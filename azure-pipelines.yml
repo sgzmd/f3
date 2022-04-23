@@ -17,4 +17,5 @@ steps:
   inputs:
     command: 'test'
     arguments: '-v'
+    arguments: './...'
     workingDirectory: './data'
