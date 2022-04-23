@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/sgzmd/flibustier/data/helpers"
+	"github.com/sgzmd/f3/data/helpers"
 
 	"github.com/anaskhan96/soup"
 )

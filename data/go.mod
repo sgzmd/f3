@@ -1,4 +1,4 @@
-module github.com/sgzmd/flibustier/data
+module github.com/sgzmd/f3/data
 
 go 1.18
 
