@@ -1,0 +1,142 @@
+syntax = "proto3";
+
+option go_package = "flibustaimporter/flibuserver/proto";
+option java_multiple_files = true;
+option java_package = "com.sgzmd.flibustier.proto";
+option java_outer_classname = "FlibustierProto";
+
+/*
+To compile:
+
+protoc --go_out=. --go_opt=paths=source_relative  \
+  --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+  flibustier.proto 
+
+*/
+
+package flibustier;
+
+service Flibustier {
+  rpc GlobalSearch (SearchRequest) returns (SearchResponse) {}
+  rpc CheckUpdates (UpdateCheckRequest) returns (UpdateCheckResponse) {}
+  rpc GetSeriesBooks (SequenceBooksRequest) returns (EntityBookResponse) {}
+  rpc GetAuthorBooks (AuthorBooksRequest) returns (EntityBookResponse) {}
+
+  rpc TrackEntry (TrackedEntry) returns (TrackEntryResponse) {}
+  rpc ListTrackedEntries (ListTrackedEntriesRequest) returns (ListTrackedEntriesResponse) {}
+  rpc UntrackEntry (TrackedEntryKey) returns (UntrackEntryResponse) {}
+}
+
+enum EntryType {
+  UNKNOWN = 0;
+  SERIES = 1;
+  AUTHOR = 2;
+  BOOK = 3;
+}
+
+message SearchRequest {
+  string search_term = 1;
+  EntryType entry_type_filter = 2;
+}
+
+message FoundEntry {
+  EntryType entry_type = 1;
+  string entry_name = 2;
+  string author = 3;
+  int64 entry_id = 4;
+  int32 num_entities = 5;
+}
+
+message SearchResponse {
+  SearchRequest original_request = 1;
+  repeated FoundEntry entry = 2;
+}
+
+message Book {
+  string book_name = 1;
+  int32 book_id = 2;
+}
+
+message TrackedEntry {
+  EntryType entry_type = 1;
+  string entry_name = 2;
+  int32 entry_id = 3;
+  int32 num_entries = 4;
+  string user_id = 5;
+
+  repeated Book book = 6;
+}
+
+message UpdateRequired {
+  TrackedEntry tracked_entry = 1;
+  int32 new_num_entries = 2;
+  repeated Book new_book = 3;
+}
+
+message UpdateCheckRequest {
+  repeated TrackedEntry tracked_entry = 1;
+}
+
+message UpdateCheckResponse {
+  repeated UpdateRequired update_required = 1;
+}
+
+message SequenceBooksRequest {
+  int32 sequence_id = 1;
+}
+
+message AuthorBooksRequest {
+  int32 author_id = 1;
+}
+
+message EntityBookResponse {
+  int32 entity_id = 1;
+  repeated Book book = 2;
+  EntityName entity_name = 3;
+}
+
+message AuthorName {
+  string first_name = 1;
+  string middle_name = 2;
+  string last_name = 3;
+}
+
+message EntityName {
+  oneof name {
+    AuthorName author_name = 1;
+    string sequence_name = 2;
+  }
+}
+
+message TrackedEntryKey {
+  EntryType entity_type = 1;  
+  int32 entity_id = 2;  
+  string user_id = 3;
+}
+
+enum TrackEntryResult {
+  TRACK_OK = 0;
+  TRACK_ALREADY_TRACKED = 1;
+}
+
+message TrackEntryResponse {
+  TrackedEntryKey key = 1;
+  TrackEntryResult result = 2;
+}
+
+message ListTrackedEntriesRequest {
+  string user_id = 1;
+}
+
+message ListTrackedEntriesResponse {
+  repeated TrackedEntry entry = 1;
+}
+
+enum UntrackEntryResult {
+  UNTRACK_OK = 0;
+  UNTRACK_NOT_TRACKED = 1;
+}
+message UntrackEntryResponse {
+  TrackedEntryKey key = 1;
+  UntrackEntryResult result = 2;
+}
