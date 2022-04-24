@@ -13,6 +13,8 @@ import (
 	"github.com/anaskhan96/soup"
 )
 
+var BannedPrefixes = [...]string{"lib.b", "lib.a", "lib.reviews", "lib.md5"}
+
 func CreateUrlList(baseUrl string) []string {
 	var urls []string
 	resp, err := soup.Get(baseUrl)
@@ -24,11 +26,26 @@ func CreateUrlList(baseUrl string) []string {
 	links := doc.FindAll("a")
 	for _, link := range links {
 		href := link.Attrs()["href"]
-		if strings.HasPrefix(href, "lib.") && !strings.HasPrefix(href, "lib.b.") && !strings.HasPrefix(href, "lib.a.") {
-			url := fmt.Sprintf("%s%s", baseUrl, href)
-			fmt.Printf("%s -> %s\n", link.Text(), url)
-			urls = append(urls, url)
+
+		if !strings.HasPrefix(href, "lib") {
+			continue
 		}
+
+		bannedPrefixFound := false
+		for _, prefix := range BannedPrefixes {
+			if strings.HasPrefix(href, prefix) {
+				bannedPrefixFound = true
+				break
+			}
+		}
+
+		if bannedPrefixFound {
+			continue
+		}
+
+		u := fmt.Sprintf("%s%s", baseUrl, href)
+		fmt.Printf("%s -> %s\n", link.Text(), u)
+		urls = append(urls, u)
 	}
 	return urls
 }

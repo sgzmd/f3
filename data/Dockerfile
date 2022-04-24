@@ -32,6 +32,4 @@ RUN crontab downloader.cron
 
 EXPOSE 9000
 
-CMD /bin/sh /app/downloader_launcher.sh
-
-# CMD ["/bin/sh", "/app/flibustier_server", "--flibusta_db=/var/local/flibudata/flibusta.db", "--port=9000"]
+CMD /bin/sh /app/start.sh

@@ -36,15 +36,39 @@ var (
 	datastore  = flag.String("datastore", "", "Path to the data store to use")
 )
 
+type ErrorCodeType int
+
+const (
+	NoUserId    ErrorCodeType = iota
+	NoEntryId   ErrorCodeType = iota
+	NoEntryType ErrorCodeType = iota
+)
+
+type RequestError struct {
+	error
+	ErrorCode ErrorCodeType
+	Message   string
+}
+
+func (r *RequestError) Error() string {
+	return fmt.Sprintf("RequestError: ErrorCode=%d, message=%s", r.ErrorCode, r.Message)
+}
+
+var ErrorCodeToMessage = map[ErrorCodeType]string{
+	NoUserId:    "No UserId",
+	NoEntryId:   "No EntryId",
+	NoEntryType: "No EntryType",
+}
+
 func (s *server) SearchAuthors(req *pb.SearchRequest) ([]*pb.FoundEntry, error) {
 	log.Printf("Searching for author: %s", req)
 
 	s.Lock.RLock()
 	defer s.Lock.RUnlock()
 
-	sql := CreateAuthorSearchQuery(req.SearchTerm)
+	query := CreateAuthorSearchQuery(req.SearchTerm)
 
-	rows, err := s.sqliteDb.Query(sql)
+	rows, err := s.sqliteDb.Query(query)
 
 	if err != nil {
 		return nil, err
@@ -81,8 +105,8 @@ func (s *server) SearchSeries(req *pb.SearchRequest) ([]*pb.FoundEntry, error) {
 	s.Lock.RLock()
 	defer s.Lock.RUnlock()
 
-	sql := CreateSequenceSearchQuery(req.SearchTerm)
-	rows, err := s.sqliteDb.Query(sql)
+	query := CreateSequenceSearchQuery(req.SearchTerm)
+	rows, err := s.sqliteDb.Query(query)
 
 	if err != nil {
 		return nil, err
@@ -114,7 +138,7 @@ func (s *server) SearchSeries(req *pb.SearchRequest) ([]*pb.FoundEntry, error) {
 	return entries, nil
 }
 
-func (s *server) GlobalSearch(ctx context.Context, in *pb.SearchRequest) (*pb.SearchResponse, error) {
+func (s *server) GlobalSearch(_ context.Context, in *pb.SearchRequest) (*pb.SearchResponse, error) {
 	log.Printf("Received: %v", in.GetSearchTerm())
 
 	s.Lock.RLock()
@@ -149,7 +173,7 @@ func (s *server) GlobalSearch(ctx context.Context, in *pb.SearchRequest) (*pb.Se
 // Implementation is very straightforward and not very performant
 // but it's possible that it's good enough.
 // See: ../proto/flibustier.proto for proto definitions.
-func (s *server) CheckUpdates(ctx context.Context, in *pb.UpdateCheckRequest) (*pb.UpdateCheckResponse, error) {
+func (s *server) CheckUpdates(_ context.Context, in *pb.UpdateCheckRequest) (*pb.UpdateCheckResponse, error) {
 	log.Printf("Received: %v", in)
 
 	s.Lock.RLock()
@@ -258,7 +282,7 @@ func GetEntityBooks(sql *sql.Stmt, entityId int32) ([]*pb.Book, error) {
 	return books, nil
 }
 
-func (s *server) GetAuthorBooks(ctx context.Context, in *pb.AuthorBooksRequest) (*pb.EntityBookResponse, error) {
+func (s *server) GetAuthorBooks(_ context.Context, in *pb.AuthorBooksRequest) (*pb.EntityBookResponse, error) {
 	log.Printf("GetAuthorBooks: %+v", in)
 
 	s.Lock.RLock()
@@ -350,6 +374,19 @@ func (s *server) GetSeriesBooks(ctx context.Context, in *pb.SequenceBooksRequest
 
 func (s *server) TrackEntry(ctx context.Context, entry *pb.TrackedEntry) (*pb.TrackEntryResponse, error) {
 	log.Printf("TrackEntry: %+v", entry)
+
+	if !(entry.EntryId > 0) {
+		return nil, createRequestError(NoEntryId)
+	}
+
+	if entry.UserId == "" {
+		return nil, createRequestError(NoUserId)
+	}
+
+	if entry.EntryType == pb.EntryType_UNKNOWN {
+		return nil, createRequestError(NoEntryType)
+	}
+
 	key := pb.TrackedEntryKey{EntityType: entry.EntryType, EntityId: entry.EntryId, UserId: entry.UserId}
 	alreadyTracked := false
 	err := s.data.View(func(txn *badger.Txn) error {
@@ -394,6 +431,10 @@ func (s *server) TrackEntry(ctx context.Context, entry *pb.TrackedEntry) (*pb.Tr
 	}
 
 	return &pb.TrackEntryResponse{Key: &key, Result: pb.TrackEntryResult_TRACK_OK}, nil
+}
+
+func createRequestError(code ErrorCodeType) *RequestError {
+	return &RequestError{ErrorCode: code, Message: ErrorCodeToMessage[code]}
 }
 
 func (s *server) ListTrackedEntries(ctx context.Context, req *pb.ListTrackedEntriesRequest) (*pb.ListTrackedEntriesResponse, error) {
