@@ -5,11 +5,7 @@ ENV telegram_api_key=nonkey
 ENV telegram_chat_id=-1
 
 RUN mkdir /app
-# RUN apt update && apt install -y sqlite3 gawk bash gcc wget cron curl
 RUN apk add sqlite gawk bash wget curl
-
-# RUN wget https://golang.org/dl/go1.17.3.linux-amd64.tar.gz
-# RUN rm -rf /usr/local/go && tar -C /usr/local -xzf go1.17.3.linux-amd64.tar.gz
 
 ADD . /app
 
@@ -19,6 +15,9 @@ RUN go build -o downloader cmd/downloader/main.go
 RUN go build -o flibustier_server -tags fts5 flibuserver/server/*.go
 
 FROM alpine:latest
+
+# Expects /var/local/flibudata volume to be set
+
 RUN mkdir /app
 RUN apk add sqlite gawk bash curl
 
@@ -33,5 +32,6 @@ RUN crontab downloader.cron
 
 EXPOSE 9000
 
-RUN /bin/sh /app/downloader_launcher.sh ; /app/flibustier_server --flibusta_db=/app/flibusta.db --port=9000
+CMD /bin/sh /app/downloader_launcher.sh
 
+# CMD ["/bin/sh", "/app/flibustier_server", "--flibusta_db=/var/local/flibudata/flibusta.db", "--port=9000"]
