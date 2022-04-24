@@ -36,30 +36,6 @@ var (
 	datastore  = flag.String("datastore", "", "Path to the data store to use")
 )
 
-type ErrorCodeType int
-
-const (
-	NoUserId    ErrorCodeType = iota
-	NoEntryId   ErrorCodeType = iota
-	NoEntryType ErrorCodeType = iota
-)
-
-type RequestError struct {
-	error
-	ErrorCode ErrorCodeType
-	Message   string
-}
-
-func (r *RequestError) Error() string {
-	return fmt.Sprintf("RequestError: ErrorCode=%d, message=%s", r.ErrorCode, r.Message)
-}
-
-var ErrorCodeToMessage = map[ErrorCodeType]string{
-	NoUserId:    "No UserId",
-	NoEntryId:   "No EntryId",
-	NoEntryType: "No EntryType",
-}
-
 func (s *server) SearchAuthors(req *pb.SearchRequest) ([]*pb.FoundEntry, error) {
 	log.Printf("Searching for author: %s", req)
 
@@ -431,10 +407,6 @@ func (s *server) TrackEntry(ctx context.Context, entry *pb.TrackedEntry) (*pb.Tr
 	}
 
 	return &pb.TrackEntryResponse{Key: &key, Result: pb.TrackEntryResult_TRACK_OK}, nil
-}
-
-func createRequestError(code ErrorCodeType) *RequestError {
-	return &RequestError{ErrorCode: code, Message: ErrorCodeToMessage[code]}
 }
 
 func (s *server) ListTrackedEntries(ctx context.Context, req *pb.ListTrackedEntriesRequest) (*pb.ListTrackedEntriesResponse, error) {
