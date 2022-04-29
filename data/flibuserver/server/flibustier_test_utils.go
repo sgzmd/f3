@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	pb "github.com/sgzmd/f3/data/flibuserver/proto"
+	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
+
 	"log"
 	"net"
 
@@ -19,7 +20,7 @@ func dialer(flibustaDb string) func(context.Context, string) (net.Conn, error) {
 	if err != nil {
 		panic(err)
 	}
-	pb.RegisterFlibustierServer(server, srv)
+	pb.RegisterFlibustierServiceServer(server, srv)
 
 	go func() {
 		if err := server.Serve(listener); err != nil {

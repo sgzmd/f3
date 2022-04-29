@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	pb "github.com/sgzmd/f3/data/flibuserver/proto"
+	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
+
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -11,7 +12,7 @@ import (
 
 type FlibustierStorageSuite struct {
 	suite.Suite
-	client pb.FlibustierClient
+	client pb.FlibustierServiceClient
 	conn   *grpc.ClientConn
 }
 
@@ -20,15 +21,19 @@ func TestFlibustierStorage(t *testing.T) {
 }
 
 func (suite *FlibustierStorageSuite) TestServer_TrackEntry() {
-	req := &pb.TrackedEntry{EntryType: pb.EntryType_AUTHOR, EntryName: "Entry Name Test", EntryId: 123, NumEntries: 10, UserId: "1", Book: []*pb.Book{}}
-	resp, err := suite.client.TrackEntry(context.Background(), req)
+	trackReq := &pb.TrackEntryRequest{Entry: &pb.TrackedEntry{
+		EntryType:  pb.EntryType_ENTRY_TYPE_AUTHOR,
+		EntryName:  "Entry Name Test",
+		EntryId:    123,
+		NumEntries: 10, UserId: "1", Book: []*pb.Book{}}}
+	resp, err := suite.client.TrackEntry(context.Background(), trackReq)
 	suite.Assert().Nil(err)
-	suite.Assert().Equal(pb.TrackEntryResult_TRACK_OK, resp.Result)
+	suite.Assert().Equal(pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK, resp.Result)
 
 	// Second time should fail
-	resp2, err := suite.client.TrackEntry(context.Background(), req)
+	resp2, err := suite.client.TrackEntry(context.Background(), trackReq)
 	suite.Assert().Nil(err)
-	suite.Assert().Equal(pb.TrackEntryResult_TRACK_ALREADY_TRACKED, resp2.Result)
+	suite.Assert().Equal(pb.TrackEntryResult_TRACK_ENTRY_RESULT_ALREADY_TRACKED, resp2.Result)
 }
 
 func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
@@ -36,22 +41,11 @@ func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
 	ids := make([]int, MAX_IDS)
 	for i := 1; i < MAX_IDS; i++ {
 		_, _ = suite.client.TrackEntry(context.Background(),
-			&pb.TrackedEntry{EntryType: pb.EntryType_AUTHOR,
-				EntryName:  "Entry Name Test",
-				EntryId:    int32(i),
-				NumEntries: 10,
-				UserId:     "1",
-				Book:       []*pb.Book{}})
+			createTrackedEntry(i, "1"))
 		ids[i] = i
 	}
 
-	_, _ = suite.client.TrackEntry(context.Background(),
-		&pb.TrackedEntry{EntryType: pb.EntryType_AUTHOR,
-			EntryName:  "Entry Name Test",
-			EntryId:    int32(0),
-			NumEntries: 10,
-			UserId:     "anotheruser",
-			Book:       []*pb.Book{}})
+	_, _ = suite.client.TrackEntry(context.Background(), createTrackedEntry(0, "anotheruid"))
 
 	resp, err := suite.client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "1"})
 	suite.Assert().Nil(err)
@@ -64,20 +58,23 @@ func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
 	suite.Assert().ElementsMatch(ids, receivedIds)
 }
 
+func createTrackedEntry(i int, uid string) *pb.TrackEntryRequest {
+	return &pb.TrackEntryRequest{Entry: &pb.TrackedEntry{EntryType: pb.EntryType_ENTRY_TYPE_AUTHOR,
+		EntryName:  "Entry Name Test",
+		EntryId:    int32(i),
+		NumEntries: 10,
+		UserId:     uid,
+		Book:       []*pb.Book{}}}
+}
+
 func (suite *FlibustierStorageSuite) TestServer_Untrack() {
-	r, err := suite.client.TrackEntry(context.Background(),
-		&pb.TrackedEntry{EntryType: pb.EntryType_AUTHOR,
-			EntryName:  "Entry Name Test",
-			EntryId:    int32(123),
-			NumEntries: 10,
-			UserId:     "user",
-			Book:       []*pb.Book{}})
+	r, err := suite.client.TrackEntry(context.Background(), createTrackedEntry(123, "user"))
 	suite.Assert().Nil(err, err)
 
 	r2, err := suite.client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "user"})
 	suite.Assert().Len(r2.Entry, 1)
 
-	suite.client.UntrackEntry(context.Background(), r.Key)
+	suite.client.UntrackEntry(context.Background(), &pb.UntrackEntryRequest{Key: r.Key})
 
 	r3, _ := suite.client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "user"})
 	suite.Assert().Empty(r3.Entry)
@@ -90,7 +87,7 @@ func (suite *FlibustierStorageSuite) BeforeTest(suiteName, testName string) {
 	if err != nil {
 		panic(err)
 	}
-	suite.client = pb.NewFlibustierClient(conn)
+	suite.client = pb.NewFlibustierServiceClient(conn)
 	suite.conn = conn
 }
 

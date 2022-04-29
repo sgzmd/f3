@@ -17,27 +17,27 @@ protoc  --plugin="protoc-gen-ts=/usr/local/bin/protoc-gen-ts" \
 
 */
 
-package flibustier;
+package flibuserver.proto.v1;
 
-service Flibustier {
-  rpc GlobalSearch (SearchRequest) returns (SearchResponse) {}
-  rpc CheckUpdates (UpdateCheckRequest) returns (UpdateCheckResponse) {}
-  rpc GetSeriesBooks (SequenceBooksRequest) returns (EntityBookResponse) {}
-  rpc GetAuthorBooks (AuthorBooksRequest) returns (EntityBookResponse) {}
+service FlibustierService {
+  rpc GlobalSearch (GlobalSearchRequest) returns (GlobalSearchResponse) {}
+  rpc CheckUpdates (CheckUpdatesRequest) returns (CheckUpdatesResponse) {}
+  rpc GetSeriesBooks (GetSeriesBooksRequest) returns (GetSeriesBooksResponse) {}
+  rpc GetAuthorBooks (GetAuthorBooksRequest) returns (GetAuthorBooksResponse) {}
 
-  rpc TrackEntry (TrackedEntry) returns (TrackEntryResponse) {}
+  rpc TrackEntry (TrackEntryRequest) returns (TrackEntryResponse) {}
   rpc ListTrackedEntries (ListTrackedEntriesRequest) returns (ListTrackedEntriesResponse) {}
-  rpc UntrackEntry (TrackedEntryKey) returns (UntrackEntryResponse) {}
+  rpc UntrackEntry (UntrackEntryRequest) returns (UntrackEntryResponse) {}
 }
 
 enum EntryType {
-  UNKNOWN = 0;
-  SERIES = 1;
-  AUTHOR = 2;
-  BOOK = 3;
+  ENTRY_TYPE_UNSPECIFIED = 0;
+  ENTRY_TYPE_SERIES = 1;
+  ENTRY_TYPE_AUTHOR = 2;
+  ENTRY_TYPE_BOOK = 3;
 }
 
-message SearchRequest {
+message GlobalSearchRequest {
   string search_term = 1;
   EntryType entry_type_filter = 2;
 }
@@ -50,8 +50,8 @@ message FoundEntry {
   int32 num_entities = 5;
 }
 
-message SearchResponse {
-  SearchRequest original_request = 1;
+message GlobalSearchResponse {
+  GlobalSearchRequest original_request = 1;
   repeated FoundEntry entry = 2;
 }
 
@@ -70,25 +70,29 @@ message TrackedEntry {
   repeated Book book = 6;
 }
 
+message TrackEntryRequest {
+  TrackedEntry entry = 1;
+}
+
 message UpdateRequired {
   TrackedEntry tracked_entry = 1;
   int32 new_num_entries = 2;
   repeated Book new_book = 3;
 }
 
-message UpdateCheckRequest {
+message CheckUpdatesRequest {
   repeated TrackedEntry tracked_entry = 1;
 }
 
-message UpdateCheckResponse {
+message CheckUpdatesResponse {
   repeated UpdateRequired update_required = 1;
 }
 
-message SequenceBooksRequest {
+message GetSeriesBooksRequest {
   int32 sequence_id = 1;
 }
 
-message AuthorBooksRequest {
+message GetAuthorBooksRequest {
   int32 author_id = 1;
 }
 
@@ -96,6 +100,14 @@ message EntityBookResponse {
   int32 entity_id = 1;
   repeated Book book = 2;
   EntityName entity_name = 3;
+}
+
+message GetSeriesBooksResponse {
+  EntityBookResponse entity_book_response = 1;
+}
+
+message GetAuthorBooksResponse {
+  EntityBookResponse entity_book_response = 1;
 }
 
 message AuthorName {
@@ -117,9 +129,14 @@ message TrackedEntryKey {
   string user_id = 3;
 }
 
+message UntrackEntryRequest {
+  TrackedEntryKey key = 1;
+}
+
 enum TrackEntryResult {
-  TRACK_OK = 0;
-  TRACK_ALREADY_TRACKED = 1;
+  TRACK_ENTRY_RESULT_UNSPECIFIED = 0;
+  TRACK_ENTRY_RESULT_OK = 1;
+  TRACK_ENTRY_RESULT_ALREADY_TRACKED = 2;
 }
 
 message TrackEntryResponse {
@@ -136,8 +153,9 @@ message ListTrackedEntriesResponse {
 }
 
 enum UntrackEntryResult {
-  UNTRACK_OK = 0;
-  UNTRACK_NOT_TRACKED = 1;
+  UNTRACK_ENTRY_RESULT_UNSPECIFIED = 0;
+  UNTRACK_ENTRY_RESULT_OK = 1;
+  UNTRACK_ENTRY_RESULT_NOT_TRACKED = 2;
 }
 message UntrackEntryResponse {
   TrackedEntryKey key = 1;

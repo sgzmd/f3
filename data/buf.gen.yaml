@@ -8,16 +8,9 @@ plugins:
     out: gen/go
     opt:
       - paths=source_relative
-  - name: grpc-gateway
-    out: gen/go
-    opt:
-      - paths=source_relative
-      - generate_unbound_methods=true
-
   - name: js
     out: gen/nodejs
     opt: import_style=commonjs,binary
-
   - name: grpc
     out: gen/nodejs
     opt: grpc_js

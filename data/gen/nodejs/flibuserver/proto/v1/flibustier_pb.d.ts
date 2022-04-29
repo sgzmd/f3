@@ -1,28 +1,28 @@
-// package: flibustier
-// file: flibuserver/proto/flibustier.proto
+// package: flibuserver.proto.v1
+// file: flibuserver/proto/v1/flibustier.proto
 
 /* tslint:disable */
 /* eslint-disable */
 
 import * as jspb from "google-protobuf";
 
-export class SearchRequest extends jspb.Message { 
+export class GlobalSearchRequest extends jspb.Message { 
     getSearchTerm(): string;
-    setSearchTerm(value: string): SearchRequest;
+    setSearchTerm(value: string): GlobalSearchRequest;
     getEntryTypeFilter(): EntryType;
-    setEntryTypeFilter(value: EntryType): SearchRequest;
+    setEntryTypeFilter(value: EntryType): GlobalSearchRequest;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): SearchRequest.AsObject;
-    static toObject(includeInstance: boolean, msg: SearchRequest): SearchRequest.AsObject;
+    toObject(includeInstance?: boolean): GlobalSearchRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: GlobalSearchRequest): GlobalSearchRequest.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: SearchRequest, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): SearchRequest;
-    static deserializeBinaryFromReader(message: SearchRequest, reader: jspb.BinaryReader): SearchRequest;
+    static serializeBinaryToWriter(message: GlobalSearchRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): GlobalSearchRequest;
+    static deserializeBinaryFromReader(message: GlobalSearchRequest, reader: jspb.BinaryReader): GlobalSearchRequest;
 }
 
-export namespace SearchRequest {
+export namespace GlobalSearchRequest {
     export type AsObject = {
         searchTerm: string,
         entryTypeFilter: EntryType,
@@ -61,30 +61,30 @@ export namespace FoundEntry {
     }
 }
 
-export class SearchResponse extends jspb.Message { 
+export class GlobalSearchResponse extends jspb.Message { 
 
     hasOriginalRequest(): boolean;
     clearOriginalRequest(): void;
-    getOriginalRequest(): SearchRequest | undefined;
-    setOriginalRequest(value?: SearchRequest): SearchResponse;
+    getOriginalRequest(): GlobalSearchRequest | undefined;
+    setOriginalRequest(value?: GlobalSearchRequest): GlobalSearchResponse;
     clearEntryList(): void;
     getEntryList(): Array<FoundEntry>;
-    setEntryList(value: Array<FoundEntry>): SearchResponse;
+    setEntryList(value: Array<FoundEntry>): GlobalSearchResponse;
     addEntry(value?: FoundEntry, index?: number): FoundEntry;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): SearchResponse.AsObject;
-    static toObject(includeInstance: boolean, msg: SearchResponse): SearchResponse.AsObject;
+    toObject(includeInstance?: boolean): GlobalSearchResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: GlobalSearchResponse): GlobalSearchResponse.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: SearchResponse, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): SearchResponse;
-    static deserializeBinaryFromReader(message: SearchResponse, reader: jspb.BinaryReader): SearchResponse;
+    static serializeBinaryToWriter(message: GlobalSearchResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): GlobalSearchResponse;
+    static deserializeBinaryFromReader(message: GlobalSearchResponse, reader: jspb.BinaryReader): GlobalSearchResponse;
 }
 
-export namespace SearchResponse {
+export namespace GlobalSearchResponse {
     export type AsObject = {
-        originalRequest?: SearchRequest.AsObject,
+        originalRequest?: GlobalSearchRequest.AsObject,
         entryList: Array<FoundEntry.AsObject>,
     }
 }
@@ -149,6 +149,29 @@ export namespace TrackedEntry {
     }
 }
 
+export class TrackEntryRequest extends jspb.Message { 
+
+    hasEntry(): boolean;
+    clearEntry(): void;
+    getEntry(): TrackedEntry | undefined;
+    setEntry(value?: TrackedEntry): TrackEntryRequest;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): TrackEntryRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: TrackEntryRequest): TrackEntryRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: TrackEntryRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): TrackEntryRequest;
+    static deserializeBinaryFromReader(message: TrackEntryRequest, reader: jspb.BinaryReader): TrackEntryRequest;
+}
+
+export namespace TrackEntryRequest {
+    export type AsObject = {
+        entry?: TrackedEntry.AsObject,
+    }
+}
+
 export class UpdateRequired extends jspb.Message { 
 
     hasTrackedEntry(): boolean;
@@ -180,85 +203,85 @@ export namespace UpdateRequired {
     }
 }
 
-export class UpdateCheckRequest extends jspb.Message { 
+export class CheckUpdatesRequest extends jspb.Message { 
     clearTrackedEntryList(): void;
     getTrackedEntryList(): Array<TrackedEntry>;
-    setTrackedEntryList(value: Array<TrackedEntry>): UpdateCheckRequest;
+    setTrackedEntryList(value: Array<TrackedEntry>): CheckUpdatesRequest;
     addTrackedEntry(value?: TrackedEntry, index?: number): TrackedEntry;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): UpdateCheckRequest.AsObject;
-    static toObject(includeInstance: boolean, msg: UpdateCheckRequest): UpdateCheckRequest.AsObject;
+    toObject(includeInstance?: boolean): CheckUpdatesRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: CheckUpdatesRequest): CheckUpdatesRequest.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: UpdateCheckRequest, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): UpdateCheckRequest;
-    static deserializeBinaryFromReader(message: UpdateCheckRequest, reader: jspb.BinaryReader): UpdateCheckRequest;
+    static serializeBinaryToWriter(message: CheckUpdatesRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): CheckUpdatesRequest;
+    static deserializeBinaryFromReader(message: CheckUpdatesRequest, reader: jspb.BinaryReader): CheckUpdatesRequest;
 }
 
-export namespace UpdateCheckRequest {
+export namespace CheckUpdatesRequest {
     export type AsObject = {
         trackedEntryList: Array<TrackedEntry.AsObject>,
     }
 }
 
-export class UpdateCheckResponse extends jspb.Message { 
+export class CheckUpdatesResponse extends jspb.Message { 
     clearUpdateRequiredList(): void;
     getUpdateRequiredList(): Array<UpdateRequired>;
-    setUpdateRequiredList(value: Array<UpdateRequired>): UpdateCheckResponse;
+    setUpdateRequiredList(value: Array<UpdateRequired>): CheckUpdatesResponse;
     addUpdateRequired(value?: UpdateRequired, index?: number): UpdateRequired;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): UpdateCheckResponse.AsObject;
-    static toObject(includeInstance: boolean, msg: UpdateCheckResponse): UpdateCheckResponse.AsObject;
+    toObject(includeInstance?: boolean): CheckUpdatesResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: CheckUpdatesResponse): CheckUpdatesResponse.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: UpdateCheckResponse, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): UpdateCheckResponse;
-    static deserializeBinaryFromReader(message: UpdateCheckResponse, reader: jspb.BinaryReader): UpdateCheckResponse;
+    static serializeBinaryToWriter(message: CheckUpdatesResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): CheckUpdatesResponse;
+    static deserializeBinaryFromReader(message: CheckUpdatesResponse, reader: jspb.BinaryReader): CheckUpdatesResponse;
 }
 
-export namespace UpdateCheckResponse {
+export namespace CheckUpdatesResponse {
     export type AsObject = {
         updateRequiredList: Array<UpdateRequired.AsObject>,
     }
 }
 
-export class SequenceBooksRequest extends jspb.Message { 
+export class GetSeriesBooksRequest extends jspb.Message { 
     getSequenceId(): number;
-    setSequenceId(value: number): SequenceBooksRequest;
+    setSequenceId(value: number): GetSeriesBooksRequest;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): SequenceBooksRequest.AsObject;
-    static toObject(includeInstance: boolean, msg: SequenceBooksRequest): SequenceBooksRequest.AsObject;
+    toObject(includeInstance?: boolean): GetSeriesBooksRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: GetSeriesBooksRequest): GetSeriesBooksRequest.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: SequenceBooksRequest, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): SequenceBooksRequest;
-    static deserializeBinaryFromReader(message: SequenceBooksRequest, reader: jspb.BinaryReader): SequenceBooksRequest;
+    static serializeBinaryToWriter(message: GetSeriesBooksRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): GetSeriesBooksRequest;
+    static deserializeBinaryFromReader(message: GetSeriesBooksRequest, reader: jspb.BinaryReader): GetSeriesBooksRequest;
 }
 
-export namespace SequenceBooksRequest {
+export namespace GetSeriesBooksRequest {
     export type AsObject = {
         sequenceId: number,
     }
 }
 
-export class AuthorBooksRequest extends jspb.Message { 
+export class GetAuthorBooksRequest extends jspb.Message { 
     getAuthorId(): number;
-    setAuthorId(value: number): AuthorBooksRequest;
+    setAuthorId(value: number): GetAuthorBooksRequest;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): AuthorBooksRequest.AsObject;
-    static toObject(includeInstance: boolean, msg: AuthorBooksRequest): AuthorBooksRequest.AsObject;
+    toObject(includeInstance?: boolean): GetAuthorBooksRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: GetAuthorBooksRequest): GetAuthorBooksRequest.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: AuthorBooksRequest, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): AuthorBooksRequest;
-    static deserializeBinaryFromReader(message: AuthorBooksRequest, reader: jspb.BinaryReader): AuthorBooksRequest;
+    static serializeBinaryToWriter(message: GetAuthorBooksRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): GetAuthorBooksRequest;
+    static deserializeBinaryFromReader(message: GetAuthorBooksRequest, reader: jspb.BinaryReader): GetAuthorBooksRequest;
 }
 
-export namespace AuthorBooksRequest {
+export namespace GetAuthorBooksRequest {
     export type AsObject = {
         authorId: number,
     }
@@ -292,6 +315,52 @@ export namespace EntityBookResponse {
         entityId: number,
         bookList: Array<Book.AsObject>,
         entityName?: EntityName.AsObject,
+    }
+}
+
+export class GetSeriesBooksResponse extends jspb.Message { 
+
+    hasEntityBookResponse(): boolean;
+    clearEntityBookResponse(): void;
+    getEntityBookResponse(): EntityBookResponse | undefined;
+    setEntityBookResponse(value?: EntityBookResponse): GetSeriesBooksResponse;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): GetSeriesBooksResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: GetSeriesBooksResponse): GetSeriesBooksResponse.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: GetSeriesBooksResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): GetSeriesBooksResponse;
+    static deserializeBinaryFromReader(message: GetSeriesBooksResponse, reader: jspb.BinaryReader): GetSeriesBooksResponse;
+}
+
+export namespace GetSeriesBooksResponse {
+    export type AsObject = {
+        entityBookResponse?: EntityBookResponse.AsObject,
+    }
+}
+
+export class GetAuthorBooksResponse extends jspb.Message { 
+
+    hasEntityBookResponse(): boolean;
+    clearEntityBookResponse(): void;
+    getEntityBookResponse(): EntityBookResponse | undefined;
+    setEntityBookResponse(value?: EntityBookResponse): GetAuthorBooksResponse;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): GetAuthorBooksResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: GetAuthorBooksResponse): GetAuthorBooksResponse.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: GetAuthorBooksResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): GetAuthorBooksResponse;
+    static deserializeBinaryFromReader(message: GetAuthorBooksResponse, reader: jspb.BinaryReader): GetAuthorBooksResponse;
+}
+
+export namespace GetAuthorBooksResponse {
+    export type AsObject = {
+        entityBookResponse?: EntityBookResponse.AsObject,
     }
 }
 
@@ -382,6 +451,29 @@ export namespace TrackedEntryKey {
         entityType: EntryType,
         entityId: number,
         userId: string,
+    }
+}
+
+export class UntrackEntryRequest extends jspb.Message { 
+
+    hasKey(): boolean;
+    clearKey(): void;
+    getKey(): TrackedEntryKey | undefined;
+    setKey(value?: TrackedEntryKey): UntrackEntryRequest;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): UntrackEntryRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: UntrackEntryRequest): UntrackEntryRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: UntrackEntryRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): UntrackEntryRequest;
+    static deserializeBinaryFromReader(message: UntrackEntryRequest, reader: jspb.BinaryReader): UntrackEntryRequest;
+}
+
+export namespace UntrackEntryRequest {
+    export type AsObject = {
+        key?: TrackedEntryKey.AsObject,
     }
 }
 
@@ -480,18 +572,20 @@ export namespace UntrackEntryResponse {
 }
 
 export enum EntryType {
-    UNKNOWN = 0,
-    SERIES = 1,
-    AUTHOR = 2,
-    BOOK = 3,
+    ENTRY_TYPE_UNSPECIFIED = 0,
+    ENTRY_TYPE_SERIES = 1,
+    ENTRY_TYPE_AUTHOR = 2,
+    ENTRY_TYPE_BOOK = 3,
 }
 
 export enum TrackEntryResult {
-    TRACK_OK = 0,
-    TRACK_ALREADY_TRACKED = 1,
+    TRACK_ENTRY_RESULT_UNSPECIFIED = 0,
+    TRACK_ENTRY_RESULT_OK = 1,
+    TRACK_ENTRY_RESULT_ALREADY_TRACKED = 2,
 }
 
 export enum UntrackEntryResult {
-    UNTRACK_OK = 0,
-    UNTRACK_NOT_TRACKED = 1,
+    UNTRACK_ENTRY_RESULT_UNSPECIFIED = 0,
+    UNTRACK_ENTRY_RESULT_OK = 1,
+    UNTRACK_ENTRY_RESULT_NOT_TRACKED = 2,
 }

@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	pb "github.com/sgzmd/f3/data/flibuserver/proto"
+	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 
 	badger "github.com/dgraph-io/badger/v3"
 	"github.com/golang/protobuf/proto"
@@ -24,7 +24,7 @@ import (
 )
 
 type server struct {
-	pb.UnimplementedFlibustierServer
+	pb.UnimplementedFlibustierServiceServer
 	sqliteDb *sql.DB
 	data     *badger.DB
 	Lock     sync.RWMutex
@@ -36,7 +36,7 @@ var (
 	datastore  = flag.String("datastore", "", "Path to the data store to use")
 )
 
-func (s *server) SearchAuthors(req *pb.SearchRequest) ([]*pb.FoundEntry, error) {
+func (s *server) SearchAuthors(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, error) {
 	log.Printf("Searching for author: %s", req)
 
 	s.Lock.RLock()
@@ -64,7 +64,7 @@ func (s *server) SearchAuthors(req *pb.SearchRequest) ([]*pb.FoundEntry, error) 
 		}
 
 		entries = append(entries, &pb.FoundEntry{
-			EntryType:   pb.EntryType_AUTHOR,
+			EntryType:   pb.EntryType_ENTRY_TYPE_AUTHOR,
 			Author:      authorName,
 			EntryName:   authorName,
 			EntryId:     authorId,
@@ -75,7 +75,7 @@ func (s *server) SearchAuthors(req *pb.SearchRequest) ([]*pb.FoundEntry, error) 
 	return entries, nil
 }
 
-func (s *server) SearchSeries(req *pb.SearchRequest) ([]*pb.FoundEntry, error) {
+func (s *server) SearchSeries(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, error) {
 	log.Printf("Searching for series: %s", req)
 
 	s.Lock.RLock()
@@ -103,7 +103,7 @@ func (s *server) SearchSeries(req *pb.SearchRequest) ([]*pb.FoundEntry, error) {
 		}
 
 		entries = append(entries, &pb.FoundEntry{
-			EntryType:   pb.EntryType_SERIES,
+			EntryType:   pb.EntryType_ENTRY_TYPE_SERIES,
 			Author:      authors,
 			EntryName:   seqName,
 			EntryId:     seqId,
@@ -114,7 +114,7 @@ func (s *server) SearchSeries(req *pb.SearchRequest) ([]*pb.FoundEntry, error) {
 	return entries, nil
 }
 
-func (s *server) GlobalSearch(_ context.Context, in *pb.SearchRequest) (*pb.SearchResponse, error) {
+func (s *server) GlobalSearch(_ context.Context, in *pb.GlobalSearchRequest) (*pb.GlobalSearchResponse, error) {
 	log.Printf("Received: %v", in.GetSearchTerm())
 
 	s.Lock.RLock()
@@ -123,7 +123,7 @@ func (s *server) GlobalSearch(_ context.Context, in *pb.SearchRequest) (*pb.Sear
 	var entries []*pb.FoundEntry = make([]*pb.FoundEntry, 0, 10)
 
 	// If there's no filter for series
-	if in.EntryTypeFilter != pb.EntryType_SERIES {
+	if in.EntryTypeFilter != pb.EntryType_ENTRY_TYPE_SERIES {
 		authors, err := s.SearchAuthors(in)
 		if err != nil {
 			return nil, err
@@ -131,7 +131,7 @@ func (s *server) GlobalSearch(_ context.Context, in *pb.SearchRequest) (*pb.Sear
 		entries = append(entries, authors...)
 	}
 
-	if in.EntryTypeFilter != pb.EntryType_AUTHOR {
+	if in.EntryTypeFilter != pb.EntryType_ENTRY_TYPE_AUTHOR {
 		series, err := s.SearchSeries(in)
 		if err != nil {
 			return nil, err
@@ -139,7 +139,7 @@ func (s *server) GlobalSearch(_ context.Context, in *pb.SearchRequest) (*pb.Sear
 		entries = append(entries, series...)
 	}
 
-	return &pb.SearchResponse{
+	return &pb.GlobalSearchResponse{
 		OriginalRequest: in,
 		Entry:           entries,
 	}, nil
@@ -149,7 +149,7 @@ func (s *server) GlobalSearch(_ context.Context, in *pb.SearchRequest) (*pb.Sear
 // Implementation is very straightforward and not very performant
 // but it's possible that it's good enough.
 // See: ../proto/flibustier.proto for proto definitions.
-func (s *server) CheckUpdates(_ context.Context, in *pb.UpdateCheckRequest) (*pb.UpdateCheckResponse, error) {
+func (s *server) CheckUpdates(_ context.Context, in *pb.CheckUpdatesRequest) (*pb.CheckUpdatesResponse, error) {
 	log.Printf("Received: %v", in)
 
 	s.Lock.RLock()
@@ -179,9 +179,9 @@ func (s *server) CheckUpdates(_ context.Context, in *pb.UpdateCheckRequest) (*pb
 		var err error
 
 		var statement *sql.Stmt
-		if entry.EntryType == pb.EntryType_AUTHOR {
+		if entry.EntryType == pb.EntryType_ENTRY_TYPE_AUTHOR {
 			statement = astm
-		} else if entry.EntryType == pb.EntryType_SERIES {
+		} else if entry.EntryType == pb.EntryType_ENTRY_TYPE_SERIES {
 			statement = sstm
 		}
 
@@ -236,7 +236,7 @@ func (s *server) CheckUpdates(_ context.Context, in *pb.UpdateCheckRequest) (*pb
 		}
 	}
 
-	return &pb.UpdateCheckResponse{UpdateRequired: response}, nil
+	return &pb.CheckUpdatesResponse{UpdateRequired: response}, nil
 }
 
 func GetEntityBooks(sql *sql.Stmt, entityId int32) ([]*pb.Book, error) {
@@ -258,7 +258,7 @@ func GetEntityBooks(sql *sql.Stmt, entityId int32) ([]*pb.Book, error) {
 	return books, nil
 }
 
-func (s *server) GetAuthorBooks(_ context.Context, in *pb.AuthorBooksRequest) (*pb.EntityBookResponse, error) {
+func (s *server) GetAuthorBooks(_ context.Context, in *pb.GetAuthorBooksRequest) (*pb.GetAuthorBooksResponse, error) {
 	log.Printf("GetAuthorBooks: %+v", in)
 
 	s.Lock.RLock()
@@ -305,13 +305,15 @@ func (s *server) GetAuthorBooks(_ context.Context, in *pb.AuthorBooksRequest) (*
 				MiddleName: middleName,
 				LastName:   lastName}}}
 
-		return &pb.EntityBookResponse{Book: books, EntityId: in.AuthorId, EntityName: name}, nil
+		return &pb.GetAuthorBooksResponse{
+			EntityBookResponse: &pb.EntityBookResponse{
+				Book: books, EntityId: in.AuthorId, EntityName: name}}, nil
 	}
 
 	return nil, fmt.Errorf("no author associated with id %d", in.AuthorId)
 }
 
-func (s *server) GetSeriesBooks(ctx context.Context, in *pb.SequenceBooksRequest) (*pb.EntityBookResponse, error) {
+func (s *server) GetSeriesBooks(ctx context.Context, in *pb.GetSeriesBooksRequest) (*pb.GetSeriesBooksResponse, error) {
 	log.Printf("GetSeriesBooks: %+v", in)
 
 	s.Lock.RLock()
@@ -342,15 +344,18 @@ func (s *server) GetSeriesBooks(ctx context.Context, in *pb.SequenceBooksRequest
 		rs.Scan(&seqName)
 		name := &pb.EntityName{Name: &pb.EntityName_SequenceName{SequenceName: seqName}}
 
-		return &pb.EntityBookResponse{Book: books, EntityId: in.SequenceId, EntityName: name}, nil
+		return &pb.GetSeriesBooksResponse{
+			EntityBookResponse: &pb.EntityBookResponse{
+				Book: books, EntityId: in.SequenceId, EntityName: name}}, nil
 	}
 
 	return nil, fmt.Errorf("no series associated with id %d", in.SequenceId)
 }
 
-func (s *server) TrackEntry(ctx context.Context, entry *pb.TrackedEntry) (*pb.TrackEntryResponse, error) {
-	log.Printf("TrackEntry: %+v", entry)
+func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb.TrackEntryResponse, error) {
+	log.Printf("TrackEntryRequest: %+v", req)
 
+	entry := req.Entry
 	if !(entry.EntryId > 0) {
 		return nil, createRequestError(NoEntryId)
 	}
@@ -359,7 +364,7 @@ func (s *server) TrackEntry(ctx context.Context, entry *pb.TrackedEntry) (*pb.Tr
 		return nil, createRequestError(NoUserId)
 	}
 
-	if entry.EntryType == pb.EntryType_UNKNOWN {
+	if entry.EntryType == pb.EntryType_ENTRY_TYPE_UNSPECIFIED {
 		return nil, createRequestError(NoEntryType)
 	}
 
@@ -385,7 +390,7 @@ func (s *server) TrackEntry(ctx context.Context, entry *pb.TrackedEntry) (*pb.Tr
 	}
 
 	if alreadyTracked {
-		return &pb.TrackEntryResponse{Key: &key, Result: pb.TrackEntryResult_TRACK_ALREADY_TRACKED}, nil
+		return &pb.TrackEntryResponse{Key: &key, Result: pb.TrackEntryResult_TRACK_ENTRY_RESULT_ALREADY_TRACKED}, nil
 	}
 
 	s.data.Update(func(txn *badger.Txn) error {
@@ -406,7 +411,7 @@ func (s *server) TrackEntry(ctx context.Context, entry *pb.TrackedEntry) (*pb.Tr
 		return nil, err
 	}
 
-	return &pb.TrackEntryResponse{Key: &key, Result: pb.TrackEntryResult_TRACK_OK}, nil
+	return &pb.TrackEntryResponse{Key: &key, Result: pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK}, nil
 }
 
 func (s *server) ListTrackedEntries(ctx context.Context, req *pb.ListTrackedEntriesRequest) (*pb.ListTrackedEntriesResponse, error) {
@@ -456,10 +461,11 @@ func (s *server) ListTrackedEntries(ctx context.Context, req *pb.ListTrackedEntr
 	return &pb.ListTrackedEntriesResponse{Entry: entries}, nil
 }
 
-func (s *server) UntrackEntry(ctx context.Context, req *pb.TrackedEntryKey) (*pb.UntrackEntryResponse, error) {
-	log.Printf("UntrackEntry: %+v", req)
+func (s *server) UntrackEntry(ctx context.Context, req *pb.UntrackEntryRequest) (*pb.UntrackEntryResponse, error) {
+	key := req.Key
+	log.Printf("UntrackEntry: %+v", key)
 	err := s.data.Update(func(txn *badger.Txn) error {
-		key, err := proto.Marshal(req)
+		key, err := proto.Marshal(key)
 		if err != nil {
 			return nil
 		}
@@ -469,7 +475,7 @@ func (s *server) UntrackEntry(ctx context.Context, req *pb.TrackedEntryKey) (*pb
 	if err != nil {
 		return nil, err
 	} else {
-		return &pb.UntrackEntryResponse{Key: req, Result: pb.UntrackEntryResult_UNTRACK_OK}, nil
+		return &pb.UntrackEntryResponse{Key: key, Result: pb.UntrackEntryResult_UNTRACK_ENTRY_RESULT_OK}, nil
 	}
 }
 
@@ -526,7 +532,7 @@ func main() {
 	}
 	defer srv.Close()
 
-	pb.RegisterFlibustierServer(s, srv)
+	pb.RegisterFlibustierServiceServer(s, srv)
 	reflection.Register(s)
 	log.Printf("server listening at %v", lis.Addr())
 

@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	pb "github.com/sgzmd/f3/data/flibuserver/proto"
+	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
+
 	"log"
 	"os"
 	"testing"
@@ -16,12 +17,12 @@ const (
 )
 
 var (
-	client pb.FlibustierClient = nil
+	client pb.FlibustierServiceClient = nil
 )
 
 func TestSmokeTest(t *testing.T) {
 	const TERM = "метел"
-	result, err := client.GlobalSearch(context.Background(), &pb.SearchRequest{SearchTerm: TERM})
+	result, err := client.GlobalSearch(context.Background(), &pb.GlobalSearchRequest{SearchTerm: TERM})
 	if err != nil {
 		log.Fatalf("Failed the smoke test: %v", err)
 		t.Fatalf("Smoke test failed")
@@ -32,7 +33,7 @@ func TestSmokeTest(t *testing.T) {
 
 func TestSearchEverything(t *testing.T) {
 	const TERM = "Николай Александрович Метельский"
-	result, err := client.GlobalSearch(context.Background(), &pb.SearchRequest{SearchTerm: TERM})
+	result, err := client.GlobalSearch(context.Background(), &pb.GlobalSearchRequest{SearchTerm: TERM})
 	assert.Nil(t, err)
 	assert.Len(t, result.Entry, 2)
 	assert.Equal(t, result.Entry[0].Author, "Николай Александрович Метельский")
@@ -42,7 +43,7 @@ func TestSearchEverything(t *testing.T) {
 func TestSearchAuthor(t *testing.T) {
 	const TERM = "Метельский"
 	result, err := client.GlobalSearch(context.Background(),
-		&pb.SearchRequest{SearchTerm: TERM, EntryTypeFilter: pb.EntryType_AUTHOR})
+		&pb.GlobalSearchRequest{SearchTerm: TERM, EntryTypeFilter: pb.EntryType_ENTRY_TYPE_AUTHOR})
 	assert.Nil(t, err)
 	assert.Len(t, result.Entry, 1)
 	assert.Equal(t, result.Entry[0].Author, "Николай Александрович Метельский")
@@ -52,7 +53,7 @@ func TestSearchSeries(t *testing.T) {
 	// note that searching for author of the series
 	const TERM = "Метельский"
 	result, err := client.GlobalSearch(context.Background(),
-		&pb.SearchRequest{SearchTerm: TERM, EntryTypeFilter: pb.EntryType_SERIES})
+		&pb.GlobalSearchRequest{SearchTerm: TERM, EntryTypeFilter: pb.EntryType_ENTRY_TYPE_SERIES})
 	assert.Nil(t, err)
 	assert.Len(t, result.Entry, 1)
 	assert.Equal(t, result.Entry[0].EntryName, "Унесенный ветром")
@@ -62,7 +63,7 @@ func TestCheckUpdates_Author(t *testing.T) {
 	books := []*pb.Book{{BookId: 452501, BookName: "Чужие маски"}}
 
 	tracked := &pb.TrackedEntry{
-		EntryType:  pb.EntryType_AUTHOR,
+		EntryType:  pb.EntryType_ENTRY_TYPE_AUTHOR,
 		EntryName:  "Метельский",
 		EntryId:    109170,
 		NumEntries: 1,
@@ -70,7 +71,7 @@ func TestCheckUpdates_Author(t *testing.T) {
 		Book:       books,
 	}
 
-	request := pb.UpdateCheckRequest{
+	request := pb.CheckUpdatesRequest{
 		TrackedEntry: []*pb.TrackedEntry{tracked},
 	}
 
@@ -91,7 +92,7 @@ func TestCheckUpdates_Series(t *testing.T) {
 	books := []*pb.Book{{BookId: 452501, BookName: "Чужие маски"}}
 
 	tracked := &pb.TrackedEntry{
-		EntryType:  pb.EntryType_SERIES,
+		EntryType:  pb.EntryType_ENTRY_TYPE_SERIES,
 		EntryName:  "Унесенный ветром",
 		EntryId:    34145,
 		NumEntries: 1,
@@ -99,7 +100,7 @@ func TestCheckUpdates_Series(t *testing.T) {
 		Book:       books,
 	}
 
-	request := pb.UpdateCheckRequest{
+	request := pb.CheckUpdatesRequest{
 		TrackedEntry: []*pb.TrackedEntry{tracked},
 	}
 
@@ -117,33 +118,34 @@ func TestCheckUpdates_Series(t *testing.T) {
 }
 
 func TestServer_GetSeriesBooks(t *testing.T) {
-	req := &pb.SequenceBooksRequest{SequenceId: 34145}
+	req := &pb.GetSeriesBooksRequest{SequenceId: 34145}
 	resp, err := client.GetSeriesBooks(context.Background(), req)
 	if err != nil {
 		t.Fatalf("Failed: %+v", err)
 	} else {
-		assert.Equal(t, req.SequenceId, resp.EntityId)
-		assert.Len(t, resp.Book, 8)
+		assert.Equal(t, req.SequenceId, resp.EntityBookResponse.EntityId)
+		assert.Len(t, resp.EntityBookResponse.Book, 8)
 
-		assert.Equal(t, "Унесенный ветром: Меняя маски. Теряя маски. Чужие маски", resp.Book[0].BookName)
-		assert.Equal(t, "Унесенный ветром", resp.EntityName.GetSequenceName())
+		assert.Equal(t, "Унесенный ветром: Меняя маски. Теряя маски. Чужие маски",
+			resp.EntityBookResponse.Book[0].BookName)
+		assert.Equal(t, "Унесенный ветром", resp.EntityBookResponse.EntityName.GetSequenceName())
 	}
 }
 
 func TestServer_GetAuthorBooks(t *testing.T) {
-	req := &pb.AuthorBooksRequest{AuthorId: 109170}
+	req := &pb.GetAuthorBooksRequest{AuthorId: 109170}
 	resp, err := client.GetAuthorBooks(context.Background(), req)
 	if err != nil {
 		t.Fatalf("Failed: %+v", err)
 	} else {
-		assert.Equal(t, req.AuthorId, resp.EntityId)
-		assert.Len(t, resp.Book, 8)
+		assert.Equal(t, req.AuthorId, resp.EntityBookResponse.EntityId)
+		assert.Len(t, resp.EntityBookResponse.Book, 8)
 
-		assert.Equal(t, "Чужие маски", resp.Book[0].BookName)
+		assert.Equal(t, "Чужие маски", resp.EntityBookResponse.Book[0].BookName)
 		assert.Equal(t, &pb.AuthorName{
 			LastName:   "Метельский",
 			MiddleName: "Александрович",
-			FirstName:  "Николай"}, resp.EntityName.GetAuthorName())
+			FirstName:  "Николай"}, resp.EntityBookResponse.EntityName.GetAuthorName())
 	}
 }
 
@@ -155,7 +157,7 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 	defer conn.Close()
-	client = pb.NewFlibustierClient(conn)
+	client = pb.NewFlibustierServiceClient(conn)
 
 	ret := m.Run()
 
