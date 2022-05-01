@@ -1,0 +1,18 @@
+<html>
+<head>
+    <link rel="stylesheet" href="static/main.css">
+    <meta charset="UTF-8">
+    <title>Флибустьер!</title>
+
+</head>
+<body>
+    <h1>Флибустьер!</h1>
+
+    <form action="/search">
+        <label for="searchTerm">Что ищем?</label>
+        <input type="text" name="searchTerm" id="searchTerm" value="{{ .DefaultSearchTerm }}"/>
+        <input type="submit">
+    </form>
+
+</body>
+</html>

@@ -18,3 +18,8 @@ steps:
     command: 'test'
     arguments: '-tags fts5 -v ./...'
     workingDirectory: './data'
+- task: Go@1
+  inputs:
+    command: 'test'
+    arguments: ' -v ./...'
+    workingDirectory: './web'

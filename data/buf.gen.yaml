@@ -10,12 +10,12 @@ plugins:
       - paths=source_relative
   - name: js
     out: gen/nodejs
-    opt: import_style=commonjs,binary
+    opt: import_style=commonjs
   - name: grpc
     out: gen/nodejs
-    opt: grpc_js
+    opt: grpc_js,mode=grpcwebtext
     path: grpc_tools_node_protoc_plugin
 
   - name: ts
     out: gen/nodejs
-    opt: grpc_js
+    opt: generate_dependencies,long_type_string

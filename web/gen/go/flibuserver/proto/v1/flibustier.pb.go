@@ -14,6 +14,8 @@
 //~/code/node_modules/.bin/protoc-gen-grpc-ts --ts_out=./ \
 // --js_out="import_style=commonjs,binary:./" ./flibustier.proto
 //
+//use this for TS: https://github.com/timostamm/protobuf-ts
+//
 
 package proto
 
