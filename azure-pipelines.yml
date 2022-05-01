@@ -18,7 +18,7 @@ steps:
     command: 'test'
     arguments: '-tags fts5 -v ./...'
     workingDirectory: './data'
-- task: Go@1
+- task: Go@0
   inputs:
     command: 'test'
     arguments: ' -v ./...'
