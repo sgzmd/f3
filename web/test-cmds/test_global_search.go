@@ -18,7 +18,7 @@ func main() {
 	search := rpc.NewGrpcSearch(client)
 	resp, err := search.GlobalSearch("Дозоры")
 	if err != nil {
-		fmt.Errorf("Failed to query GRPC", err)
+		fmt.Errorf("Failed to query GRPC: %s", err)
 	} else {
 		fmt.Printf("%s", resp)
 	}
