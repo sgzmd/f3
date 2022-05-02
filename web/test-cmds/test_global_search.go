@@ -6,6 +6,7 @@ import (
 	"github.com/sgzmd/f3/web/rpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/encoding/prototext"
 )
 
 func main() {
@@ -16,10 +17,11 @@ func main() {
 	defer conn.Close()
 	client := pb.NewFlibustierServiceClient(conn)
 	search := rpc.NewGrpcSearch(client)
-	resp, err := search.GlobalSearch("Дозоры")
+	resp, err := search.GlobalSearch("Маски")
+
 	if err != nil {
 		fmt.Errorf("Failed to query GRPC: %s", err)
 	} else {
-		fmt.Printf("%s", resp)
+		fmt.Printf("%s", prototext.Format(resp))
 	}
 }

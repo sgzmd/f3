@@ -8,11 +8,23 @@
 <body>
     <h1>Флибустьер!</h1>
 
-    <form action="/search">
+    <form action="/">
         <label for="searchTerm">Что ищем?</label>
         <input type="text" name="searchTerm" id="searchTerm" value="{{ .DefaultSearchTerm }}"/>
         <input type="submit">
     </form>
+
+    {{ if .SearchResult }}
+    <ul>
+    {{ range .SearchResult.Entry }}
+        <li><a href="/resolver?id={{ .EntryId }}&type={{ .EntryType }}">{{ .EntryName }}</a></li>
+    {{ end }}
+    </ul>
+    {{ else }}
+
+    <p>Ain't nothing here chief</p>
+
+    {{ end }}
 
 </body>
 </html>
