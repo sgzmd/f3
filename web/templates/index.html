@@ -19,7 +19,7 @@
     {{ range .SearchResult.Entry }}
         <li>
             <a href="/resolver?id={{ .EntryId }}&type={{ .EntryType }}">{{ .EntryName }}</a>
-            <img src="static/subscribe_24.png"/> <br/>
+            <a href="/subscribe?id={{ .EntryId }}&type={{ .EntryType }}">+</a> <br/>
             <small>{{ .Author }}</small>
         </li>
     {{ end }}
