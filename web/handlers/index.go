@@ -21,11 +21,11 @@ type IndexPage struct {
 type IndexPageHandler struct {
 	http.Handler
 
-	search     rpc.Search
+	search     rpc.Backend
 	searchTerm string
 }
 
-func NewIndexPageHandler(search rpc.Search) *IndexPageHandler {
+func NewIndexPageHandler(search rpc.Backend) *IndexPageHandler {
 	return &IndexPageHandler{
 		search: search,
 	}

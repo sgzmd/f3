@@ -32,12 +32,12 @@ func main() {
 	grpcBackend = flag.String("grpc_backend", "", "GRPC backend to use if any")
 	flag.Parse()
 
-	var search rpc.Search
+	var search rpc.Backend
 	var grpcClient *pb.FlibustierServiceClient
 
 	if *useFakes {
 		s := rpc.FakeSearch{}
-		search = s.Search
+		search = s.Backend
 	} else {
 		var err error
 		grpcClient, err = rpc.NewFlibustierClient(*grpcBackend)

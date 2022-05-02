@@ -6,15 +6,16 @@ import (
 	pb "github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
 )
 
-type Search interface {
+type Backend interface {
 	GlobalSearch(searchTerm string) (*pb.GlobalSearchResponse, error)
+	ListTrackedEntries(userId string) (*pb.ListTrackedEntriesResponse, error)
 }
 type FakeSearch struct {
-	Search
+	Backend
 }
 
 type GrpcSearch struct {
-	Search
+	Backend
 	client pb.FlibustierServiceClient
 }
 
@@ -22,32 +23,13 @@ func NewGrpcSearch(client pb.FlibustierServiceClient) *GrpcSearch {
 	return &GrpcSearch{client: client}
 }
 
-func (fs *FakeSearch) GlobalSearch(searchTerm string) (*pb.GlobalSearchResponse, error) {
-
+func (fs *FakeSearch) GlobalSearch(_ string) (*pb.GlobalSearchResponse, error) {
 	resp := pb.GlobalSearchResponse{}
 	proto.UnmarshalText(FakeResponse, &resp)
 	return &resp, nil
-	//
-	//entries := make([]*pb.FoundEntry, 1)
-	//entries[0] = &pb.FoundEntry{
-	//	EntryId:     123,
-	//	EntryName:   searchTerm,
-	//	EntryType:   pb.EntryType_ENTRY_TYPE_AUTHOR,
-	//	Author:      searchTerm + " author",
-	//	NumEntities: 3}
-	//resp := pb.GlobalSearchResponse{
-	//	OriginalRequest: &pb.GlobalSearchRequest{
-	//		SearchTerm:      searchTerm,
-	//		EntryTypeFilter: pb.EntryType_ENTRY_TYPE_UNSPECIFIED,
-	//	},
-	//	Entry: entries,
-	//}
-	//
-	//return &resp, nil
 }
 
 func (gs *GrpcSearch) GlobalSearch(searchTerm string) (*pb.GlobalSearchResponse, error) {
-
 	result, err := gs.client.GlobalSearch(context.Background(), &pb.GlobalSearchRequest{
 		SearchTerm:      searchTerm,
 		EntryTypeFilter: 0,
