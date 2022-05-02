@@ -47,6 +47,7 @@ func (fs *FakeSearch) GlobalSearch(searchTerm string) (*pb.GlobalSearchResponse,
 }
 
 func (gs *GrpcSearch) GlobalSearch(searchTerm string) (*pb.GlobalSearchResponse, error) {
+
 	result, err := gs.client.GlobalSearch(context.Background(), &pb.GlobalSearchRequest{
 		SearchTerm:      searchTerm,
 		EntryTypeFilter: 0,

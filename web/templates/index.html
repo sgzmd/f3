@@ -18,9 +18,9 @@
     <ul>
     {{ range .SearchResult.Entry }}
         <li>
-            <a href="/resolver?id={{ .EntryId }}&type={{ .EntryType }}">{{ .EntryName }}</a>
-            <a href="/subscribe?id={{ .EntryId }}&type={{ .EntryType }}">+</a> <br/>
-            <small>{{ .Author }}</small>
+            <a href="/resolver?id={{ .EntryId }}&type={{ .EntryType }}">{{ .EntryName }}</a> &ndash; {{ .Author }}
+            <a href="/subscribe?id={{ .EntryId }}&type={{ .EntryType }}">(добавить)</a> <br/>
+
         </li>
     {{ end }}
     </ul>
