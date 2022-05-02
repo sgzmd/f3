@@ -355,20 +355,19 @@ func (s *server) GetSeriesBooks(ctx context.Context, in *pb.GetSeriesBooksReques
 func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb.TrackEntryResponse, error) {
 	log.Printf("TrackEntryRequest: %+v", req)
 
-	entry := req.Entry
-	if !(entry.EntryId > 0) {
+	if !(req.EntryId > 0) {
 		return nil, createRequestError(NoEntryId)
 	}
 
-	if entry.UserId == "" {
+	if req.UserId == "" {
 		return nil, createRequestError(NoUserId)
 	}
 
-	if entry.EntryType == pb.EntryType_ENTRY_TYPE_UNSPECIFIED {
+	if req.EntryType == pb.EntryType_ENTRY_TYPE_UNSPECIFIED {
 		return nil, createRequestError(NoEntryType)
 	}
 
-	key := pb.TrackedEntryKey{EntityType: entry.EntryType, EntityId: entry.EntryId, UserId: entry.UserId}
+	key := pb.TrackedEntryKey{EntityType: req.EntryType, EntityId: req.EntryId, UserId: req.UserId}
 	alreadyTracked := false
 	err := s.data.View(func(txn *badger.Txn) error {
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
@@ -399,7 +398,7 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 			return err
 		}
 
-		value, err := proto.Marshal(entry)
+		value, err := proto.Marshal(req)
 		if err != nil {
 			return err
 		}
@@ -445,9 +444,14 @@ func (s *server) ListTrackedEntries(ctx context.Context, req *pb.ListTrackedEntr
 
 			trackedEntry := pb.TrackedEntry{}
 			err = proto.Unmarshal(marshalledValue, &trackedEntry)
+
 			if err != nil {
 				return err
 			}
+			trackedEntry.EntryId = key.EntityId
+			trackedEntry.EntryType = key.EntityType
+			trackedEntry.UserId = key.UserId
+
 			entries = append(entries, &trackedEntry)
 		}
 

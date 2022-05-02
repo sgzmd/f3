@@ -21,11 +21,10 @@ func TestFlibustierStorage(t *testing.T) {
 }
 
 func (suite *FlibustierStorageSuite) TestServer_TrackEntry() {
-	trackReq := &pb.TrackEntryRequest{Entry: &pb.TrackedEntry{
-		EntryType:  pb.EntryType_ENTRY_TYPE_AUTHOR,
-		EntryName:  "Entry Name Test",
-		EntryId:    123,
-		NumEntries: 10, UserId: "1", Book: []*pb.Book{}}}
+	trackReq := &pb.TrackEntryRequest{
+		EntryType: pb.EntryType_ENTRY_TYPE_AUTHOR,
+		EntryId:   123,
+		UserId:    "1"}
 	resp, err := suite.client.TrackEntry(context.Background(), trackReq)
 	suite.Assert().Nil(err)
 	suite.Assert().Equal(pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK, resp.Result)
@@ -40,7 +39,8 @@ func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
 	const MAX_IDS = 10
 	ids := make([]int, MAX_IDS)
 	for i := 1; i < MAX_IDS; i++ {
-		_, _ = suite.client.TrackEntry(context.Background(),
+		_, _ = suite.client.TrackEntry(
+			context.Background(),
 			createTrackedEntry(i, "1"))
 		ids[i] = i
 	}
@@ -59,12 +59,10 @@ func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
 }
 
 func createTrackedEntry(i int, uid string) *pb.TrackEntryRequest {
-	return &pb.TrackEntryRequest{Entry: &pb.TrackedEntry{EntryType: pb.EntryType_ENTRY_TYPE_AUTHOR,
-		EntryName:  "Entry Name Test",
-		EntryId:    int32(i),
-		NumEntries: 10,
-		UserId:     uid,
-		Book:       []*pb.Book{}}}
+	return &pb.TrackEntryRequest{
+		EntryType: pb.EntryType_ENTRY_TYPE_AUTHOR,
+		EntryId:   int64(i),
+		UserId:    uid}
 }
 
 func (suite *FlibustierStorageSuite) TestServer_Untrack() {
