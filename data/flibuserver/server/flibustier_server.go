@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -401,13 +402,45 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 		return &pb.TrackEntryResponse{Key: &key, Result: pb.TrackEntryResult_TRACK_ENTRY_RESULT_ALREADY_TRACKED}, nil
 	}
 
+	// So we will be definitely tracking this, let's obtain all the info
+	// about this entry.
+	var entries []*pb.FoundEntry
+	if req.EntryType == pb.EntryType_ENTRY_TYPE_AUTHOR {
+		query := CreateAuthorByIdQuery(int(req.EntryId))
+		entries, err = s.iterateOverAuthors(query)
+	} else if req.EntryType == pb.EntryType_ENTRY_TYPE_SERIES {
+		query := CreateSequenceByIdQuery(int(req.EntryId))
+		entries, err = s.iterateOverSeries(query)
+	} else {
+		return nil, createRequestError(NoEntryType)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(entries) != 1 {
+		return nil, errors.New(fmt.Sprintf("More than one entries in %s", entries))
+	}
+
+	entry := entries[0]
+
 	s.data.Update(func(txn *badger.Txn) error {
 		key, err := proto.Marshal(&key)
 		if err != nil {
 			return err
 		}
 
-		value, err := proto.Marshal(req)
+		// TODO: We are not extracting books, but probably should!
+		val := pb.TrackedEntry{
+			EntryType:  req.EntryType,
+			EntryName:  entry.EntryName,
+			EntryId:    req.EntryId,
+			NumEntries: entry.NumEntities,
+			UserId:     req.UserId,
+		}
+
+		value, err := proto.Marshal(&val)
 		if err != nil {
 			return err
 		}

@@ -66,3 +66,11 @@ func CreateAuthorSearchQuery(author string) string {
 func CreateSequenceSearchQuery(seq string) string {
 	return fmt.Sprintf(SEQUENCE_QUERY_TEMPLATE, seq)
 }
+
+func CreateAuthorByIdQuery(authorId int) string {
+	return fmt.Sprintf(AUTHOR_QUERY_TEMPLATE_BY_ID, authorId)
+}
+
+func CreateSequenceByIdQuery(seqId int) string {
+	return fmt.Sprintf(SEQUENCE_QUERY_TEMPLATE_BY_ID, seqId)
+}
