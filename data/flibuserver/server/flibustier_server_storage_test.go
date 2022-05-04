@@ -62,11 +62,12 @@ func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
 		&pb.ListTrackedEntriesRequest{UserId: "1"})
 	suite.Assert().Nil(err)
 
-	// for i, entry := range resp.Entry {
+	for _, entry := range resp.Entry {
+		suite.Assert().Contains(entriesToTrack, entry.EntryId)
+		delete(entriesToTrack, entry.EntryId)
+	}
 
-	// }
-
-	suite.Assert().ElementsMatch(ids, receivedIds)
+	suite.Assert().Empty(entriesToTrack)
 }
 
 func createTrackedEntry(i int, uid string) *pb.TrackEntryRequest {

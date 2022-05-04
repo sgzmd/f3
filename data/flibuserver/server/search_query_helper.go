@@ -55,7 +55,7 @@ select
 	f.SeqId,
 	(select count(ls.BookId) from libseq ls where ls.SeqId = f.SeqId) NumBooks
 from 
-	libseq f 
+	sequence_fts f 
 where f.SeqId = %d
 	`
 )
