@@ -45,7 +45,10 @@ func (s *server) SearchAuthors(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, e
 	// TODO: Refactor this part so we can re-use iteration code with a different SQL
 	// query - as long as it supplies the right results.
 	query := CreateAuthorSearchQuery(req.SearchTerm)
+	return s.iterateOverAuthors(query)
+}
 
+func (s *server) iterateOverAuthors(query string) ([]*pb.FoundEntry, error) {
 	rows, err := s.sqliteDb.Query(query)
 
 	if err != nil {
