@@ -42,6 +42,8 @@ func (s *server) SearchAuthors(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, e
 	s.Lock.RLock()
 	defer s.Lock.RUnlock()
 
+	// TODO: Refactor this part so we can re-use iteration code with a different SQL
+	// query - as long as it supplies the right results.
 	query := CreateAuthorSearchQuery(req.SearchTerm)
 
 	rows, err := s.sqliteDb.Query(query)
