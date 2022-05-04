@@ -2,6 +2,10 @@ package main
 
 import (
 	"context"
+	"io/ioutil"
+	"path/filepath"
+	"runtime"
+
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 
 	"log"
@@ -16,7 +20,15 @@ func dialer(flibustaDb string) func(context.Context, string) (net.Conn, error) {
 
 	server := grpc.NewServer()
 
-	srv, err := NewServer(flibustaDb, "" /* in memory datastore */)
+	_, filename, _, _ := runtime.Caller(0)
+	dir, _ := filepath.Split(filename)
+
+	data, err := ioutil.ReadFile(dir + "../../testutils/flibusta-test-db.sql")
+	if err != nil {
+		panic(err)
+	}
+	sqlDump := string(data)
+	srv, err := NewServerWithDump(flibustaDb, "" /* in memory datastore */, sqlDump)
 	if err != nil {
 		panic(err)
 	}

@@ -27,12 +27,13 @@ select
 	COUNT(1) as Count
 from
 	libavtor la,
+	author_fts a,
 	libbook lb
 where
 	la.AvtorId = a.authorId
 	and la.BookId = lb.BookId
 	and lb.Deleted != '1'
-	and a.authorId = "%d"
+	and la.AvtorId = %d
 GROUP BY 1,2;
 	`
 

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -407,20 +406,25 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 	var entries []*pb.FoundEntry
 	if req.EntryType == pb.EntryType_ENTRY_TYPE_AUTHOR {
 		query := CreateAuthorByIdQuery(int(req.EntryId))
+		log.Printf("SQL: %s", query)
 		entries, err = s.iterateOverAuthors(query)
 	} else if req.EntryType == pb.EntryType_ENTRY_TYPE_SERIES {
 		query := CreateSequenceByIdQuery(int(req.EntryId))
+		log.Printf("SQL: %s", query)
 		entries, err = s.iterateOverSeries(query)
 	} else {
 		return nil, createRequestError(NoEntryType)
 	}
 
 	if err != nil {
+		log.Printf("Error requesting entries for entity: %+v", err)
 		return nil, err
 	}
 
 	if len(entries) != 1 {
-		return nil, errors.New(fmt.Sprintf("More than one entries in %s", entries))
+		e := fmt.Errorf("must be 1 entry exactly in %s", entries)
+		log.Printf("Error: %+v", e)
+		return nil, e
 	}
 
 	entry := entries[0]
@@ -532,6 +536,31 @@ func (s *server) Close() {
 
 func OpenDatabase(db_path string) (*sql.DB, error) {
 	return sql.Open("sqlite3", db_path)
+}
+
+func NewServerWithDump(db_path string, datastore string, dump string) (*server, error) {
+	srv := new(server)
+
+	db, err := OpenDatabase(db_path)
+	if err != nil {
+		return nil, err
+	}
+	srv.sqliteDb = db
+	db.Exec(dump)
+
+	var opt badger.Options
+	if datastore == "" {
+		opt = badger.DefaultOptions("").WithInMemory(true)
+	} else {
+		opt = badger.DefaultOptions(datastore)
+	}
+
+	srv.data, err = badger.Open(opt)
+	if err != nil {
+		return nil, err
+	}
+
+	return srv, nil
 }
 
 func NewServer(db_path string, datastore string) (*server, error) {

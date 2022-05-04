@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 
 	"testing"
@@ -23,7 +24,7 @@ func TestFlibustierStorage(t *testing.T) {
 func (suite *FlibustierStorageSuite) TestServer_TrackEntry() {
 	trackReq := &pb.TrackEntryRequest{
 		EntryType: pb.EntryType_ENTRY_TYPE_AUTHOR,
-		EntryId:   123,
+		EntryId:   109170,
 		UserId:    "1"}
 	resp, err := suite.client.TrackEntry(context.Background(), trackReq)
 	suite.Assert().Nil(err)
@@ -45,7 +46,7 @@ func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
 		ids[i] = i
 	}
 
-	_, _ = suite.client.TrackEntry(context.Background(), createTrackedEntry(0, "anotheruid"))
+	_, _ = suite.client.TrackEntry(context.Background(), createTrackedEntry(1, "anotheruid"))
 
 	resp, err := suite.client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "1"})
 	suite.Assert().Nil(err)
