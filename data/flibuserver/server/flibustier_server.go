@@ -84,6 +84,10 @@ func (s *server) SearchSeries(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, er
 	defer s.Lock.RUnlock()
 
 	query := CreateSequenceSearchQuery(req.SearchTerm)
+	return s.iterateOverSeries(query)
+}
+
+func (s *server) iterateOverSeries(query string) ([]*pb.FoundEntry, error) {
 	rows, err := s.sqliteDb.Query(query)
 
 	if err != nil {
