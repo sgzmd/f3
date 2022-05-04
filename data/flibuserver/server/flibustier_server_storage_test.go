@@ -37,24 +37,34 @@ func (suite *FlibustierStorageSuite) TestServer_TrackEntry() {
 }
 
 func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
-	const MAX_IDS = 10
-	ids := make([]int, MAX_IDS)
-	for i := 1; i < MAX_IDS; i++ {
-		_, _ = suite.client.TrackEntry(
-			context.Background(),
-			createTrackedEntry(i, "1"))
-		ids[i] = i
+	entriesToTrack := map[int64]pb.EntryType{
+		1801:   pb.EntryType_ENTRY_TYPE_AUTHOR,
+		109170: pb.EntryType_ENTRY_TYPE_AUTHOR,
+		34145:  pb.EntryType_ENTRY_TYPE_SERIES,
 	}
 
-	_, _ = suite.client.TrackEntry(context.Background(), createTrackedEntry(1, "anotheruid"))
+	for key, value := range entriesToTrack {
+		suite.client.TrackEntry(context.Background(), &pb.TrackEntryRequest{
+			EntryId:   key,
+			EntryType: value,
+			UserId:    "1",
+		})
+	}
 
-	resp, err := suite.client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "1"})
+	_, _ = suite.client.TrackEntry(context.Background(), &pb.TrackEntryRequest{
+		EntryId:   1801,
+		EntryType: entriesToTrack[1801],
+		UserId:    "another_user",
+	})
+
+	resp, err := suite.client.ListTrackedEntries(
+		context.Background(),
+		&pb.ListTrackedEntriesRequest{UserId: "1"})
 	suite.Assert().Nil(err)
 
-	receivedIds := make([]int, MAX_IDS)
-	for i, entry := range resp.Entry {
-		receivedIds[i] = int(entry.EntryId)
-	}
+	// for i, entry := range resp.Entry {
+
+	// }
 
 	suite.Assert().ElementsMatch(ids, receivedIds)
 }
