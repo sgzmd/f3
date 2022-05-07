@@ -23,7 +23,7 @@ func dialer(flibustaDb string) func(context.Context, string) (net.Conn, error) {
 	_, filename, _, _ := runtime.Caller(0)
 	dir, _ := filepath.Split(filename)
 
-	data, err := ioutil.ReadFile(dir + "../../testutils/flibusta-test-db.sql")
+	data, err := ioutil.ReadFile(dir + "../../../testutils/flibusta-test-db.sql")
 	if err != nil {
 		panic(err)
 	}

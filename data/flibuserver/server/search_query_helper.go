@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 const (
-	AUTHOR_QUERY_TEMPLATE = `
+	AuthorQueryTemplate = `
 select 
 	a.authorName, 
 	a.authorId,
@@ -20,7 +20,7 @@ where
 GROUP BY 1,2;
 	`
 
-	AUTHOR_QUERY_TEMPLATE_BY_ID = `
+	AuthorQueryTemplateById = `
 select
 	a.authorName,
 	a.authorId,
@@ -37,7 +37,7 @@ where
 GROUP BY 1,2;
 	`
 
-	SEQUENCE_QUERY_TEMPLATE = `
+	SequenceQueryTemplate = `
 select	
 	f.SeqName,
 	f.Authors,
@@ -48,7 +48,7 @@ from
 where f.sequence_fts match ("%s*")
 	`
 
-	SEQUENCE_QUERY_TEMPLATE_BY_ID = `
+	SequenceQueryTemplateById = `
 select	
 	f.SeqName,
 	f.Authors,
@@ -58,20 +58,46 @@ from
 	sequence_fts f 
 where f.SeqId = %d
 	`
+
+	BooksByAuthorId = `
+select b.Title, b.BookId
+from libbook b,
+     libavtor a
+where b.BookId = a.BookId
+  and b.Deleted = 0
+  and a.AvtorId = %d
+`
+
+	BooksBySequenceId = `
+select b.Title, b.BookId
+from libbook b,
+     libseq s
+where b.BookId = s.BookId
+  and b.Deleted = 0
+  and s.SeqId = %d
+`
 )
 
 func CreateAuthorSearchQuery(author string) string {
-	return fmt.Sprintf(AUTHOR_QUERY_TEMPLATE, author)
+	return fmt.Sprintf(AuthorQueryTemplate, author)
 }
 
 func CreateSequenceSearchQuery(seq string) string {
-	return fmt.Sprintf(SEQUENCE_QUERY_TEMPLATE, seq)
+	return fmt.Sprintf(SequenceQueryTemplate, seq)
 }
 
 func CreateAuthorByIdQuery(authorId int) string {
-	return fmt.Sprintf(AUTHOR_QUERY_TEMPLATE_BY_ID, authorId)
+	return fmt.Sprintf(AuthorQueryTemplateById, authorId)
 }
 
 func CreateSequenceByIdQuery(seqId int) string {
-	return fmt.Sprintf(SEQUENCE_QUERY_TEMPLATE_BY_ID, seqId)
+	return fmt.Sprintf(SequenceQueryTemplateById, seqId)
+}
+
+func CreateGetBooksForAuthor(authorId int) string {
+	return fmt.Sprintf(BooksByAuthorId, authorId)
+}
+
+func CreateGetBooksBySequenceId(seqId int) string {
+	return fmt.Sprintf(BooksBySequenceId, seqId)
 }

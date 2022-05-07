@@ -11,6 +11,14 @@ import (
 	"google.golang.org/grpc"
 )
 
+var (
+	TrackableEntries = map[int64]pb.EntryType{
+		1801:   pb.EntryType_ENTRY_TYPE_AUTHOR,
+		109170: pb.EntryType_ENTRY_TYPE_AUTHOR,
+		34145:  pb.EntryType_ENTRY_TYPE_SERIES,
+	}
+)
+
 type FlibustierStorageSuite struct {
 	suite.Suite
 	client pb.FlibustierServiceClient
@@ -37,10 +45,9 @@ func (suite *FlibustierStorageSuite) TestServer_TrackEntry() {
 }
 
 func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
-	entriesToTrack := map[int64]pb.EntryType{
-		1801:   pb.EntryType_ENTRY_TYPE_AUTHOR,
-		109170: pb.EntryType_ENTRY_TYPE_AUTHOR,
-		34145:  pb.EntryType_ENTRY_TYPE_SERIES,
+	entriesToTrack := make(map[int64]pb.EntryType)
+	for k, v := range TrackableEntries {
+		entriesToTrack[k] = v
 	}
 
 	for key, value := range entriesToTrack {
@@ -78,7 +85,19 @@ func createTrackedEntry(i int, uid string) *pb.TrackEntryRequest {
 }
 
 func (suite *FlibustierStorageSuite) TestServer_Untrack() {
-	r, err := suite.client.TrackEntry(context.Background(), createTrackedEntry(123, "user"))
+	var entryId int64
+	var entryType pb.EntryType
+	for k, v := range TrackableEntries {
+		entryId = k
+		entryType = v
+		break
+	}
+
+	r, err := suite.client.TrackEntry(context.Background(), &pb.TrackEntryRequest{
+		EntryId:   entryId,
+		EntryType: entryType,
+		UserId:    "user",
+	})
 	suite.Assert().Nil(err, err)
 
 	r2, err := suite.client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "user"})
