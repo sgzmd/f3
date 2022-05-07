@@ -81,13 +81,6 @@ func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
 	suite.Assert().Empty(entriesToTrack)
 }
 
-func createTrackedEntry(i int, uid string) *pb.TrackEntryRequest {
-	return &pb.TrackEntryRequest{
-		EntryType: pb.EntryType_ENTRY_TYPE_AUTHOR,
-		EntryId:   int64(i),
-		UserId:    uid}
-}
-
 func (suite *FlibustierStorageSuite) TestServer_Untrack() {
 	var entryId int64
 	var entryType pb.EntryType

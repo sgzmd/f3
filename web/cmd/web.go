@@ -7,7 +7,6 @@ package main
 // Both "fmt" and "net" are part of the Go standard library
 import (
 	"flag"
-	pb "github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
 	handlers "github.com/sgzmd/f3/web/handlers"
 	"github.com/sgzmd/f3/web/rpc"
 	"log"
@@ -28,35 +27,20 @@ var (
 )
 
 func main() {
-	useFakes = flag.Bool("use_fake_search", false, "Whether use fake search or real GRPC")
 	grpcBackend = flag.String("grpc_backend", "", "GRPC backend to use if any")
 	flag.Parse()
 
-	var search rpc.Backend
-	var grpcClient *pb.FlibustierServiceClient
-
-	if *useFakes {
-		s := rpc.FakeSearch{}
-		search = s.Backend
-	} else {
-		var err error
-		grpcClient, err = rpc.NewFlibustierClient(*grpcBackend)
-		if err != nil {
-			panic(err)
-		}
-
-		search = rpc.NewGrpcSearch(*grpcClient)
-		log.Printf("Using GRPC backend %s", *grpcBackend)
+	client, err := rpc.NewClient(grpcBackend)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	r := mux.NewRouter()
 
-	r.Handle("/", handlers.NewIndexPageHandler(search)).Methods("GET")
+	r.Handle("/", handlers.NewIndexPageHandler(*client)).Methods("GET")
 
 	r.PathPrefix(StaticPrefix).Handler(http.StripPrefix(StaticPrefix, http.FileServer(http.Dir("./templates/"+StaticPrefix))))
 
-	// After defining our server, we finally "listen and serve" on port 8080
-	// The second argument is the handler, which we will come to later on, but for now it is left as nil,
-	// and the handler defined above (in "HandleFunc") is used
-	http.ListenAndServe(":8080", r)
+	e := http.ListenAndServe(":8080", r)
+	log.Fatal(e)
 }

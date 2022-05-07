@@ -29,7 +29,6 @@ type FlibustierServiceClient interface {
 	TrackEntry(ctx context.Context, in *TrackEntryRequest, opts ...grpc.CallOption) (*TrackEntryResponse, error)
 	ListTrackedEntries(ctx context.Context, in *ListTrackedEntriesRequest, opts ...grpc.CallOption) (*ListTrackedEntriesResponse, error)
 	UntrackEntry(ctx context.Context, in *UntrackEntryRequest, opts ...grpc.CallOption) (*UntrackEntryResponse, error)
-	GetEntryInfo(ctx context.Context, in *GetEntryInfoRequest, opts ...grpc.CallOption) (*GetEntryInfoResponse, error)
 }
 
 type flibustierServiceClient struct {
@@ -103,15 +102,6 @@ func (c *flibustierServiceClient) UntrackEntry(ctx context.Context, in *UntrackE
 	return out, nil
 }
 
-func (c *flibustierServiceClient) GetEntryInfo(ctx context.Context, in *GetEntryInfoRequest, opts ...grpc.CallOption) (*GetEntryInfoResponse, error) {
-	out := new(GetEntryInfoResponse)
-	err := c.cc.Invoke(ctx, "/flibuserver.proto.v1.FlibustierService/GetEntryInfo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // FlibustierServiceServer is the server API for FlibustierService service.
 // All implementations must embed UnimplementedFlibustierServiceServer
 // for forward compatibility
@@ -123,7 +113,6 @@ type FlibustierServiceServer interface {
 	TrackEntry(context.Context, *TrackEntryRequest) (*TrackEntryResponse, error)
 	ListTrackedEntries(context.Context, *ListTrackedEntriesRequest) (*ListTrackedEntriesResponse, error)
 	UntrackEntry(context.Context, *UntrackEntryRequest) (*UntrackEntryResponse, error)
-	GetEntryInfo(context.Context, *GetEntryInfoRequest) (*GetEntryInfoResponse, error)
 	mustEmbedUnimplementedFlibustierServiceServer()
 }
 
@@ -151,9 +140,6 @@ func (UnimplementedFlibustierServiceServer) ListTrackedEntries(context.Context, 
 }
 func (UnimplementedFlibustierServiceServer) UntrackEntry(context.Context, *UntrackEntryRequest) (*UntrackEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UntrackEntry not implemented")
-}
-func (UnimplementedFlibustierServiceServer) GetEntryInfo(context.Context, *GetEntryInfoRequest) (*GetEntryInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetEntryInfo not implemented")
 }
 func (UnimplementedFlibustierServiceServer) mustEmbedUnimplementedFlibustierServiceServer() {}
 
@@ -294,24 +280,6 @@ func _FlibustierService_UntrackEntry_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FlibustierService_GetEntryInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetEntryInfoRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FlibustierServiceServer).GetEntryInfo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/flibuserver.proto.v1.FlibustierService/GetEntryInfo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FlibustierServiceServer).GetEntryInfo(ctx, req.(*GetEntryInfoRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // FlibustierService_ServiceDesc is the grpc.ServiceDesc for FlibustierService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -346,10 +314,6 @@ var FlibustierService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UntrackEntry",
 			Handler:    _FlibustierService_UntrackEntry_Handler,
-		},
-		{
-			MethodName: "GetEntryInfo",
-			Handler:    _FlibustierService_GetEntryInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -21,13 +21,13 @@ type IndexPage struct {
 type IndexPageHandler struct {
 	http.Handler
 
-	search     rpc.Backend
+	client     rpc.ClientInterface
 	searchTerm string
 }
 
-func NewIndexPageHandler(search rpc.Backend) *IndexPageHandler {
+func NewIndexPageHandler(client rpc.ClientInterface) *IndexPageHandler {
 	return &IndexPageHandler{
-		search: search,
+		client: client,
 	}
 }
 
@@ -56,7 +56,10 @@ func (idx *IndexPageHandler) getSearchResults(r *http.Request) *SearchResultType
 		return nil
 	}
 
-	searchResult, err := idx.search.GlobalSearch(idx.searchTerm)
+	searchResult, err := idx.client.GlobalSearch(&proto.GlobalSearchRequest{
+		SearchTerm: idx.searchTerm,
+	})
+
 	if err != nil {
 		fmt.Errorf("Error querying GRPC: %s", err)
 		return nil
