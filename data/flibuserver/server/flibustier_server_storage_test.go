@@ -42,6 +42,10 @@ func (suite *FlibustierStorageSuite) TestServer_TrackEntry() {
 	resp2, err := suite.client.TrackEntry(context.Background(), trackReq)
 	suite.Assert().Nil(err)
 	suite.Assert().Equal(pb.TrackEntryResult_TRACK_ENTRY_RESULT_ALREADY_TRACKED, resp2.Result)
+
+	resp3, err := suite.client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "1"})
+	suite.Assert().Nil(err)
+	suite.Assert().Len(resp3.Entry[0].Book, 8)
 }
 
 func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {

@@ -90,6 +90,32 @@ func (s *server) SearchSeries(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, er
 	return s.iterateOverSeries(query)
 }
 
+func (s *server) getBooks(query string) ([]*pb.Book, error) {
+	rows, err := s.sqliteDb.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+	books := make([]*pb.Book, 0, 10)
+	for rows.Next() {
+		var bookName string
+		var bookId int32
+
+		err = rows.Scan(&bookName, &bookId)
+		if err != nil {
+			return nil, err
+		}
+
+		books = append(books, &pb.Book{
+			BookName: bookName,
+			BookId:   bookId,
+		})
+	}
+
+	return books, nil
+}
+
 func (s *server) iterateOverSeries(query string) ([]*pb.FoundEntry, error) {
 	rows, err := s.sqliteDb.Query(query)
 
@@ -404,14 +430,18 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 	// So we will be definitely tracking this, let's obtain all the info
 	// about this entry.
 	var entries []*pb.FoundEntry
+	var bookExtractorSql string
+	entryId := int(req.EntryId)
 	if req.EntryType == pb.EntryType_ENTRY_TYPE_AUTHOR {
-		query := CreateAuthorByIdQuery(int(req.EntryId))
+		query := CreateAuthorByIdQuery(entryId)
 		log.Printf("SQL: %s", query)
 		entries, err = s.iterateOverAuthors(query)
+		bookExtractorSql = CreateGetBooksForAuthor(entryId)
 	} else if req.EntryType == pb.EntryType_ENTRY_TYPE_SERIES {
-		query := CreateSequenceByIdQuery(int(req.EntryId))
+		query := CreateSequenceByIdQuery(entryId)
 		log.Printf("SQL: %s", query)
 		entries, err = s.iterateOverSeries(query)
+		bookExtractorSql = CreateGetBooksBySequenceId(entryId)
 	} else {
 		return nil, createRequestError(NoEntryType)
 	}
@@ -428,6 +458,10 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 	}
 
 	entry := entries[0]
+	books, err := s.getBooks(bookExtractorSql)
+	if err != nil {
+		return nil, err
+	}
 
 	s.data.Update(func(txn *badger.Txn) error {
 		key, err := proto.Marshal(&key)
@@ -442,6 +476,7 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 			EntryId:    req.EntryId,
 			NumEntries: entry.NumEntities,
 			UserId:     req.UserId,
+			Book:       books,
 		}
 
 		value, err := proto.Marshal(&val)
