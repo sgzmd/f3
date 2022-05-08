@@ -7,10 +7,11 @@
     <style>
         #tracked_status {
             position: absolute;
-            top: 50px;
-            left: 30%;
+            top: 5%;
+            left: 5%;
+            width: 80%;
             background-color: antiquewhite;
-            padding: 3em;
+            padding: 2%;
         }
     </style>
 </head>
@@ -23,12 +24,16 @@
         <input type="submit">
     </form>
 
-    {{ if .TrackResult  }}
+    {{ if eq .TrackResult "tracked" }}
         <div id="tracked_status">Добавлено!</div>
-        <script>
-            $('#tracked_status').fadeOut(3000);
-        </script>
+    {{ else if eq .TrackResult "already_tracked" }}
+        <div id="tracked_status">Ужо давно добавлено!</div>
     {{ end }}
+
+    <script>
+        $('#tracked_status').fadeOut(3000);
+    </script>
+
 
     {{ if .SearchResult }}
     <ul>
