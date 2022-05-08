@@ -25,7 +25,7 @@ func NewGrpcSearch(client pb.FlibustierServiceClient) *GrpcSearch {
 
 func (fs *FakeSearch) GlobalSearch(_ string) (*pb.GlobalSearchResponse, error) {
 	resp := pb.GlobalSearchResponse{}
-	proto.UnmarshalText(FakeResponse, &resp)
+	proto.UnmarshalText(GlobalSearchFakeResponse, &resp)
 	return &resp, nil
 }
 

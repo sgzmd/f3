@@ -1,7 +1,7 @@
 package rpc
 
 const (
-	FakeResponse = `
+	GlobalSearchFakeResponse = `
 original_request: {
   search_term: "Маски"
 }
@@ -83,4 +83,79 @@ entry: {
   num_entities: 1
 }
 `
+	TrackEntryFakeRequer = `
+key:  {
+  entity_type:  ENTRY_TYPE_SERIES
+  entity_id:  34145
+  user_id:  "user"
+}`
+	
+	ListEntriesFakeResponse = `
+entry:  {
+  entry_type:  ENTRY_TYPE_SERIES
+  entry_name:  "Маски [= Унесенный ветром]"
+  entry_id:  34145
+  num_entries:  17
+  user_id:  "user"
+  book:  {
+    book_name:  "Маска зверя"
+    book_id:  530624
+  }
+  book:  {
+    book_name:  "Удерживая маску"
+    book_id:  513628
+  }
+  book:  {
+    book_name:  "Срывая маски"
+    book_id:  517316
+  }
+  book:  {
+    book_name:  "Теряя маски"
+    book_id:  452502
+  }
+  book:  {
+    book_name:  "Чужие маски"
+    book_id:  452501
+  }
+  book:  {
+    book_name:  "Меняя маски"
+    book_id:  452503
+  }
+  book:  {
+    book_name:  "Унесенный ветром"
+    book_id:  552329
+  }
+  book:  {
+    book_name:  "Осколки маски"
+    book_id:  569518
+  }
+  book:  {
+    book_name:  "Устав от масок"
+    book_id:  605769
+  }
+  book:  {
+    book_name:  "Тень маски"
+    book_id:  603180
+  }
+  book:  {
+    book_name:  "Без масок"
+    book_id:  625424
+  }
+  book:  {
+    book_name:  "Новый враг"
+    book_id:  644955
+  }
+  book:  {
+    book_name:  "Унесенный ветром"
+    book_id:  657948
+  }
+  book:  {
+    book_name:  "Охота на маску. Часть вторая"
+    book_id:  645426
+  }
+  book:  {
+    book_name:  "Охота на маску. Часть первая"
+    book_id:  649660
+  }
+}`
 )

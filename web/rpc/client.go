@@ -62,7 +62,7 @@ func (g GrpcClientImplementation) UntrackEntry(in *pb.UntrackEntryRequest) (*pb.
 
 func (f FakeClientImplementation) GlobalSearch(in *pb.GlobalSearchRequest) (*pb.GlobalSearchResponse, error) {
 	resp := pb.GlobalSearchResponse{}
-	proto.UnmarshalText(FakeResponse, &resp)
+	proto.UnmarshalText(GlobalSearchFakeResponse, &resp)
 	return &resp, nil
 }
 
