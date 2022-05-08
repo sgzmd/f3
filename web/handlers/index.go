@@ -7,6 +7,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"path/filepath"
+	"runtime"
 )
 
 type SearchResultType struct {
@@ -54,7 +56,10 @@ func (idx *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		data.TrackResult = proto.TrackEntryResult(proto.TrackEntryResult_value[tracked[0]])
 	}
 
-	t := template.Must(template.ParseFiles("./templates/index.html"))
+	_, filename, _, _ := runtime.Caller(0)
+	dir, _ := filepath.Split(filename)
+
+	t := template.Must(template.ParseFiles(dir + "/../templates/index.html"))
 	err := t.Execute(w, data)
 	if err != nil {
 		fmt.Fprintf(w, "Error: %s", err)
