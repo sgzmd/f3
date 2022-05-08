@@ -9,7 +9,7 @@ import (
 	"google.golang.org/protobuf/encoding/prototext"
 )
 
-func main() {
+func TryGlobalSearch() {
 	conn, err := grpc.Dial("172.23.22.238:9000", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)

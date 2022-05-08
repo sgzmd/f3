@@ -10,7 +10,7 @@ import (
 	"log"
 )
 
-func main() {
+func TryTrack() {
 	conn, err := grpc.Dial("localhost:9000", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal(err)
