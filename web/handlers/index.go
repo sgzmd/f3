@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"fmt"
-	"github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
-	"github.com/sgzmd/f3/web/rpc"
 	"html/template"
 	"log"
 	"net/http"
+
+	"github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
+	"github.com/sgzmd/f3/web/rpc"
 )
 
 type SearchResultType struct {
@@ -61,7 +62,7 @@ func (idx *IndexPageHandler) getSearchResults(r *http.Request) *SearchResultType
 	})
 
 	if err != nil {
-		fmt.Errorf("Error querying GRPC: %s", err)
+		log.Printf("Error querying GRPC: %s", err)
 		return nil
 	} else {
 		return &SearchResultType{Entry: searchResult.Entry}

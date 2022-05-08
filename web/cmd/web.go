@@ -7,9 +7,10 @@ package main
 // Both "fmt" and "net" are part of the Go standard library
 import (
 	"flag"
+	"log"
+
 	handlers "github.com/sgzmd/f3/web/handlers"
 	"github.com/sgzmd/f3/web/rpc"
-	"log"
 
 	// The "net/http" library has methods to implement HTTP clients and servers
 	"net/http"
@@ -38,6 +39,7 @@ func main() {
 	r := mux.NewRouter()
 
 	r.Handle("/", handlers.NewIndexPageHandler(*client)).Methods("GET")
+	r.Handle("/track", handlers.NewTrackPageHandler(*client)).Methods("GET")
 
 	r.PathPrefix(StaticPrefix).Handler(http.StripPrefix(StaticPrefix, http.FileServer(http.Dir("./templates/"+StaticPrefix))))
 
