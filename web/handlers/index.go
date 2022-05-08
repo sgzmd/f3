@@ -16,6 +16,7 @@ type SearchResultType struct {
 
 type IndexPage struct {
 	DefaultSearchTerm string
+	TrackResult       string
 	SearchResult      *SearchResultType
 }
 
@@ -33,9 +34,13 @@ func NewIndexPageHandler(client rpc.ClientInterface) *IndexPageHandler {
 }
 
 func (idx *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Printf("ServeHTTP: %s", r.RequestURI)
+	log.Printf("ServeHTTP: %s; query=%s", r.RequestURI, r.URL.Query())
 	searchTerm, ok := r.URL.Query()["searchTerm"]
-	data := IndexPage{SearchResult: idx.getSearchResults(r)}
+
+	data := IndexPage{
+		SearchResult: idx.getSearchResults(r),
+		TrackResult:  "",
+	}
 
 	if ok {
 		idx.searchTerm = searchTerm[0]
@@ -44,6 +49,11 @@ func (idx *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data.DefaultSearchTerm = idx.searchTerm
+	tracked, ok := r.URL.Query()["track_result"]
+
+	if ok {
+		data.TrackResult = tracked[0]
+	}
 
 	t := template.Must(template.ParseFiles("./templates/index.html"))
 	err := t.Execute(w, data)

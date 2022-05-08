@@ -17,5 +17,5 @@ func NewTrackPageHandler(client rpc.ClientInterface) *TrackPageHandler {
 }
 
 func (idx *TrackPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/?track_result=true", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/?track_result=tracked", http.StatusTemporaryRedirect)
 }
