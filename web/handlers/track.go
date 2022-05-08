@@ -52,6 +52,6 @@ func (page *TrackPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	}
 
 	http.Redirect(w, r,
-		fmt.Sprintf("/?track_result=%d", resp.Result),
+		fmt.Sprintf("/?track_result=%s", resp.Result),
 		http.StatusTemporaryRedirect)
 }

@@ -2,13 +2,11 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
+	"github.com/sgzmd/f3/web/rpc"
 	"html/template"
 	"log"
 	"net/http"
-	"strconv"
-
-	"github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
-	"github.com/sgzmd/f3/web/rpc"
 )
 
 type SearchResultType struct {
@@ -38,27 +36,22 @@ func (idx *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Printf("ServeHTTP: %s; query=%s", r.RequestURI, r.URL.Query())
 	searchTerm, ok := r.URL.Query()["searchTerm"]
 
-	data := IndexPage{
-		SearchResult: idx.getSearchResults(r),
-		TrackResult:  0,
-	}
-
 	if ok {
 		idx.searchTerm = searchTerm[0]
 	} else {
 		idx.searchTerm = ""
 	}
 
+	data := IndexPage{
+		SearchResult: idx.getSearchResults(r),
+		TrackResult:  0,
+	}
+
 	data.DefaultSearchTerm = idx.searchTerm
 	tracked, ok := r.URL.Query()["track_result"]
 
 	if ok {
-		r, e := strconv.Atoi(tracked[0])
-		if e != nil {
-			log.Printf("Failed to parse tracked status: %+v", e)
-		} else {
-			data.TrackResult = proto.TrackEntryResult(r)
-		}
+		data.TrackResult = proto.TrackEntryResult(proto.TrackEntryResult_value[tracked[0]])
 	}
 
 	t := template.Must(template.ParseFiles("./templates/index.html"))

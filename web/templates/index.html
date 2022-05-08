@@ -31,7 +31,9 @@
     {{ end }}
 
     <script>
-        $('#tracked_status').fadeOut(3000);
+        $('#tracked_status').fadeOut(3000, function() {
+            window.location.replace("/");
+        });
     </script>
 
 
@@ -41,7 +43,6 @@
         <li>
             <a href="/resolver?EntryId={{ .EntryId }}&EntryType={{ .EntryType }}">{{ .EntryName }}</a> &ndash; {{ .Author }}
             <a href="/track?EntryId={{ .EntryId }}&EntryType={{ .EntryType }}">(добавить)</a> <br/>
-
         </li>
     {{ end }}
     </ul>
