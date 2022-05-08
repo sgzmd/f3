@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
 	"github.com/sgzmd/f3/web/rpc"
@@ -16,7 +17,7 @@ type SearchResultType struct {
 
 type IndexPage struct {
 	DefaultSearchTerm string
-	TrackResult       string
+	TrackResult       proto.TrackEntryResult
 	SearchResult      *SearchResultType
 }
 
@@ -39,7 +40,7 @@ func (idx *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	data := IndexPage{
 		SearchResult: idx.getSearchResults(r),
-		TrackResult:  "",
+		TrackResult:  0,
 	}
 
 	if ok {
@@ -52,7 +53,12 @@ func (idx *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tracked, ok := r.URL.Query()["track_result"]
 
 	if ok {
-		data.TrackResult = tracked[0]
+		r, e := strconv.Atoi(tracked[0])
+		if e != nil {
+			log.Printf("Failed to parse tracked status: %+v", e)
+		} else {
+			data.TrackResult = proto.TrackEntryResult(r)
+		}
 	}
 
 	t := template.Must(template.ParseFiles("./templates/index.html"))

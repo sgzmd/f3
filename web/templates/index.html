@@ -24,9 +24,9 @@
         <input type="submit">
     </form>
 
-    {{ if eq .TrackResult "tracked" }}
+    {{ if eq .TrackResult 1 }}
         <div id="tracked_status">Добавлено!</div>
-    {{ else if eq .TrackResult "already_tracked" }}
+    {{ else if eq .TrackResult 2 }}
         <div id="tracked_status">Ужо давно добавлено!</div>
     {{ end }}
 
@@ -39,8 +39,8 @@
     <ul>
     {{ range .SearchResult.Entry }}
         <li>
-            <a href="/resolver?id={{ .EntryId }}&type={{ .EntryType }}">{{ .EntryName }}</a> &ndash; {{ .Author }}
-            <a href="/track?id={{ .EntryId }}&type={{ .EntryType }}">(добавить)</a> <br/>
+            <a href="/resolver?EntryId={{ .EntryId }}&EntryType={{ .EntryType }}">{{ .EntryName }}</a> &ndash; {{ .Author }}
+            <a href="/track?EntryId={{ .EntryId }}&EntryType={{ .EntryType }}">(добавить)</a> <br/>
 
         </li>
     {{ end }}
