@@ -89,7 +89,7 @@ key:  {
   entity_id:  34145
   user_id:  "user"
 }`
-	
+
 	ListEntriesFakeResponse = `
 entry:  {
   entry_type:  ENTRY_TYPE_SERIES

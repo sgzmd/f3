@@ -1,12 +1,13 @@
 package rpc
 
 import (
+	"log"
+
 	"github.com/golang/protobuf/proto"
 	pb "github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"log"
 )
 
 type ClientInterface interface {
@@ -46,13 +47,11 @@ func (g GrpcClientImplementation) GetAuthorBooks(in *pb.GetAuthorBooksRequest) (
 }
 
 func (g GrpcClientImplementation) TrackEntry(in *pb.TrackEntryRequest) (*pb.TrackEntryResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	return g.client.TrackEntry(context.Background(), in)
 }
 
 func (g GrpcClientImplementation) ListTrackedEntries(in *pb.ListTrackedEntriesRequest) (*pb.ListTrackedEntriesResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	return g.client.ListTrackedEntries(context.Background(), in)
 }
 
 func (g GrpcClientImplementation) UntrackEntry(in *pb.UntrackEntryRequest) (*pb.UntrackEntryResponse, error) {
@@ -82,13 +81,15 @@ func (f FakeClientImplementation) GetAuthorBooks(in *pb.GetAuthorBooksRequest) (
 }
 
 func (f FakeClientImplementation) TrackEntry(in *pb.TrackEntryRequest) (*pb.TrackEntryResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	return &pb.TrackEntryResponse{Key: &pb.TrackedEntryKey{
+		EntityType: in.EntryType, EntityId: in.EntryId, UserId: in.UserId,
+	}, Result: pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK}, nil
 }
 
 func (f FakeClientImplementation) ListTrackedEntries(in *pb.ListTrackedEntriesRequest) (*pb.ListTrackedEntriesResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	resp := pb.ListTrackedEntriesResponse{}
+	proto.UnmarshalText(ListEntriesFakeResponse, &resp)
+	return &resp, nil
 }
 
 func (f FakeClientImplementation) UntrackEntry(in *pb.UntrackEntryRequest) (*pb.UntrackEntryResponse, error) {
