@@ -69,6 +69,8 @@ message TrackedEntry {
   string entry_name = 2;
   int32 num_entries = 4;
 
+  // Equals to entry_name if AUTHOR
+  string entry_author = 5;
   repeated Book book = 6;
 
   google.protobuf.Timestamp saved = 7;

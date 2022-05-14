@@ -434,6 +434,7 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 	var entries []*pb.FoundEntry
 	var bookExtractorSql string
 	entryId := int(key.EntityId)
+
 	if key.EntityType == pb.EntryType_ENTRY_TYPE_AUTHOR {
 		query := CreateAuthorByIdQuery(entryId)
 		log.Printf("SQL: %s", query)
@@ -472,10 +473,11 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 		}
 
 		val := pb.TrackedEntry{
-			Key:        key,
-			EntryName:  entry.EntryName,
-			NumEntries: entry.NumEntities,
-			Book:       books,
+			Key:         key,
+			EntryName:   entry.EntryName,
+			NumEntries:  entry.NumEntities,
+			Book:        books,
+			EntryAuthor: entry.Author,
 		}
 
 		now := time.Now()

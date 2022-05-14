@@ -131,6 +131,7 @@ func (suite *FlibustierStorageSuite) TestServer_TrackEntry_ListTracked() {
 	suite.Assert().Len(r2.Entry, 1)
 	suite.Assert().Equal(int64(109170), r2.Entry[0].Key.EntityId)
 	suite.Assert().LessOrEqual(math.Abs(float64(r2.Entry[0].Saved.Seconds)-float64(time.Now().Unix())), float64(2))
+	suite.Assert().Equal("Николай Александрович Метельский", r2.Entry[0].EntryAuthor)
 }
 
 func (suite *FlibustierStorageSuite) TestServer_TrackEntry_Double() {
