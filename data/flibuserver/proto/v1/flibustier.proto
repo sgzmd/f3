@@ -5,6 +5,8 @@ option java_multiple_files = true;
 option java_package = "com.sgzmd.flibustier.proto";
 option java_outer_classname = "FlibustierProto";
 
+import "google/protobuf/timestamp.proto";
+
 /*
 To compile:
 
@@ -70,6 +72,8 @@ message TrackedEntry {
   string user_id = 5;
 
   repeated Book book = 6;
+
+  google.protobuf.Timestamp saved = 7;
 }
 
 message TrackEntryRequest {

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
 	"net"
 	"os"
@@ -469,7 +470,6 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 			return err
 		}
 
-		// TODO: We are not extracting books, but probably should!
 		val := pb.TrackedEntry{
 			EntryType:  req.EntryType,
 			EntryName:  entry.EntryName,
@@ -478,6 +478,9 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 			UserId:     req.UserId,
 			Book:       books,
 		}
+
+		now := time.Now()
+		val.Saved = &timestamppb.Timestamp{Seconds: now.Unix()}
 
 		value, err := proto.Marshal(&val)
 		if err != nil {

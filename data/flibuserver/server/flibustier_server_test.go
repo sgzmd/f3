@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
+	"math"
+	"time"
 
 	"log"
 	"os"
@@ -147,6 +149,24 @@ func TestServer_GetAuthorBooks(t *testing.T) {
 			MiddleName: "Александрович",
 			FirstName:  "Николай"}, resp.EntityBookResponse.EntityName.GetAuthorName())
 	}
+}
+
+func TestServer_TrackEntry_ListTracked(t *testing.T) {
+	req := &pb.TrackEntryRequest{
+		EntryId:   34145,
+		EntryType: pb.EntryType_ENTRY_TYPE_SERIES,
+		UserId:    "abc",
+	}
+	resp, err := client.TrackEntry(context.Background(), req)
+	assert.Nil(t, err)
+	assert.Equal(t, pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK, resp.Result)
+
+	r2, err := client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "abc"})
+	assert.Nil(t, err)
+
+	assert.Len(t, r2.Entry, 1)
+	assert.Equal(t, int64(34145), r2.Entry[0].EntryId)
+	assert.LessOrEqual(t, math.Abs(float64(r2.Entry[0].Saved.Seconds)-float64(time.Now().Unix())), float64(2))
 }
 
 func TestMain(m *testing.M) {
