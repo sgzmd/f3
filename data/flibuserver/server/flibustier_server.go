@@ -215,13 +215,14 @@ func (s *server) CheckUpdates(_ context.Context, in *pb.CheckUpdatesRequest) (*p
 		var err error
 
 		var statement *sql.Stmt
-		if entry.EntryType == pb.EntryType_ENTRY_TYPE_AUTHOR {
+		key := entry.Key
+		if key.EntityType == pb.EntryType_ENTRY_TYPE_AUTHOR {
 			statement = astm
-		} else if entry.EntryType == pb.EntryType_ENTRY_TYPE_SERIES {
+		} else if key.EntityType == pb.EntryType_ENTRY_TYPE_SERIES {
 			statement = sstm
 		}
 
-		rs, err = statement.Query(entry.EntryId)
+		rs, err = statement.Query(key.EntityId)
 		if err != nil {
 			return nil, err
 		}
@@ -230,7 +231,7 @@ func (s *server) CheckUpdates(_ context.Context, in *pb.CheckUpdatesRequest) (*p
 			return nil,
 				fmt.Errorf("exceptional situation: nothing was found for %v with EntryId %d",
 					statement,
-					entry.EntryId)
+					key.EntityId)
 		}
 
 		newBooks := make([]*pb.Book, 0)
@@ -391,24 +392,24 @@ func (s *server) GetSeriesBooks(ctx context.Context, in *pb.GetSeriesBooksReques
 func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb.TrackEntryResponse, error) {
 	log.Printf("TrackEntryRequest: %+v", req)
 
-	if !(req.EntryId > 0) {
+	key := req.Key
+	if !(req.Key.EntityId > 0) {
 		return nil, createRequestError(NoEntryId)
 	}
 
-	if req.UserId == "" {
+	if req.Key.UserId == "" {
 		return nil, createRequestError(NoUserId)
 	}
 
-	if req.EntryType == pb.EntryType_ENTRY_TYPE_UNSPECIFIED {
+	if req.Key.EntityType == pb.EntryType_ENTRY_TYPE_UNSPECIFIED {
 		return nil, createRequestError(NoEntryType)
 	}
 
-	key := pb.TrackedEntryKey{EntityType: req.EntryType, EntityId: req.EntryId, UserId: req.UserId}
 	alreadyTracked := false
 	err := s.data.View(func(txn *badger.Txn) error {
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()
-		prefix, err := proto.Marshal(&key)
+		prefix, err := proto.Marshal(key)
 		if err != nil {
 			return err
 		}
@@ -424,21 +425,21 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 		return nil, err
 	}
 
-	if alreadyTracked {
-		return &pb.TrackEntryResponse{Key: &key, Result: pb.TrackEntryResult_TRACK_ENTRY_RESULT_ALREADY_TRACKED}, nil
+	if alreadyTracked && !req.ForceUpdate {
+		return &pb.TrackEntryResponse{Key: key, Result: pb.TrackEntryResult_TRACK_ENTRY_RESULT_ALREADY_TRACKED}, nil
 	}
 
 	// So we will be definitely tracking this, let's obtain all the info
 	// about this entry.
 	var entries []*pb.FoundEntry
 	var bookExtractorSql string
-	entryId := int(req.EntryId)
-	if req.EntryType == pb.EntryType_ENTRY_TYPE_AUTHOR {
+	entryId := int(key.EntityId)
+	if key.EntityType == pb.EntryType_ENTRY_TYPE_AUTHOR {
 		query := CreateAuthorByIdQuery(entryId)
 		log.Printf("SQL: %s", query)
 		entries, err = s.iterateOverAuthors(query)
 		bookExtractorSql = CreateGetBooksForAuthor(entryId)
-	} else if req.EntryType == pb.EntryType_ENTRY_TYPE_SERIES {
+	} else if key.EntityType == pb.EntryType_ENTRY_TYPE_SERIES {
 		query := CreateSequenceByIdQuery(entryId)
 		log.Printf("SQL: %s", query)
 		entries, err = s.iterateOverSeries(query)
@@ -465,17 +466,15 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 	}
 
 	s.data.Update(func(txn *badger.Txn) error {
-		key, err := proto.Marshal(&key)
+		keyBytes, err := proto.Marshal(key)
 		if err != nil {
 			return err
 		}
 
 		val := pb.TrackedEntry{
-			EntryType:  req.EntryType,
+			Key:        key,
 			EntryName:  entry.EntryName,
-			EntryId:    req.EntryId,
 			NumEntries: entry.NumEntities,
-			UserId:     req.UserId,
 			Book:       books,
 		}
 
@@ -487,14 +486,14 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 			return err
 		}
 
-		return txn.Set(key, value)
+		return txn.Set(keyBytes, value)
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.TrackEntryResponse{Key: &key, Result: pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK}, nil
+	return &pb.TrackEntryResponse{Key: key, Result: pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK}, nil
 }
 
 func (s *server) ListTrackedEntries(ctx context.Context, req *pb.ListTrackedEntriesRequest) (*pb.ListTrackedEntriesResponse, error) {
@@ -532,10 +531,7 @@ func (s *server) ListTrackedEntries(ctx context.Context, req *pb.ListTrackedEntr
 			if err != nil {
 				return err
 			}
-			trackedEntry.EntryId = key.EntityId
-			trackedEntry.EntryType = key.EntityType
-			trackedEntry.UserId = key.UserId
-
+			trackedEntry.Key = key
 			entries = append(entries, &trackedEntry)
 		}
 

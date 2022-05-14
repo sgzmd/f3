@@ -16,6 +16,7 @@ import (
 )
 
 func dialer(flibustaDb string) func(context.Context, string) (net.Conn, error) {
+	log.Print("dialer() creates new server")
 	listener := bufconn.Listen(1024 * 1024)
 
 	server := grpc.NewServer()

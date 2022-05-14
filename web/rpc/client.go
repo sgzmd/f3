@@ -81,9 +81,7 @@ func (f FakeClientImplementation) GetAuthorBooks(in *pb.GetAuthorBooksRequest) (
 }
 
 func (f FakeClientImplementation) TrackEntry(in *pb.TrackEntryRequest) (*pb.TrackEntryResponse, error) {
-	return &pb.TrackEntryResponse{Key: &pb.TrackedEntryKey{
-		EntityType: in.EntryType, EntityId: in.EntryId, UserId: in.UserId,
-	}, Result: pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK}, nil
+	return &pb.TrackEntryResponse{Key: in.Key, Result: pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK}, nil
 }
 
 func (f FakeClientImplementation) ListTrackedEntries(in *pb.ListTrackedEntriesRequest) (*pb.ListTrackedEntriesResponse, error) {

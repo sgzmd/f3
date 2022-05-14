@@ -65,11 +65,9 @@ message Book {
 }
 
 message TrackedEntry {
-  EntryType entry_type = 1;
+  TrackedEntryKey key = 1;
   string entry_name = 2;
-  int64 entry_id = 3;
   int32 num_entries = 4;
-  string user_id = 5;
 
   repeated Book book = 6;
 
@@ -77,9 +75,10 @@ message TrackedEntry {
 }
 
 message TrackEntryRequest {
-  int64  entry_id = 1;
-  EntryType entry_type = 2;
-  string user_id = 3;
+  TrackedEntryKey key = 1;
+
+  // Re-track entry even if it already exists
+  bool force_update = 2;
 }
 
 message UpdateRequired {
