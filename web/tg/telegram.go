@@ -81,18 +81,18 @@ func main() {
 				bot.Send(msg)
 			} else {
 				resp, err := client.TrackEntry(&pb.TrackEntryRequest{
-					EntryId: int64(entryId), EntryType: pb.EntryType(entryType), UserId: update.Message.Chat.UserName})
+					EntryId: int64(entryId), EntryType: pb.EntryType(entryType), UserId: update.CallbackQuery.From.UserName})
 				if err != nil {
 					errorText := fmt.Sprintf("Failed to track story: %+v", err)
 					msg := tb.NewMessage(update.CallbackQuery.Message.Chat.ID, errorText)
 					bot.Send(msg)
 					log.Printf(errorText)
 				} else if resp.Result == pb.TrackEntryResult_TRACK_ENTRY_RESULT_ALREADY_TRACKED {
-					text := "✔️Уже добавлено"
+					text := "✔️ Уже добавлено"
 					msg := tb.NewMessage(update.CallbackQuery.Message.Chat.ID, text)
 					bot.Send(msg)
 				} else if resp.Result == pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK {
-					text := "✅️Добавлено!"
+					text := "✅️ Добавлено!"
 					msg := tb.NewMessage(update.CallbackQuery.Message.Chat.ID, text)
 					bot.Send(msg)
 				}
