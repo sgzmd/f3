@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	tb "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/jessevdk/go-flags"
 	pb "github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
 	"github.com/sgzmd/f3/web/rpc"
 	"log"
@@ -81,6 +82,9 @@ func listCommandHandler(update tb.Update, client rpc.ClientInterface, bot *tb.Bo
 
 	for _, entry := range resp.Entry {
 		entryText := formatEntry(entry.Key.EntityType, entry.EntryName, "", entry.NumEntries, entry.Key.EntityId)
+		msg := tb.NewMessage(update.Message.Chat.ID, entryText)
+		msg.ParseMode = tb.ModeHTML
+		bot.Send(msg)
 	}
 
 }
@@ -150,7 +154,8 @@ func searchCommandHandler(update tb.Update, client rpc.ClientInterface, bot *tb.
 
 		msg := tb.NewMessage(update.Message.Chat.ID, entryText)
 		msg.ParseMode = tb.ModeHTML
-		msg.ReplyMarkup = tb.NewInlineKeyboardMarkup(tb.NewInlineKeyboardRow(tb.NewInlineKeyboardButtonData("➕ Добавить", fmt.Sprintf("%s|%d", entry.EntryType, int(entry.EntryId)))))
+		msg.ReplyMarkup = tb.NewInlineKeyboardMarkup(tb.NewInlineKeyboardRow(tb.NewInlineKeyboardButtonData(
+			"➕ Добавить", fmt.Sprintf("%s|%d", entry.EntryType, int(entry.EntryId)))))
 
 		bot.Send(msg)
 		numSent++
