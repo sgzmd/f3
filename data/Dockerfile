@@ -25,6 +25,7 @@ ADD . /app
 
 WORKDIR /app
 
+COPY --from=0 /app/scripts/docker_download.sh /app/docker_download.sh
 COPY --from=0 /app/downloader /app/downloader
 COPY --from=0 /app/flibustier_server /app/flibustier_server
 

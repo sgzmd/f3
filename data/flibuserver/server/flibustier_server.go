@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/exec"
 	"sync"
 	"time"
 
@@ -35,6 +36,8 @@ var (
 	port       = flag.Int("port", 9000, "RPC server port")
 	flibustaDb = flag.String("flibusta_db", "", "Path to Flibusta SQLite3 database")
 	datastore  = flag.String("datastore", "", "Path to the data store to use")
+	update     = flag.Duration("update_every", 24*time.Hour, "How often to re-download files")
+	updateCmd  = flag.String("update_cmd", "/app/downloader_launcher.sh", "Command to kick-off re-download")
 )
 
 func (s *server) SearchAuthors(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, error) {
@@ -647,22 +650,39 @@ func main() {
 	reflection.Register(s)
 	log.Printf("server listening at %v", lis.Addr())
 
-	ticker := time.NewTicker(10 * time.Minute)
-	go func() {
-		for range ticker.C {
-			log.Printf("Re-opening database ...")
-			srv.Lock.Lock()
-			db, err := OpenDatabase(*flibustaDb)
-			srv.Lock.Unlock()
-			if err != nil {
-				log.Fatalf("Failed to open database: %s", err)
-				os.Exit(1)
-			}
+	if updateCmd != nil {
+		dbReopen := time.NewTicker(*update)
 
-			srv.sqliteDb = db
-			log.Printf("Database re-opened.")
-		}
-	}()
+		log.Printf("Scheduling to run %s every %s", *updateCmd, *update)
+
+		go func() {
+			for range dbReopen.C {
+				downloadCmd := exec.Command(*updateCmd)
+				downloadCmd.Stdout = os.Stdout
+				downloadCmd.Stderr = os.Stderr
+
+				err = downloadCmd.Start()
+				if err != nil {
+					log.Printf("Failed to download database update: %+v", err)
+					continue
+				}
+
+				downloadCmd.Wait()
+
+				log.Printf("Re-opening database ...")
+				srv.Lock.Lock()
+				db, err := OpenDatabase(*flibustaDb)
+				srv.Lock.Unlock()
+				if err != nil {
+					log.Fatalf("Failed to open database: %s", err)
+					os.Exit(1)
+				}
+
+				srv.sqliteDb = db
+				log.Printf("Database re-opened.")
+			}
+		}()
+	}
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

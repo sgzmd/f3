@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 function assert_exists {
   if ! command -v $1 &> /dev/null
@@ -70,8 +70,8 @@ fi
 cd $active_dir
 echo "Will be creating $flibusta_db_path"
 
-assert_exists awk
-assert_exists sqlite3
+# assert_exists awk
+# assert_exists sqlite3
 
 # Downloading the files, this might take a while...
 ./downloader
@@ -122,4 +122,5 @@ else
   send_update $telegram_key $telegram_chat_id "New data dump looks ($num_books books) legitimate, creating $flibusta_db_path"
   mv flibusta_new.db $flibusta_db_path
   rm lib*.sql
+  rm flibusta_*_dump.sql
 fi
