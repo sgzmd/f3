@@ -84,6 +84,8 @@ func listCommandHandler(update tb.Update, client rpc.ClientInterface, bot *tb.Bo
 		entryText := formatEntry(entry.Key.EntityType, entry.EntryName, "", entry.NumEntries, entry.Key.EntityId)
 		msg := tb.NewMessage(update.Message.Chat.ID, entryText)
 		msg.ParseMode = tb.ModeHTML
+		msg.ReplyMarkup = tb.NewInlineKeyboardMarkup(tb.NewInlineKeyboardRow(tb.NewInlineKeyboardButtonData(
+			"❌ Удалить", fmt.Sprintf("untrack|%s|%d", entry.Key.EntityType, int(entry.Key.EntityId)))))
 		bot.Send(msg)
 	}
 
@@ -97,28 +99,45 @@ func handleCallbackQuery(update tb.Update, bot *tb.BotAPI, client rpc.ClientInte
 	}
 
 	data := update.CallbackQuery.Data
-	req := strings.SplitN(data, "|", 2)
-	entryId, err := strconv.Atoi(req[1])
-	entryType, ok := pb.EntryType_value[req[0]]
-	if len(req) != 2 || err != nil || !ok {
+	req := strings.SplitN(data, "|", 3)
+	entryId, err := strconv.Atoi(req[2])
+	entryType, ok := pb.EntryType_value[req[1]]
+
+	if len(req) != 3 || err != nil || !ok {
 		msg := tb.NewMessage(update.CallbackQuery.Message.Chat.ID, "Received bad callback: "+update.CallbackQuery.Data)
 		bot.Send(msg)
 	} else {
-		resp, err := client.TrackEntry(&pb.TrackEntryRequest{Key: &pb.TrackedEntryKey{
-			EntityId: int64(entryId), EntityType: pb.EntryType(entryType), UserId: update.CallbackQuery.From.UserName}})
-		if err != nil {
-			errorText := fmt.Sprintf("Failed to track story: %+v", err)
-			msg := tb.NewMessage(update.CallbackQuery.Message.Chat.ID, errorText)
-			bot.Send(msg)
-			log.Printf(errorText)
-		} else if resp.Result == pb.TrackEntryResult_TRACK_ENTRY_RESULT_ALREADY_TRACKED {
-			text := "✔️ Уже добавлено"
-			msg := tb.NewMessage(update.CallbackQuery.Message.Chat.ID, text)
-			bot.Send(msg)
-		} else if resp.Result == pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK {
-			text := "✅️ Добавлено!"
-			msg := tb.NewMessage(update.CallbackQuery.Message.Chat.ID, text)
-			bot.Send(msg)
+		if req[0] == "track" {
+			resp, err := client.TrackEntry(&pb.TrackEntryRequest{Key: &pb.TrackedEntryKey{
+				EntityId: int64(entryId), EntityType: pb.EntryType(entryType), UserId: update.CallbackQuery.From.UserName}})
+			if err != nil {
+				errorText := fmt.Sprintf("Failed to track story: %+v", err)
+				msg := tb.NewMessage(update.CallbackQuery.Message.Chat.ID, errorText)
+				bot.Send(msg)
+				log.Printf(errorText)
+			} else if resp.Result == pb.TrackEntryResult_TRACK_ENTRY_RESULT_ALREADY_TRACKED {
+				text := "✔️ Уже добавлено"
+				msg := tb.NewMessage(update.CallbackQuery.Message.Chat.ID, text)
+				bot.Send(msg)
+			} else if resp.Result == pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK {
+				text := "✅️ Добавлено!"
+				msg := tb.NewMessage(update.CallbackQuery.Message.Chat.ID, text)
+				bot.Send(msg)
+			}
+		} else if req[0] == "untrack" {
+			_, err := client.UntrackEntry(&pb.UntrackEntryRequest{Key: &pb.TrackedEntryKey{
+				EntityId: int64(entryId), EntityType: pb.EntryType(entryType), UserId: update.CallbackQuery.From.UserName}})
+			if err != nil {
+				errorText := fmt.Sprintf("Failed to untrack story: %+v", err)
+				msg := tb.NewMessage(update.CallbackQuery.Message.Chat.ID, errorText)
+				bot.Send(msg)
+				log.Printf(errorText)
+			} else {
+				text := "✔️ Удалили"
+				msg := tb.NewMessage(update.CallbackQuery.Message.Chat.ID, text)
+				bot.Send(msg)
+
+			}
 		}
 	}
 }
@@ -155,7 +174,7 @@ func searchCommandHandler(update tb.Update, client rpc.ClientInterface, bot *tb.
 		msg := tb.NewMessage(update.Message.Chat.ID, entryText)
 		msg.ParseMode = tb.ModeHTML
 		msg.ReplyMarkup = tb.NewInlineKeyboardMarkup(tb.NewInlineKeyboardRow(tb.NewInlineKeyboardButtonData(
-			"➕ Добавить", fmt.Sprintf("%s|%d", entry.EntryType, int(entry.EntryId)))))
+			"➕ Добавить", fmt.Sprintf("track|%s|%d", entry.EntryType, int(entry.EntryId)))))
 
 		bot.Send(msg)
 		numSent++

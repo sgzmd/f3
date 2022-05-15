@@ -55,8 +55,7 @@ func (g GrpcClientImplementation) ListTrackedEntries(in *pb.ListTrackedEntriesRe
 }
 
 func (g GrpcClientImplementation) UntrackEntry(in *pb.UntrackEntryRequest) (*pb.UntrackEntryResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	return g.client.UntrackEntry(context.Background(), in)
 }
 
 func (f FakeClientImplementation) GlobalSearch(in *pb.GlobalSearchRequest) (*pb.GlobalSearchResponse, error) {
