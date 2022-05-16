@@ -20,8 +20,21 @@ const (
 	StartCommand     = "start"
 	SearchCommand    = "search"
 	ListCommand      = "list"
+	CheckUpdates     = "updates"
 	MaxSearchEntries = 50
 )
+
+type IBotApiWrapper interface {
+	Send(msg tb.MessageConfig)
+}
+
+type BotApiWrapper struct {
+	Bot *tb.BotAPI
+}
+
+func (w BotApiWrapper) Send(msg tb.MessageConfig) {
+	w.Bot.Send(msg)
+}
 
 func main() {
 
@@ -64,11 +77,69 @@ func main() {
 					searchCommandHandler(update, client, bot)
 				case ListCommand:
 					listCommandHandler(update, client, bot)
+				case CheckUpdates:
+					checkUpdatesHandler(update, client, BotApiWrapper{Bot: bot})
 				}
 
 			}
 		} else if update.CallbackQuery != nil {
 			handleCallbackQuery(update, bot, client)
+		}
+	}
+}
+
+func checkUpdatesHandler(update tb.Update, client rpc.ClientInterface, bot IBotApiWrapper) {
+	resp, err := client.ListTrackedEntries(&pb.ListTrackedEntriesRequest{UserId: update.Message.From.UserName})
+	if err != nil {
+		msg := tb.NewMessage(update.Message.Chat.ID, "Error listing entries: %+v")
+		msg.Text = fmt.Sprintf("Error: %+v", err)
+		log.Print(msg.Text)
+		bot.Send(msg)
+		return
+	}
+
+	if len(resp.Entry) == 0 {
+		msg := tb.NewMessage(update.Message.Chat.ID, "Сперва надо на что-нибудь подписаться!")
+		bot.Send(msg)
+		return
+	}
+
+	respUpdates, err := client.CheckUpdates(&pb.CheckUpdatesRequest{TrackedEntry: resp.Entry})
+	if err != nil {
+		msg := tb.NewMessage(update.Message.Chat.ID, "Failed to check updates: %+v")
+		msg.Text = fmt.Sprintf("Error: %+v", err)
+		log.Print(msg.Text)
+		bot.Send(msg)
+		return
+	}
+
+	for _, upd := range respUpdates.UpdateRequired {
+		entryText := formatEntry(
+			upd.TrackedEntry.Key.EntityType,
+			upd.TrackedEntry.EntryName,
+			upd.TrackedEntry.EntryAuthor,
+			upd.NewNumEntries,
+			upd.TrackedEntry.Key.EntityId)
+
+		entryText += fmt.Sprintf("\nНовых книг: %d\n", upd.NewNumEntries-upd.TrackedEntry.NumEntries)
+
+		for _, book := range upd.NewBook {
+			entryText += fmt.Sprintf("<a href='http://flibusta.is/b/%d'>%s</a>\n", book.BookId, book.BookName)
+		}
+
+		msg := tb.NewMessage(update.Message.Chat.ID, entryText)
+		bot.Send(msg)
+
+		_, err := client.TrackEntry(&pb.TrackEntryRequest{
+			Key:         upd.TrackedEntry.Key,
+			ForceUpdate: true,
+		})
+
+		if err != nil {
+			msg2 := tb.NewMessage(update.Message.Chat.ID, "Failed to force-update entry: %+v")
+			msg2.Text = fmt.Sprintf("Error: %+v", err)
+			log.Print(msg2.Text)
+			bot.Send(msg2)
 		}
 	}
 }
@@ -88,7 +159,6 @@ func listCommandHandler(update tb.Update, client rpc.ClientInterface, bot *tb.Bo
 			"❌ Удалить", fmt.Sprintf("untrack|%s|%d", entry.Key.EntityType, int(entry.Key.EntityId)))))
 		bot.Send(msg)
 	}
-
 }
 
 func handleCallbackQuery(update tb.Update, bot *tb.BotAPI, client rpc.ClientInterface) {
