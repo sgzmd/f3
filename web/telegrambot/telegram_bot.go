@@ -2,12 +2,13 @@ package telegrambot
 
 import (
 	"fmt"
-	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	pb "github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
-	"github.com/sgzmd/f3/web/rpc"
 	"log"
 	"strconv"
 	"strings"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	pb "github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
+	"github.com/sgzmd/f3/web/rpc"
 )
 
 type BotApiWrapper struct {
@@ -16,6 +17,53 @@ type BotApiWrapper struct {
 
 func (w BotApiWrapper) Send(msg tgbotapi.MessageConfig) {
 	w.Bot.Send(msg)
+}
+
+type TelegramBotHandler struct {
+	bot    IBotApiWrapper
+	client rpc.ClientInterface
+}
+
+// creates new TelegramBotHandler
+func NewTelegramBotHandler(bot IBotApiWrapper, client rpc.ClientInterface) *TelegramBotHandler {
+	return &TelegramBotHandler{
+		bot:    bot,
+		client: client,
+	}
+}
+
+func (tbh *TelegramBotHandler) ListHandler(update tgbotapi.Update) {
+	resp, err := tbh.client.ListTrackedEntries(&pb.ListTrackedEntriesRequest{
+		UserId: update.Message.From.UserName})
+	if err != nil {
+		tbh.reportError(update, err)
+		return
+	}
+
+	if len(resp.Entry) == 0 {
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Сперва надо на что-нибудь подписаться!")
+		tbh.bot.Send(msg)
+		return
+	}
+
+	for _, entry := range resp.Entry {
+		entryText := formatEntry(
+			entry.Key.EntityType,
+			entry.EntryName,
+			entry.EntryAuthor,
+			entry.NumEntries,
+			entry.Key.EntityId)
+
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, entryText)
+		tbh.bot.Send(msg)
+	}
+}
+
+func (tbh *TelegramBotHandler) reportError(update tgbotapi.Update, err error) {
+	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Error: %+v")
+	msg.Text = fmt.Sprintf("Error: %+v", err)
+	log.Print(msg.Text)
+	tbh.bot.Send(msg)
 }
 
 func CheckUpdatesHandler(update tgbotapi.Update, client rpc.ClientInterface, bot IBotApiWrapper) {
