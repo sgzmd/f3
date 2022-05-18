@@ -55,6 +55,11 @@ func (tbh *TelegramBotHandler) ListHandler(update tgbotapi.Update) {
 			entry.Key.EntityId)
 
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, entryText)
+
+		msg.ParseMode = tgbotapi.ModeHTML
+		msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonData(
+			"❌ Удалить", fmt.Sprintf("untrack|%s|%d", entry.Key.EntityType, int(entry.Key.EntityId)))))
+
 		tbh.bot.Send(msg)
 	}
 }
