@@ -28,12 +28,12 @@ type GrpcClientImplementation struct {
 }
 
 func (g GrpcClientImplementation) GlobalSearch(in *pb.GlobalSearchRequest) (*pb.GlobalSearchResponse, error) {
+	log.Printf("GlobalSearch: %+v", in)
 	return g.client.GlobalSearch(context.Background(), in)
 }
 
 func (g GrpcClientImplementation) CheckUpdates(in *pb.CheckUpdatesRequest) (*pb.CheckUpdatesResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	return g.client.CheckUpdates(context.Background(), in)
 }
 
 func (g GrpcClientImplementation) GetSeriesBooks(in *pb.GetSeriesBooksRequest) (*pb.GetSeriesBooksResponse, error) {

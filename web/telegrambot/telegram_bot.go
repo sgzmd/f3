@@ -10,14 +10,10 @@ import (
 	"strings"
 )
 
-type BotApiWrapper struct {
-	Bot *tgbotapi.BotAPI
-}
+// Broadly speaking, do we want to have a proper object here with a state and some lifecycle
+// rather than dragging every single thing from one method call to another?
 
-func (w BotApiWrapper) Send(msg tgbotapi.MessageConfig) {
-	w.Bot.Send(msg)
-}
-
+// CheckUpdatesHandler TODO: should return error when failed
 func CheckUpdatesHandler(update tgbotapi.Update, client rpc.ClientInterface, bot IBotApiWrapper) {
 	resp, err := client.ListTrackedEntries(&pb.ListTrackedEntriesRequest{UserId: update.Message.From.UserName})
 	if err != nil {

@@ -257,6 +257,10 @@ func (s *server) CheckUpdates(_ context.Context, in *pb.CheckUpdatesRequest) (*p
 				oldBookMap[int(b.BookId)] = b
 			}
 
+			if len(newBooks) <= int(entry.NumEntries) {
+				continue
+			}
+
 			newlyAddedBooks := make([]*pb.Book, 0, len(newBooks)-int(entry.NumEntries))
 			for _, b := range newBooks {
 				_, exists := oldBookMap[int(b.BookId)]
