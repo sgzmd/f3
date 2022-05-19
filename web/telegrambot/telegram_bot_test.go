@@ -1,6 +1,7 @@
 package telegrambot
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -29,6 +30,36 @@ func TestListHandler(t *testing.T) {
 
 	tbh := NewTelegramBotHandler(bot, client)
 	tbh.ListHandler(update)
+}
+
+func TestListHandlerEquivalence(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mocks.NewMockClientInterface(ctrl)
+	bot := mocks.NewMockIBotApiWrapper(ctrl)
+
+	update := NewFakeUpdate()
+
+	listResp := NewFakeListTrackedEntriesResponse(5, update.Message.From.UserName)
+	client.
+		EXPECT().
+		ListTrackedEntries(gomock.Any()).
+		Return(listResp, nil).
+		Times(2)
+
+	bot.EXPECT().Send(gomock.Any()).Times(5)
+
+	tbh := NewTelegramBotHandler(bot, client)
+	messages, err := tbh.ListHandler(update)
+
+	messages2, err := ListCommandHandler(update, client, bot)
+
+	if err != nil {
+		t.Errorf("ListHandler returned an error: %v", err)
+	}
+	assert.Len(t, messages, 5)
+	assert.Equal(t, messages, messages2)
 }
 
 func TestCheckUpdatesHandler(t *testing.T) {

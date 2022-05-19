@@ -27,20 +27,21 @@ func NewTelegramBotHandler(bot IBotApiWrapper, client rpc.ClientInterface) *Tele
 	}
 }
 
-func (tbh *TelegramBotHandler) ListHandler(update tgbotapi.Update) {
+func (tbh *TelegramBotHandler) ListHandler(update tgbotapi.Update) ([]tgbotapi.Chattable, error) {
 	resp, err := tbh.client.ListTrackedEntries(&pb.ListTrackedEntriesRequest{
 		UserId: update.Message.From.UserName})
 	if err != nil {
 		tbh.reportError(update, err)
-		return
+		return nil, err
 	}
 
 	if len(resp.Entry) == 0 {
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Сперва надо на что-нибудь подписаться!")
 		tbh.bot.Send(msg)
-		return
+		return nil, fmt.Errorf("no entries found")
 	}
 
+	messages := make([]tgbotapi.Chattable, 0, len(resp.Entry))
 	for _, entry := range resp.Entry {
 		entryText := formatEntry(
 			entry.Key.EntityType,
@@ -55,8 +56,10 @@ func (tbh *TelegramBotHandler) ListHandler(update tgbotapi.Update) {
 		msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonData(
 			"❌ Удалить", fmt.Sprintf("untrack|%s|%d", entry.Key.EntityType, int(entry.Key.EntityId)))))
 
-		tbh.bot.Send(msg)
+		messages = append(messages, msg)
 	}
+
+	return messages, nil
 }
 
 func (tbh *TelegramBotHandler) reportError(update tgbotapi.Update, err error) {
@@ -142,12 +145,13 @@ func errorToTg(update tgbotapi.Update, text string, err error, bot *tgbotapi.Bot
 	bot.Send(msg)
 }
 
-func ListCommandHandler(update tgbotapi.Update, client rpc.ClientInterface, bot *tgbotapi.BotAPI) {
+func ListCommandHandler(update tgbotapi.Update, client rpc.ClientInterface, bot IBotApiWrapper) ([]tgbotapi.Chattable, error) {
 	resp, err := client.ListTrackedEntries(&pb.ListTrackedEntriesRequest{UserId: update.Message.From.UserName})
 	if err != nil {
-		errorToTg(update, "Error listing entries: %+v", err, bot)
-		return
+		return nil, err
 	}
+
+	messages := make([]tgbotapi.Chattable, 0, len(resp.Entry))
 
 	for _, entry := range resp.Entry {
 		entryText := formatEntry(entry.Key.EntityType, entry.EntryName, "", entry.NumEntries, entry.Key.EntityId)
@@ -155,8 +159,13 @@ func ListCommandHandler(update tgbotapi.Update, client rpc.ClientInterface, bot 
 		msg.ParseMode = tgbotapi.ModeHTML
 		msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonData(
 			"❌ Удалить", fmt.Sprintf("untrack|%s|%d", entry.Key.EntityType, int(entry.Key.EntityId)))))
+
+		messages = append(messages, msg)
+
 		bot.Send(msg)
 	}
+
+	return messages, nil
 }
 
 func HandleCallbackQuery(update tgbotapi.Update, bot *tgbotapi.BotAPI, client rpc.ClientInterface) {
