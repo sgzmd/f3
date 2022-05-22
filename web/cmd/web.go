@@ -30,8 +30,8 @@ var (
 )
 
 type Options struct {
-	GrpcBackend string `short:"g" long:"grpc_backend" description:"GRPC Backend to use"`
-	//TelegramToken string `short:"t" long:"telegram_token" description:"Telegram token to use" required:"true"`
+	GrpcBackend   string `short:"g" long:"grpc_backend" description:"GRPC Backend to use"`
+	TelegramToken string `short:"t" long:"telegram_token" description:"Telegram token to use" required:"true"`
 }
 
 func main() {
@@ -43,9 +43,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	auth = tgauth.NewTelegramAuth(opts.TelegramToken, "/login", "/check-auth")
+
 	r := mux.NewRouter()
 
-	r.Handle("/", handlers.NewIndexPageHandler(*client)).Methods("GET")
+	r.Handle("/", handlers.NewIndexPageHandler(*client, auth)).Methods("GET")
 	r.Handle("/track", handlers.NewTrackPageHandler(*client)).Methods("GET")
 
 	r.PathPrefix(StaticPrefix).Handler(http.StripPrefix(StaticPrefix, http.FileServer(http.Dir("./templates/"+StaticPrefix))))
