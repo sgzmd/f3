@@ -39,6 +39,25 @@ func NewIndexPageHandler(client rpc.ClientInterface, auth tgauth.TelegramAuth) *
 
 func (idx *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Printf("ServeHTTP: %s; query=%s", r.RequestURI, r.URL.Query())
+
+	params, err := idx.auth.GetParamsFromCookie(r)
+	if err != nil {
+		log.Printf("Unable to get params from cookie: %+v", err)
+		http.Redirect(w, r, "/auth", http.StatusFound)
+		return
+	}
+
+	ok, err := idx.auth.CheckAuth(params)
+	if err != nil {
+		log.Printf("Unable to check auth: %+v", err)
+		http.Redirect(w, r, "/auth", http.StatusFound)
+		return
+	} else if !ok {
+		log.Printf("Auth is not ok")
+		http.Redirect(w, r, "/auth", http.StatusFound)
+		return
+	}
+
 	searchTerm, ok := r.URL.Query()["searchTerm"]
 
 	if ok {
@@ -63,7 +82,7 @@ func (idx *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	dir, _ := filepath.Split(filename)
 
 	t := template.Must(template.ParseFiles(dir + "/../templates/index.html"))
-	err := t.Execute(w, data)
+	err = t.Execute(w, data)
 	if err != nil {
 		fmt.Fprintf(w, "Error: %s", err)
 	}

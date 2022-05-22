@@ -49,6 +49,8 @@ func main() {
 
 	r.Handle("/", handlers.NewIndexPageHandler(*client, auth)).Methods("GET")
 	r.Handle("/track", handlers.NewTrackPageHandler(*client)).Methods("GET")
+	r.HandleFunc("/auth", handlers.LoginHandler).Methods("GET")
+	r.Handle("/check-auth", handlers.NewCheckAuthHandler(auth)).Methods("GET")
 
 	r.PathPrefix(StaticPrefix).Handler(http.StripPrefix(StaticPrefix, http.FileServer(http.Dir("./templates/"+StaticPrefix))))
 
