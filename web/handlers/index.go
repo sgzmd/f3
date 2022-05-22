@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
 	"github.com/sgzmd/f3/web/rpc"
+	"github.com/sgzmd/go-telegram-auth/tgauth"
 	"html/template"
 	"log"
 	"net/http"
@@ -26,11 +27,13 @@ type IndexPageHandler struct {
 
 	client     rpc.ClientInterface
 	searchTerm string
+	auth       tgauth.TelegramAuth
 }
 
-func NewIndexPageHandler(client rpc.ClientInterface) *IndexPageHandler {
+func NewIndexPageHandler(client rpc.ClientInterface, auth tgauth.TelegramAuth) *IndexPageHandler {
 	return &IndexPageHandler{
 		client: client,
+		auth:   auth,
 	}
 }
 

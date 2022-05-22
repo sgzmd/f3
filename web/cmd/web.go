@@ -6,12 +6,12 @@ package main
 // These are the libraries we are going to use
 // Both "fmt" and "net" are part of the Go standard library
 import (
-	"flag"
+	"github.com/jessevdk/go-flags"
+	"github.com/sgzmd/go-telegram-auth/tgauth"
 	"log"
 
 	handlers "github.com/sgzmd/f3/web/handlers"
 	"github.com/sgzmd/f3/web/rpc"
-
 	// The "net/http" library has methods to implement HTTP clients and servers
 	"net/http"
 
@@ -25,13 +25,20 @@ const (
 var (
 	useFakes    *bool
 	grpcBackend *string
+
+	auth tgauth.TelegramAuth
 )
 
-func main() {
-	grpcBackend = flag.String("grpc_backend", "", "GRPC backend to use if any")
-	flag.Parse()
+type Options struct {
+	GrpcBackend string `short:"g" long:"grpc_backend" description:"GRPC Backend to use"`
+	//TelegramToken string `short:"t" long:"telegram_token" description:"Telegram token to use" required:"true"`
+}
 
-	client, err := rpc.NewClient(grpcBackend)
+func main() {
+	var opts Options
+	_, err := flags.Parse(&opts)
+
+	client, err := rpc.NewClient(&opts.GrpcBackend)
 	if err != nil {
 		log.Fatal(err)
 	}

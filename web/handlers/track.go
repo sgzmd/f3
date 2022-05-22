@@ -40,11 +40,11 @@ func (page *TrackPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		ErrorToBrowser(w, r, err)
 	}
 
-	resp, err := page.client.TrackEntry(&proto.TrackEntryRequest{
-		EntryId:   trackReq.EntryId,
-		EntryType: proto.EntryType(proto.EntryType_value[trackReq.EntryType]),
-		UserId:    "default",
-	})
+	resp, err := page.client.TrackEntry(&proto.TrackEntryRequest{Key: &proto.TrackedEntryKey{
+		EntityId:   trackReq.EntryId,
+		EntityType: proto.EntryType(proto.EntryType_value[trackReq.EntryType]),
+		UserId:     "default",
+	}})
 
 	if err != nil {
 		log.Printf("Error tracking entry: %+v", err)
