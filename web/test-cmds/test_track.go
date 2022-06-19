@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+
 	pb "github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/encoding/prototext"
-	"log"
 )
 
 func TryTrack() {
