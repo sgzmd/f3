@@ -42,6 +42,8 @@ func main() {
 
 	updates := bot.GetUpdatesChan(u)
 
+	botw := &telegrambot.BotApiWrapper{Bot: bot}
+
 	for update := range updates {
 		if update.Message != nil { // If we got a message
 			if update.Message.IsCommand() {
@@ -53,7 +55,7 @@ func main() {
 				case telegrambot.SearchCommand:
 					telegrambot.SearchCommandHandler(update, client, bot)
 				case telegrambot.ListCommand:
-					telegrambot.ListCommandHandler(update, client, bot)
+					telegrambot.ListCommandHandler(update, client, botw)
 				case telegrambot.CheckUpdates:
 					telegrambot.CheckUpdatesHandler(update, client, telegrambot.BotApiWrapper{Bot: bot})
 				}

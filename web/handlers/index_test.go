@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/sgzmd/f3/web/rpc"
+	testing2 "github.com/sgzmd/go-telegram-auth/testing"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -15,7 +16,7 @@ var (
 
 func prepare() (*IndexPageHandler, *httptest.ResponseRecorder) {
 	client, _ := rpc.NewClient(&backend)
-	idx := NewIndexPageHandler(*client)
+	idx := NewIndexPageHandler(*client, testing2.NewFakeTelegramAuth(true, "username"))
 	rr := httptest.NewRecorder()
 
 	return idx, rr

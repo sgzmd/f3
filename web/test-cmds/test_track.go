@@ -18,11 +18,11 @@ func TryTrack() {
 	defer conn.Close()
 	client := pb.NewFlibustierServiceClient(conn)
 
-	resp, err := client.TrackEntry(context.Background(), &pb.TrackEntryRequest{
-		EntryId:   34145,
-		EntryType: pb.EntryType_ENTRY_TYPE_SERIES,
-		UserId:    "user",
-	})
+	resp, err := client.TrackEntry(context.Background(), &pb.TrackEntryRequest{Key: &pb.TrackedEntryKey{
+		EntityId:   34145,
+		EntityType: pb.EntryType_ENTRY_TYPE_SERIES,
+		UserId:     "user",
+	}})
 
 	if err != nil {
 		log.Fatalf("Failed to query GRPC: %s", err)

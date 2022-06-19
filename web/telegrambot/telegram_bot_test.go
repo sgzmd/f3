@@ -26,10 +26,13 @@ func TestListHandler(t *testing.T) {
 		ListTrackedEntries(gomock.Any()).
 		Return(listResp, nil)
 
-	bot.EXPECT().Send(gomock.Any()).Times(5)
+	//bot.EXPECT().Send(gomock.Any()).Times(5)
 
 	tbh := NewTelegramBotHandler(bot, client)
-	tbh.ListHandler(update)
+	msgs, err := tbh.ListHandler(update)
+
+	assert.Nil(t, err)
+	assert.Len(t, msgs, 5)
 }
 
 func TestListHandlerEquivalence(t *testing.T) {

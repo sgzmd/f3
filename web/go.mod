@@ -10,6 +10,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/schema v1.2.0
 	github.com/jessevdk/go-flags v1.5.0
+	github.com/sgzmd/go-telegram-auth v0.0.3
 	github.com/stretchr/testify v1.7.1
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
 	google.golang.org/grpc v1.46.0
@@ -18,7 +19,6 @@ require (
 
 require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/sgzmd/go-telegram-auth v0.0.1 // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
