@@ -51,6 +51,7 @@ func (g GrpcClientImplementation) TrackEntry(in *pb.TrackEntryRequest) (*pb.Trac
 }
 
 func (g GrpcClientImplementation) ListTrackedEntries(in *pb.ListTrackedEntriesRequest) (*pb.ListTrackedEntriesResponse, error) {
+	log.Printf("ListTrackedEntries: %+v", in)
 	return g.client.ListTrackedEntries(context.Background(), in)
 }
 

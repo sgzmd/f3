@@ -16,10 +16,15 @@ type SearchResultType struct {
 	Entry []*proto.FoundEntry
 }
 
+type TrackedEntriesType struct {
+	Entry []*proto.TrackedEntry
+}
+
 type IndexPage struct {
 	DefaultSearchTerm string
 	TrackResult       proto.TrackEntryResult
 	SearchResult      *SearchResultType
+	TrackedEntries    *TrackedEntriesType
 }
 
 type IndexPageHandler struct {
@@ -67,8 +72,9 @@ func (idx *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := IndexPage{
-		SearchResult: idx.getSearchResults(r),
-		TrackResult:  0,
+		SearchResult:   idx.getSearchResults(r),
+		TrackedEntries: idx.getTrackedEntries(w, r),
+		TrackResult:    0,
 	}
 
 	data.DefaultSearchTerm = idx.searchTerm
@@ -103,4 +109,14 @@ func (idx *IndexPageHandler) getSearchResults(r *http.Request) *SearchResultType
 	} else {
 		return &SearchResultType{Entry: searchResult.Entry}
 	}
+}
+
+func (idx *IndexPageHandler) getTrackedEntries(w http.ResponseWriter, r *http.Request) *TrackedEntriesType {
+	resp, err := idx.client.ListTrackedEntries(&proto.ListTrackedEntriesRequest{UserId: "default"})
+	if err != nil {
+		log.Printf("Error fetching tracked entries: %+v", err)
+		ErrorToBrowser(w, r, err)
+	}
+
+	return &TrackedEntriesType{Entry: resp.Entry}
 }

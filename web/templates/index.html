@@ -55,5 +55,17 @@
 
     {{ end }}
 
+    {{ if .TrackedEntries }}
+
+    <ul>
+        {{ range .TrackedEntries.Entry }}
+        <li>
+            {{ .EntryName }}
+        </li>
+        {{ end }}
+    </ul>
+
+    {{ end }}
+
 </body>
 </html>
