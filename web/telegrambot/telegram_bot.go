@@ -30,7 +30,7 @@ func NewTelegramBotHandler(bot IBotApiWrapper, client rpc.ClientInterface) *Tele
 
 func (tbh *TelegramBotHandler) ListHandler(update tgbotapi.Update) ([]tgbotapi.Chattable, error) {
 	resp, err := tbh.client.ListTrackedEntries(&pb.ListTrackedEntriesRequest{
-		UserId: update.Message.From.UserName})
+		UserId: MakeUserKey(update)})
 	if err != nil {
 		tbh.reportError(update, err)
 		return nil, err
@@ -71,7 +71,7 @@ func (tbh *TelegramBotHandler) reportError(update tgbotapi.Update, err error) {
 }
 
 func CheckUpdatesHandler(update tgbotapi.Update, client rpc.ClientInterface, bot IBotApiWrapper) {
-	resp, err := client.ListTrackedEntries(&pb.ListTrackedEntriesRequest{UserId: update.Message.From.UserName})
+	resp, err := client.ListTrackedEntries(&pb.ListTrackedEntriesRequest{UserId: MakeUserKey(update)})
 	if err != nil {
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Error listing entries: %+v")
 		msg.Text = fmt.Sprintf("Error: %+v", err)
@@ -90,6 +90,13 @@ func CheckUpdatesHandler(update tgbotapi.Update, client rpc.ClientInterface, bot
 	if err != nil {
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Failed to check updates: %+v")
 		msg.Text = fmt.Sprintf("Error: %+v", err)
+		log.Print(msg.Text)
+		bot.Send(msg)
+		return
+	}
+
+	if len(respUpdates.UpdateRequired) == 0 {
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Отсутствие новостей - лучшая новость!")
 		log.Print(msg.Text)
 		bot.Send(msg)
 		return
@@ -148,8 +155,7 @@ func errorToTg(update tgbotapi.Update, text string, err error, bot *tgbotapi.Bot
 
 func ListCommandHandler(update tgbotapi.Update, client rpc.ClientInterface, bot IBotApiWrapper) ([]tgbotapi.Chattable, error) {
 	resp, err := client.ListTrackedEntries(&pb.ListTrackedEntriesRequest{
-		UserId: handlers.MakeUserKeyFromUserNameAndId(
-			update.Message.From.UserName, update.Message.From.ID)})
+		UserId: MakeUserKey(update)})
 	if err != nil {
 		return nil, err
 	}
@@ -169,6 +175,11 @@ func ListCommandHandler(update tgbotapi.Update, client rpc.ClientInterface, bot 
 	}
 
 	return messages, nil
+}
+
+func MakeUserKey(update tgbotapi.Update) string {
+	return handlers.MakeUserKeyFromUserNameAndId(
+		update.Message.From.UserName, update.Message.From.ID)
 }
 
 func HandleCallbackQuery(update tgbotapi.Update, bot *tgbotapi.BotAPI, client rpc.ClientInterface) {
