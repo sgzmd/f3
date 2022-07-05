@@ -60,7 +60,7 @@
     <ul>
         {{ range .TrackedEntries.Entry }}
         <li>
-            {{ .EntryName }}
+            <a href="{{ .EntryUrl }}">{{ .Entry.EntryName }}</a>
         </li>
         {{ end }}
     </ul>

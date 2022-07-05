@@ -16,8 +16,12 @@ type SearchResultType struct {
 	Entry []*proto.FoundEntry
 }
 
+type Entry struct {
+	Entry *proto.TrackedEntry
+}
+
 type TrackedEntriesType struct {
-	Entry []*proto.TrackedEntry
+	Entry []Entry
 }
 
 type IndexPage struct {
@@ -40,6 +44,10 @@ func NewIndexPageHandler(client rpc.ClientInterface, auth tgauth.TelegramAuth) *
 		client: client,
 		auth:   auth,
 	}
+}
+
+func (e *Entry) EntryUrl() string {
+	return TrackedEntryUrl(e.Entry)
 }
 
 func (idx *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -118,5 +126,12 @@ func (idx *IndexPageHandler) getTrackedEntries(w http.ResponseWriter, r *http.Re
 		ErrorToBrowser(w, r, err)
 	}
 
-	return &TrackedEntriesType{Entry: resp.Entry}
+	entries := make([]Entry, len(resp.Entry))
+	for i := 0; i < len(resp.Entry); i++ {
+		entries[i] = Entry{
+			Entry: resp.Entry[i],
+		}
+	}
+
+	return &TrackedEntriesType{Entry: entries}
 }

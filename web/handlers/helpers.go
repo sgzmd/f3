@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"bytes"
+	"fmt"
+	pb "github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
 	"log"
 	"net/http"
 	"text/template"
@@ -33,4 +35,17 @@ func ErrorToBrowser(w http.ResponseWriter, r *http.Request, err error) {
 	}
 
 	w.Write(buf.Bytes())
+}
+
+func TrackedEntryUrl(entry *pb.TrackedEntry) string {
+	url := "http://flibusta.is/"
+	if entry.Key.EntityType == pb.EntryType_ENTRY_TYPE_SERIES {
+		url += "s"
+	} else if entry.Key.EntityType == pb.EntryType_ENTRY_TYPE_AUTHOR {
+		url += "a"
+	} else {
+		return ""
+	}
+
+	return fmt.Sprintf("%s/%d", url, entry.Key.EntityId)
 }
