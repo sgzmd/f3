@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	pb "github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
+	"github.com/sgzmd/go-telegram-auth/tgauth"
 	"log"
 	"net/http"
 	"text/template"
@@ -48,4 +49,12 @@ func TrackedEntryUrl(entry *pb.TrackedEntry) string {
 	}
 
 	return fmt.Sprintf("%s/%d", url, entry.Key.EntityId)
+}
+
+func MakeUserKey(ui *tgauth.UserInfo) string {
+	return MakeUserKeyFromUserNameAndId(ui.UserName, ui.Id)
+}
+
+func MakeUserKeyFromUserNameAndId(userName string, userId int64) string {
+	return fmt.Sprintf("%s-%d", userName, userId)
 }

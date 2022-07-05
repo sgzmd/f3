@@ -71,6 +71,13 @@ func (idx *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userInfo, err := idx.auth.GetUserInfo(params)
+	if err != nil {
+		log.Printf("Auth is not ok")
+		http.Redirect(w, r, "/auth", http.StatusFound)
+		return
+	}
+
 	searchTerm, ok := r.URL.Query()["searchTerm"]
 
 	if ok {
@@ -81,7 +88,7 @@ func (idx *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	data := IndexPage{
 		SearchResult:   idx.getSearchResults(r),
-		TrackedEntries: idx.getTrackedEntries(w, r),
+		TrackedEntries: idx.getTrackedEntries(w, r, userInfo),
 		TrackResult:    0,
 	}
 
@@ -119,8 +126,8 @@ func (idx *IndexPageHandler) getSearchResults(r *http.Request) *SearchResultType
 	}
 }
 
-func (idx *IndexPageHandler) getTrackedEntries(w http.ResponseWriter, r *http.Request) *TrackedEntriesType {
-	resp, err := idx.client.ListTrackedEntries(&proto.ListTrackedEntriesRequest{UserId: "default"})
+func (idx *IndexPageHandler) getTrackedEntries(w http.ResponseWriter, r *http.Request, info *tgauth.UserInfo) *TrackedEntriesType {
+	resp, err := idx.client.ListTrackedEntries(&proto.ListTrackedEntriesRequest{UserId: MakeUserKey(info)})
 	if err != nil {
 		log.Printf("Error fetching tracked entries: %+v", err)
 		ErrorToBrowser(w, r, err)

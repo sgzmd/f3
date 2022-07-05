@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/sgzmd/go-telegram-auth/tgauth"
 	"log"
 	"net/http"
 
@@ -16,6 +17,7 @@ type TrackPageHandler struct {
 	http.Handler
 
 	client rpc.ClientInterface
+	auth   tgauth.TelegramAuth
 }
 
 type TrackRequestSchema struct {
@@ -23,12 +25,38 @@ type TrackRequestSchema struct {
 	EntryType string
 }
 
-func NewTrackPageHandler(client rpc.ClientInterface) *TrackPageHandler {
-	return &TrackPageHandler{client: client}
+func NewTrackPageHandler(client rpc.ClientInterface, auth tgauth.TelegramAuth) *TrackPageHandler {
+	return &TrackPageHandler{client: client, auth: auth}
 }
 
 func (page *TrackPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+
+	params, err := page.auth.GetParamsFromCookie(r)
+	if err != nil {
+		log.Printf("Unable to get params from cookie: %+v", err)
+		http.Redirect(w, r, "/auth", http.StatusFound)
+		return
+	}
+
+	ok, err := page.auth.CheckAuth(params)
+	if err != nil {
+		log.Printf("Unable to check auth: %+v", err)
+		http.Redirect(w, r, "/auth", http.StatusFound)
+		return
+	} else if !ok {
+		log.Printf("Auth is not ok")
+		http.Redirect(w, r, "/auth", http.StatusFound)
+		return
+	}
+
+	userInfo, err := page.auth.GetUserInfo(params)
+	if err != nil {
+		log.Printf("Auth is not ok")
+		http.Redirect(w, r, "/auth", http.StatusFound)
+		return
+	}
+
+	err = r.ParseForm()
 	if err != nil {
 		log.Printf("Problem parsing form: %+v", err)
 		ErrorToBrowser(w, r, err)
@@ -43,7 +71,7 @@ func (page *TrackPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	resp, err := page.client.TrackEntry(&proto.TrackEntryRequest{Key: &proto.TrackedEntryKey{
 		EntityId:   trackReq.EntryId,
 		EntityType: proto.EntryType(proto.EntryType_value[trackReq.EntryType]),
-		UserId:     "default",
+		UserId:     MakeUserKey(userInfo),
 	}})
 
 	if err != nil {

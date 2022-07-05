@@ -2,6 +2,7 @@ package telegrambot
 
 import (
 	"fmt"
+	"github.com/sgzmd/f3/web/handlers"
 	"log"
 	"strconv"
 	"strings"
@@ -146,7 +147,9 @@ func errorToTg(update tgbotapi.Update, text string, err error, bot *tgbotapi.Bot
 }
 
 func ListCommandHandler(update tgbotapi.Update, client rpc.ClientInterface, bot IBotApiWrapper) ([]tgbotapi.Chattable, error) {
-	resp, err := client.ListTrackedEntries(&pb.ListTrackedEntriesRequest{UserId: update.Message.From.UserName})
+	resp, err := client.ListTrackedEntries(&pb.ListTrackedEntriesRequest{
+		UserId: handlers.MakeUserKeyFromUserNameAndId(
+			update.Message.From.UserName, update.Message.From.ID)})
 	if err != nil {
 		return nil, err
 	}
@@ -184,9 +187,12 @@ func HandleCallbackQuery(update tgbotapi.Update, bot *tgbotapi.BotAPI, client rp
 		msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, "Received bad callback: "+update.CallbackQuery.Data)
 		bot.Send(msg)
 	} else {
+		from := update.CallbackQuery.From
 		if req[0] == "track" {
 			resp, err := client.TrackEntry(&pb.TrackEntryRequest{Key: &pb.TrackedEntryKey{
-				EntityId: int64(entryId), EntityType: pb.EntryType(entryType), UserId: update.CallbackQuery.From.UserName}})
+				EntityId:   int64(entryId),
+				EntityType: pb.EntryType(entryType),
+				UserId:     handlers.MakeUserKeyFromUserNameAndId(from.UserName, from.ID)}})
 			if err != nil {
 				errorText := fmt.Sprintf("Failed to track story: %+v", err)
 				msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, errorText)
@@ -203,7 +209,9 @@ func HandleCallbackQuery(update tgbotapi.Update, bot *tgbotapi.BotAPI, client rp
 			}
 		} else if req[0] == "untrack" {
 			_, err := client.UntrackEntry(&pb.UntrackEntryRequest{Key: &pb.TrackedEntryKey{
-				EntityId: int64(entryId), EntityType: pb.EntryType(entryType), UserId: update.CallbackQuery.From.UserName}})
+				EntityId:   int64(entryId),
+				EntityType: pb.EntryType(entryType),
+				UserId:     handlers.MakeUserKeyFromUserNameAndId(from.UserName, from.ID)}})
 			if err != nil {
 				errorText := fmt.Sprintf("Failed to untrack story: %+v", err)
 				msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, errorText)
