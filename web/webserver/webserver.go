@@ -39,7 +39,9 @@ func main() {
 
 	auth = tgauth.NewTelegramAuth(opts.TelegramToken, "/login", "/check-auth")
 
-	engine := html.New("./templates", ".html")
+	engine := html.New("./templates/web", ".html")
+	//fastergoding.Run()
+
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
@@ -88,6 +90,18 @@ func SearchHandler() func(ctx *fiber.Ctx) error {
 		log.Printf("/search/%s", term)
 
 		return nil
+	}
+}
+
+func IndexHandler() func(c *fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
+
+		ui := c.Locals("user")
+		if ui != nil {
+			log.Printf("UI: %+v", ui)
+		}
+
+		return c.Render("index", fiber.Map{})
 	}
 }
 
@@ -156,18 +170,6 @@ func AuthMiddleware() func(c *fiber.Ctx) error {
 
 		c.Locals("user", ui)
 		return c.Next()
-	}
-}
-
-func IndexHandler() func(c *fiber.Ctx) error {
-	return func(c *fiber.Ctx) error {
-
-		ui := c.Locals("user")
-		if ui != nil {
-			log.Printf("UI: %+v", ui)
-		}
-
-		return nil
 	}
 }
 
