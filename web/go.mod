@@ -12,7 +12,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/schema v1.2.0
 	github.com/jessevdk/go-flags v1.5.0
-	github.com/sgzmd/go-telegram-auth v0.0.5
+	github.com/sgzmd/go-telegram-auth v0.1.1
 	github.com/stretchr/testify v1.7.1
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f
 	google.golang.org/grpc v1.46.0
