@@ -40,7 +40,6 @@ func main() {
 	auth = tgauth.NewTelegramAuth(opts.TelegramToken, "/login", "/check-auth")
 
 	engine := html.New("./templates/web", ".html")
-	//fastergoding.Run()
 
 	app := fiber.New(fiber.Config{
 		Views: engine,
@@ -52,7 +51,7 @@ func main() {
 	app.Use(AuthMiddleware())
 
 	app.Get("/", IndexHandler())
-	app.Get("/search/:term", SearchHandler())
+	app.Get("/search/:searchTerm", SearchHandler())
 	app.Get("/track/:entityType/:id", TrackHandler())
 	app.Get(Login, LoginHandler())
 
@@ -83,13 +82,18 @@ func TrackHandler() func(ctx *fiber.Ctx) error {
 	}
 }
 
+type FakeSearchResult struct {
+	Name string
+}
+
 func SearchHandler() func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
-		term := ctx.Params("term", "")
-
-		log.Printf("/search/%s", term)
-
-		return nil
+		_ = ctx.Params("searchTerm", "")
+		userInfo := ctx.Locals("user").(*tgauth.UserInfo)
+		sr := []FakeSearchResult{
+			{Name: "Some Name"},
+		}
+		return ctx.Render("index", fiber.Map{"Name": userInfo.FirstName, "HasSearchResults": true, "SearchResults": sr})
 	}
 }
 
@@ -97,11 +101,9 @@ func IndexHandler() func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 
 		ui := c.Locals("user")
-		if ui != nil {
-			log.Printf("UI: %+v", ui)
-		}
+		userInfo := ui.(*tgauth.UserInfo)
 
-		return c.Render("index", fiber.Map{})
+		return c.Render("index", fiber.Map{"Name": userInfo.FirstName})
 	}
 }
 
