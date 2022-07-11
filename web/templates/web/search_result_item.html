@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-1 subscribe-col">
-        <img class="bullet {{ .GetEntryClass }} subscribe"
+        <img class="bullet  {{ if .Tracked }} subscribed {{ else }} subscribe {{ .GetEntryClass }} {{ end }}"
              onclick="TrackUntrackEntry('{{ .Entry.EntryId }}', '{{.Entry.EntryType.Number}}');"/>
 
       </div>

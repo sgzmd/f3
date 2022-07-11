@@ -21,7 +21,8 @@ func entryTypeToChar(et proto.EntryType) string {
 }
 
 type SearchResultEntry struct {
-	Entry *proto.FoundEntry
+	Entry   *proto.FoundEntry
+	Tracked bool
 }
 
 type TrackedEntry struct {
