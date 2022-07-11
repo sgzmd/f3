@@ -1,0 +1,71 @@
+$bell: '/static/subscribe_24.png';
+$subscribe: '/static/plus_24.png';
+$unsubscribe: '/static/minus_24.png';
+$subscribed: '/static/check-mark_24.png';
+$author: '/static/author_24.png';
+$series: '/static/series_24.png';
+
+$as_padding: 3px;
+
+
+li.search-entry {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  line-height: 30px;
+  list-style: none;
+}
+
+img.bullet {
+  margin: 6px;
+  padding-top: 3px;
+}
+
+img.subscribe {
+  content:url($bell);
+}
+
+img.subscribe:hover {
+  content:url($subscribe);
+  cursor: pointer;
+}
+
+img.subscribed:hover {
+  content:url($unsubscribe);
+  cursor: pointer;
+}
+
+img.subscribed {
+  content:url($subscribed);
+}
+
+%author_or_series {
+  padding: 3px;
+}
+
+img.author {
+  @extend %author_or_series;
+  content:url($author);
+}
+
+img.series {
+  @extend %author_or_series;
+  content:url($series);
+}
+
+div.subscribe-col {
+  margin-right: -3em;
+}
+
+div.authors-entry {
+  div.series {
+    font-size: small;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  div.author {
+    display: none;
+  }
+}

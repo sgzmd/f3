@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/sgzmd/f3/web/handlers"
+	"github.com/sgzmd/go-telegram-auth/tgauth"
 	"log"
 
 	"github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
@@ -56,4 +58,23 @@ func getEntityTypeString(entryType proto.EntryType) string {
 	} else {
 		return ""
 	}
+}
+
+func GetTrackedEntries(client ClientContext, userInfo *tgauth.UserInfo) ([]TrackedEntry, error) {
+	resp, err := client.RpcClient.ListTrackedEntries(&proto.ListTrackedEntriesRequest{
+		UserId: handlers.MakeUserKeyFromUserNameAndId(userInfo.UserName, userInfo.Id),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	sr := make([]TrackedEntry, len(resp.Entry))
+	for i, entry := range resp.Entry {
+		sr[i] = TrackedEntry{
+			Entry: entry,
+		}
+	}
+
+	return sr, err
 }

@@ -20,6 +20,8 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/dailymuse/gosass v0.0.0-20161105181939-25eedb4a9173 // indirect
+	github.com/dullgiulio/pingo v0.0.0-20151111190101-8b1949e35b5a // indirect
 	github.com/gofiber/utils v0.1.2 // indirect
 	github.com/klauspost/compress v1.15.7 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
@@ -32,5 +34,6 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
 	google.golang.org/genproto v0.0.0-20211208223120-3a66f561d7aa // indirect
+	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/yaml.v3 v3.0.0 // indirect
 )

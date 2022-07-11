@@ -28,8 +28,17 @@ func SearchHandler(client ClientContext) func(ctx *fiber.Ctx) error {
 			}
 		}
 
+		tr, err := GetTrackedEntries(client, userInfo)
+
+		if err != nil {
+			return ctx.Status(500).SendString(err.Error())
+		}
+
 		return ctx.Render("index", fiber.Map{
-			"Name": userInfo.FirstName, "HasSearchResults": true, "SearchResults": sr,
+			"Name":             userInfo.FirstName,
+			"HasSearchResults": true,
+			"SearchResults":    sr,
+			"TrackedEntries":   tr,
 		})
 	}
 }
