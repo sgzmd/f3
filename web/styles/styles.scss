@@ -53,8 +53,15 @@ img.series {
   content:url($series);
 }
 
-div.subscribe-col {
-  margin-right: -3em;
+@media (max-width: 1000px) {
+  div.subscribe-col {
+    margin-right: -1dp;
+  }
+}
+@media (min-width: 1001px) {
+  div.subscribe-col {
+    margin-right: -3em;
+  }
 }
 
 div.authors-entry {

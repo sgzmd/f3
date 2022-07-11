@@ -63,7 +63,8 @@ func main() {
 
 	app.Get("/", handlers.IndexHandler(clientContext))
 	app.Get("/search/:searchTerm", handlers.SearchHandler(clientContext))
-	app.Get("/track/:entityType/:id", handlers.TrackHandler(clientContext))
+	app.Get("/track/:entityType/:id", handlers.TrackUntrackHandler(clientContext, handlers.Track))
+	app.Get("/untrack/:entityType/:id", handlers.TrackUntrackHandler(clientContext, handlers.Untrack))
 	app.Get(Login, LoginHandler())
 
 	log.Fatal(app.Listen(":8080"))

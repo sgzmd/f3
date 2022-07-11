@@ -4,7 +4,12 @@ function onSearchSubmit() {
     return false;
 }
 
-function TrackUntrackEntry(id, type) {
-    console.log("TrackUntrackEntry: " + id + " " + type);
+function TrackEntry(id, type) {
+    console.log("TrackEntry: " + id + " " + type);
     window.location = "/track/" + type + "/" + id;
+}
+
+function UntrackEntry(id, type) {
+    console.log("UntrackEntry: " + id + " " + type);
+    window.location = "/untrack/" + type + "/" + id;
 }
