@@ -13,3 +13,12 @@ function UntrackEntry(id, type) {
     console.log("UntrackEntry: " + id + " " + type);
     window.location = "/untrack/" + type + "/" + id;
 }
+
+function showHideBooks(id) {
+    let bookList = document.getElementById(id);
+    if (bookList.style.display == "block") {
+        bookList.style.display = "none";
+    } else {
+        bookList.style.display = "block";
+    }
+}

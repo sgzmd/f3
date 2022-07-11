@@ -11,15 +11,28 @@
                         <div class="col-12 pl-0">
                             <a target="_blank" href="{{ .GetUrl }}">{{ .Entry.EntryName }}</a>
                             <small>
-                                <a href="/untrack/{{.Entry.Key.EntityType.Number}}/{{ .Entry.Key.EntityId }}" class="action">(x)</a>
+                                <a href="/untrack/{{.Entry.Key.EntityType.Number}}/{{ .Entry.Key.EntityId }}"
+                                   class="action">(x)</a>
                             </small>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12 pl-0 authors-entry">
                             <div class="{{ .GetEntryClass }}">
-                                {{.Entry.EntryAuthor}}
+                                {{.Entry.EntryAuthor}} <a href="#"
+                                                          onclick="showHideBooks('book_list_{{ .Entry.Key.EntityId }}');">(книги)</a>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="col-12 pl-0 booklist" id="book_list_{{ .Entry.Key.EntityId }}">
+                            <small>
+                                <ol>
+                                    {{ range .Entry.Book }}
+                                    <li><a target="_blank" href="http://flibusta.is/b/{{ .BookId }}">{{ .BookName }}</a></li>
+                                    {{ end }}
+                                </ol>
+                            </small>
                         </div>
                     </div>
                 </div>
