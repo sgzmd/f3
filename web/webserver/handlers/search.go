@@ -21,9 +21,9 @@ func SearchHandler(client ClientContext) func(ctx *fiber.Ctx) error {
 			return ctx.Status(500).SendString(err.Error())
 		}
 
-		sr := make([]ResultEntry, len(resp.Entry))
+		sr := make([]SearchResultEntry, len(resp.Entry))
 		for i, entry := range resp.Entry {
-			sr[i] = ResultEntry{
+			sr[i] = SearchResultEntry{
 				Entry: entry,
 			}
 		}

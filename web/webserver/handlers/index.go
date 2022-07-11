@@ -18,9 +18,9 @@ func IndexHandler(client ClientContext) func(c *fiber.Ctx) error {
 			UserId: handlers.MakeUserKeyFromUserNameAndId(userInfo.UserName, userInfo.Id),
 		})
 
-		sr := make([]ResultEntry, len(resp.Entry))
+		sr := make([]TrackedEntry, len(resp.Entry))
 		for i, entry := range resp.Entry {
-			sr[i] = ResultEntry{
+			sr[i] = TrackedEntry{
 				Entry: entry,
 			}
 		}
@@ -33,7 +33,7 @@ func IndexHandler(client ClientContext) func(c *fiber.Ctx) error {
 
 		return c.Render("index", fiber.Map{
 			"Name":           userInfo.FirstName,
-			"TrackedEntries": resp.Entry,
+			"TrackedEntries": sr,
 		})
 	}
 }

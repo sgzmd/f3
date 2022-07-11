@@ -1,7 +1,27 @@
-<div class="container">
-    <div class="row">
-      <div class="col-md-6">
-        {{ .EntryName }}
-      </div>
+<li class="search-entry">
+    <div class="container">
+        <div class="row">
+            <div class="col-1 subscribe-col">
+                <img class="bullet subscribe"
+                     onclick="TrackUntrackEntry('{{ .Entry.Key.EntityId }}', '{{.Entry.Key.EntityType.Number}}');"/>
+            </div>
+            <div class="col-11">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 pl-0">
+                            <a target="_blank" href="{{ .GetUrl }}">{{ .Entry.EntryName }}</a>
+                            <img class="{{ .GetEntryClass }}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 pl-0 authors-entry">
+                            <div class="{{ .GetEntryClass }}">
+                                {{.Entry.EntryAuthor}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+</li>
