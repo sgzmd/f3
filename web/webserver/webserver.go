@@ -1,14 +1,16 @@
 package main
 
 import (
+	"log"
+	"net/url"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/template/html"
 	"github.com/jessevdk/go-flags"
+	"github.com/sgzmd/f3/web/webserver/handlers"
 	"github.com/sgzmd/go-telegram-auth/tgauth"
-	"log"
-	"net/url"
-	"time"
 )
 
 const (
@@ -50,7 +52,7 @@ func main() {
 
 	app.Use(AuthMiddleware())
 
-	app.Get("/", IndexHandler())
+	app.Get("/", handlers.IndexHandler())
 	app.Get("/search/:searchTerm", SearchHandler())
 	app.Get("/track/:entityType/:id", TrackHandler())
 	app.Get(Login, LoginHandler())
