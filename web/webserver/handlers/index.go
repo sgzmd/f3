@@ -18,6 +18,13 @@ func IndexHandler(client ClientContext) func(c *fiber.Ctx) error {
 			UserId: handlers.MakeUserKeyFromUserNameAndId(userInfo.UserName, userInfo.Id),
 		})
 
+		sr := make([]ResultEntry, len(resp.Entry))
+		for i, entry := range resp.Entry {
+			sr[i] = ResultEntry{
+				Entry: entry,
+			}
+		}
+
 		log.Printf("Response: %+v", resp)
 
 		if err != nil {

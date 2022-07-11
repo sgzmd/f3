@@ -6,6 +6,5 @@ function onSearchSubmit() {
 
 function TrackUntrackEntry(id, type) {
     console.log("TrackUntrackEntry: " + id + " " + type);
+    window.location = "/track/" + type + "/" + id;
 }
-
-// Generates onSubmit for HTML form

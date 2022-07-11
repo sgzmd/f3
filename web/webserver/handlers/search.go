@@ -1,32 +1,12 @@
 package handlers
 
 import (
-	"fmt"
 	"net/url"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
 	"github.com/sgzmd/go-telegram-auth/tgauth"
 )
-
-type SearchResultEntry struct {
-	Entry *proto.FoundEntry
-}
-
-func (entry *SearchResultEntry) GetFlibustaUrl() string {
-	return fmt.Sprintf("http://flibusta.is/%s/%d",
-		entryTypeToChar(entry.Entry.EntryType), entry.Entry.EntryId)
-}
-
-func (entry *SearchResultEntry) GetEntryClass() string {
-	if entry.Entry.EntryType == proto.EntryType_ENTRY_TYPE_SERIES {
-		return "series"
-	} else if entry.Entry.EntryType == proto.EntryType_ENTRY_TYPE_AUTHOR {
-		return "author"
-	} else {
-		return ""
-	}
-}
 
 func SearchHandler(client ClientContext) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
@@ -41,9 +21,9 @@ func SearchHandler(client ClientContext) func(ctx *fiber.Ctx) error {
 			return ctx.Status(500).SendString(err.Error())
 		}
 
-		sr := make([]SearchResultEntry, len(resp.Entry))
+		sr := make([]ResultEntry, len(resp.Entry))
 		for i, entry := range resp.Entry {
-			sr[i] = SearchResultEntry{
+			sr[i] = ResultEntry{
 				Entry: entry,
 			}
 		}

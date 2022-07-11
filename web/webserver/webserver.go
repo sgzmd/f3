@@ -63,7 +63,7 @@ func main() {
 
 	app.Get("/", handlers.IndexHandler(clientContext))
 	app.Get("/search/:searchTerm", handlers.SearchHandler(clientContext))
-	app.Get("/track/:entityType/:id", TrackHandler())
+	app.Get("/track/:entityType/:id", handlers.TrackHandler(clientContext))
 	app.Get(Login, LoginHandler())
 
 	log.Fatal(app.Listen(":8080"))
@@ -72,24 +72,6 @@ func main() {
 func LoginHandler() func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		return ctx.Render("login", fiber.Map{})
-	}
-}
-
-func TrackHandler() func(ctx *fiber.Ctx) error {
-	return func(ctx *fiber.Ctx) error {
-		entityType, err := ctx.ParamsInt("entityType", -1)
-		if err != nil {
-			return fiber.ErrBadRequest
-		}
-
-		entityId, err := ctx.ParamsInt("id", -1)
-		if err != nil {
-			return fiber.ErrBadRequest
-		}
-
-		log.Printf("/track/type=%d/id=%d", entityType, entityId)
-
-		return nil
 	}
 }
 
