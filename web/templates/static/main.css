@@ -63,3 +63,9 @@ div.authors-entry div.series {
 div.authors-entry div.author {
   display: none;
 }
+
+a.action {
+  color: black;
+  text-decoration: none;
+  font-weight: bold;
+}

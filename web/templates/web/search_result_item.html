@@ -17,7 +17,14 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-12 pl-0">
-                            <a target="_blank" href="{{ .GetUrl }}">{{ .Entry.EntryName }}</a>
+                            <a target="_blank" href="{{ .GetUrl }}" >{{ .Entry.EntryName }}</a>
+                            <small>
+                                {{ if .Tracked }}
+                                <a href="/untrack/{{.Entry.EntryType.Number}}/{{ .Entry.EntryId }}" class="action">(x)</a>
+                                {{ else }}
+                                <a href="/track/{{.Entry.EntryType.Number}}/{{ .Entry.EntryId }}" class="action">(+)</a>
+                                {{ end }}
+                            </small>
                         </div>
                     </div>
                     <div class="row">
