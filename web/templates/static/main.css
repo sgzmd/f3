@@ -1,3 +1,50 @@
 h1 {
     font-family: Arial;
 }
+
+li.search-entry {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+
+    line-height: 30px;
+
+    list-style: none;
+}
+
+/* li.search-entry:before {
+    display: block;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+
+    vertical-align: middle;
+
+    background: url('/static/subscribe_24.png') no-repeat left center;
+    background-size: contain;
+
+    content: '';
+} */
+
+li.search-entry > .bullet {
+    margin: 6px;
+    padding-top: 3px;
+}
+
+li.search-entry > .subscribe {
+    content:url('/static/subscribe_24.png');
+}
+
+li.search-entry > .subscribe:hover {
+    content:url('/static/yellow_bell_24.png');
+}
+
+
+li.search-entry > .active {
+    content:url('/static/check-mark_24.png');
+}
+
+li.search-entry > .active:hover {
+    content:url('/static/subscribe_24.png');
+}

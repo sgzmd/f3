@@ -17,7 +17,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-12 pl-0">
             {{ range .SearchResults }}
             {{ template "search_result_item" . }}
             {{ end }}
@@ -28,8 +28,18 @@
     {{ end }}
 
     {{ end }}
-
-
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h4>Результаты поиска</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{ range .TrackedEntries }}
+            {{ template "tracked_entry" . }}
+            {{ end }}
+        </div>
+    </div>
 </div>
 
 

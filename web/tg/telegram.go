@@ -1,11 +1,12 @@
 package main
 
 import (
+	"log"
+
 	tb "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/jessevdk/go-flags"
 	"github.com/sgzmd/f3/web/rpc"
 	"github.com/sgzmd/f3/web/telegrambot"
-	"log"
 )
 
 type Options struct {
@@ -28,7 +29,7 @@ func main() {
 	}
 
 	pclient, err := rpc.NewClient(&opts.GrpcBackend)
-	client := *pclient
+	client := pclient
 	if err != nil {
 		log.Fatal(err)
 	}

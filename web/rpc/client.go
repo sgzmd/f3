@@ -95,7 +95,7 @@ func (f FakeClientImplementation) UntrackEntry(in *pb.UntrackEntryRequest) (*pb.
 	panic("implement me")
 }
 
-func NewClient(backend *string) (*ClientInterface, error) {
+func NewClient(backend *string) (ClientInterface, error) {
 	var client ClientInterface
 	if backend == nil || *backend == "" {
 		log.Print("Using FakeClientImplementation")
@@ -109,7 +109,7 @@ func NewClient(backend *string) (*ClientInterface, error) {
 		fclient := pb.NewFlibustierServiceClient(conn)
 		client = GrpcClientImplementation{client: fclient}
 	}
-	return &client, nil
+	return client, nil
 }
 
 func NewFlibustierClient(backend string) (*pb.FlibustierServiceClient, error) {
