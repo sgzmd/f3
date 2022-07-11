@@ -1,9 +1,26 @@
-<!-- <div class="container">
-  <div class="row">
-    <div class="col-12 pl-0"> -->
-      <li class="search-entry">
-        <img class="bullet subscribe"/>
-        <a target="_blank" href="{{ .GetFlibustaUrl }}">{{ .Entry.EntryName }}</a></li>
-    <!-- </div>
+<li class="search-entry">
+  <div class="container">
+    <div class="row">
+      <div class="col-1 subscribe-col">
+        <img class="bullet subscribe" />
+      </div>
+      <div class="col-11">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 pl-0">
+              <a target="_blank" href="{{ .GetFlibustaUrl }}">{{ .Entry.EntryName }}</a>
+              <img class="{{ .GetEntryClass }}" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 pl-0 authors-entry">
+              <div class="{{ .GetEntryClass }}">
+                {{.Entry.Author}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div> -->
+</li>

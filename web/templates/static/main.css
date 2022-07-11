@@ -27,24 +27,49 @@ li.search-entry {
     content: '';
 } */
 
-li.search-entry > .bullet {
+img.bullet {
     margin: 6px;
     padding-top: 3px;
 }
 
-li.search-entry > .subscribe {
+img.subscribe {
     content:url('/static/subscribe_24.png');
 }
 
-li.search-entry > .subscribe:hover {
+img.subscribe:hover {
     content:url('/static/yellow_bell_24.png');
 }
 
 
-li.search-entry > .active {
+img.active {
     content:url('/static/check-mark_24.png');
 }
 
-li.search-entry > .active:hover {
+img.active:hover {
     content:url('/static/subscribe_24.png');
+}
+
+img.author {
+    padding: 3px;
+    content:url('/static/author_24.png');
+}
+
+img.series {
+    content:url('/static/series_24.png');
+    padding: 3px;
+}
+
+div.subscribe-col {
+    margin-right: -3em;
+}
+
+div.authors-entry > div.series {
+    font-size: small;
+    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+div.authors-entry > div.author {
+    display: none;
 }
