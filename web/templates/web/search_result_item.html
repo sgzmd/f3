@@ -2,14 +2,15 @@
   <div class="container">
     <div class="row">
       <div class="col-1 subscribe-col">
-        <img class="bullet subscribe" />
+        <img class="bullet subscribe" 
+          onclick="TrackUntrackEntry('{{ .Entry.EntryId }}', '{{.Entry.EntryType}}');"/>
       </div>
       <div class="col-11">
         <div class="container">
           <div class="row">
             <div class="col-12 pl-0">
               <a target="_blank" href="{{ .GetFlibustaUrl }}">{{ .Entry.EntryName }}</a>
-              <img class="{{ .GetEntryClass }}" />
+              <img class="{{ .GetEntryClass }}"/>
             </div>
           </div>
           <div class="row">

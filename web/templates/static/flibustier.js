@@ -4,5 +4,8 @@ function onSearchSubmit() {
     return false;
 }
 
+function TrackUntrackEntry(id, type) {
+    console.log("TrackUntrackEntry: " + id + " " + type);
+}
 
 // Generates onSubmit for HTML form

@@ -1,0 +1,19 @@
+h1 {
+  color: midnightblue;
+}
+
+.form-row > input {
+  width: 80%;
+  height: 2.0em;
+  margin-top: 0.5em;
+  border-width: 1px;
+  box-shadow: none;
+  border-color: slategrey;
+}
+
+.form-row > button.search-button {
+  height: 2.0em;
+  margin-top: 0.5em;
+  border-width: 1px;
+  border-color: slategrey;
+}

@@ -37,7 +37,7 @@ img.subscribe {
 }
 
 img.subscribe:hover {
-    content:url('/static/yellow_bell_24.png');
+    content:url('/static/plus_24.png');
 }
 
 
