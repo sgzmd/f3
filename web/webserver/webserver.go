@@ -21,9 +21,6 @@ const (
 )
 
 var (
-	useFakes    *bool
-	grpcBackend *string
-
 	auth tgauth.TelegramAuth
 )
 
@@ -109,8 +106,6 @@ func AuthMiddleware() func(c *fiber.Ctx) error {
 		}
 
 		if c.Path() == CheckAuth {
-			log.Printf(CheckAuth)
-
 			url, err := url.Parse(c.Request().URI().String())
 			if err != nil {
 				log.Printf("Bad URL: %+v", err)
@@ -133,6 +128,7 @@ func AuthMiddleware() func(c *fiber.Ctx) error {
 						log.Printf("Cannot create cookie: %+v", err)
 						return c.Redirect(Login)
 					} else {
+
 						cookie := &fiber.Cookie{
 							Name:    tgauth.DefaultCookieName,
 							Value:   cookieValue,
