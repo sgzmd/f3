@@ -142,6 +142,47 @@ func TestServer_GetAuthorBooks(t *testing.T) {
 	}
 }
 
+func TestServer_TestGetUserInfo_NotFound(t *testing.T) {
+	req := &pb.GetUserInfoRequest{UserId: "123"}
+	resp, err := client.GetUserInfo(context.Background(), req)
+	assert.Nil(t, resp)
+	assert.Contains(t, err.Error(), "User not found")
+}
+
+func TestServer_TestGetUserInfo_Create(t *testing.T) {
+	req := &pb.GetUserInfoRequest{
+		UserId:         "123",
+		UserTelegramId: 1234,
+		Action:         pb.UserInfoAction_USER_INFO_ACTION_CREATE,
+	}
+	resp, err := client.GetUserInfo(context.Background(), req)
+	assert.Nil(t, err)
+	assert.Equal(t, "123", resp.UserInfo.UserId)
+	assert.Equal(t, int64(1234), resp.UserInfo.UserTelegramId)
+}
+
+// Tests that user can be created, and then retrieved
+func TestServer_TestGetUserInfo_Get(t *testing.T) {
+	// Create the user first
+	req := &pb.GetUserInfoRequest{
+		UserId:         "567",
+		UserTelegramId: 78931,
+		Action:         pb.UserInfoAction_USER_INFO_ACTION_CREATE,
+	}
+	resp, err := client.GetUserInfo(context.Background(), req)
+	assert.Nil(t, err)
+	assert.Equal(t, "567", resp.UserInfo.UserId)
+
+	// Get the user
+	req = &pb.GetUserInfoRequest{
+		UserId: "567",
+	}
+	resp, err = client.GetUserInfo(context.Background(), req)
+	assert.Nil(t, err)
+	assert.Equal(t, "567", resp.UserInfo.UserId)
+	assert.Equal(t, int64(78931), resp.UserInfo.UserTelegramId)
+}
+
 func TestMain(m *testing.M) {
 	ctx := context.Background()
 	// Creating a client

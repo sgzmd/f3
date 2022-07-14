@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"flag"
 	"fmt"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -11,6 +12,7 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"strings"
 	"sync"
 	"time"
 
@@ -427,12 +429,10 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 		entryKey := &pb.KvRecordKey{}
 		entryKey.Key = &pb.KvRecordKey_TrackedEntryKey{TrackedEntryKey: key}
 
-		prefix, err := proto.Marshal(entryKey)
-		if err != nil {
-			return err
-		}
+		prefix := TrackedEntryPrefix + proto.MarshalTextString(entryKey)
+		bprefix := []byte(prefix)
 
-		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+		for it.Seek(bprefix); it.ValidForPrefix(bprefix); it.Next() {
 			alreadyTracked = true
 			return nil
 		}
@@ -487,7 +487,9 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 	s.data.Update(func(txn *badger.Txn) error {
 		entryKey := &pb.KvRecordKey{Key: &pb.KvRecordKey_TrackedEntryKey{TrackedEntryKey: key}}
 
-		keyBytes, err := proto.Marshal(entryKey)
+		prefix := TrackedEntryPrefix + proto.MarshalTextString(entryKey)
+		keyBytes := []byte(prefix)
+
 		if err != nil {
 			return err
 		}
@@ -525,11 +527,16 @@ func (s *server) ListTrackedEntries(ctx context.Context, req *pb.ListTrackedEntr
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()
 
-		for it.Rewind(); it.Valid(); it.Next() {
+		bprefix := []byte(TrackedEntryPrefix)
+
+		for it.Seek(bprefix); it.ValidForPrefix(bprefix); it.Next() {
 			marshalledValue := []byte{}
 			key := &pb.KvRecordKey{}
 
-			err := proto.Unmarshal(it.Item().Key(), key)
+			str := string(it.Item().Key())
+			skey := strings.TrimPrefix(str, TrackedEntryPrefix)
+
+			err := proto.UnmarshalText(skey, key)
 			if err != nil {
 				return err
 			}
@@ -577,10 +584,8 @@ func (s *server) UntrackEntry(ctx context.Context, req *pb.UntrackEntryRequest) 
 	log.Printf("UntrackEntry: %+v", key)
 	err := s.data.Update(func(txn *badger.Txn) error {
 		entryKey := &pb.KvRecordKey{Key: &pb.KvRecordKey_TrackedEntryKey{TrackedEntryKey: key}}
-		key, err := proto.Marshal(entryKey)
-		if err != nil {
-			return nil
-		}
+		skey := TrackedEntryPrefix + proto.MarshalTextString(entryKey)
+		key := []byte(skey)
 
 		return txn.Delete(key)
 	})
@@ -591,8 +596,59 @@ func (s *server) UntrackEntry(ctx context.Context, req *pb.UntrackEntryRequest) 
 	}
 }
 
-func (s *server) GetUserInfo(context.Context, *pb.GetUserInfoRequest) (*pb.GetUserInfoResponse, error) {
-	return &pb.GetUserInfoResponse{}, nil
+func (s *server) GetUserInfo(_ context.Context, in *pb.GetUserInfoRequest) (*pb.GetUserInfoResponse, error) {
+	ui := pb.UserInfo{}
+	prefix := []byte((UserEntryPrefix + in.UserId))
+
+	err := s.data.View(func(txn *badger.Txn) error {
+		it := txn.NewIterator(badger.DefaultIteratorOptions)
+		defer it.Close()
+		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+			skey := strings.TrimPrefix(string(it.Item().Key()), UserEntryPrefix)
+			if skey == in.UserId {
+				return it.Item().Value(func(val []byte) error {
+					err := proto.Unmarshal(val, &ui)
+					if err != nil {
+						return err
+					}
+					return nil
+				})
+			}
+		}
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	} else {
+		if ui.UserId == "" {
+			if in.GetAction() == pb.UserInfoAction_USER_INFO_ACTION_CREATE {
+				ui.UserId = in.UserId
+				ui.UserTelegramId = in.UserTelegramId
+
+				err := s.data.Update(func(txn *badger.Txn) error {
+					val, err := proto.Marshal(&ui)
+					if err != nil {
+						return err
+					}
+
+					txn.Set(prefix, val)
+
+					return nil
+				})
+
+				if err != nil {
+					return nil, err
+				} else {
+					return &pb.GetUserInfoResponse{UserInfo: &ui}, nil
+				}
+			}
+		} else {
+			return &pb.GetUserInfoResponse{UserInfo: &ui}, nil
+		}
+
+		return nil, errors.New("User not found")
+	}
 }
 
 func (s *server) Close() {
