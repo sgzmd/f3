@@ -41,6 +41,34 @@ enum EntryType {
   ENTRY_TYPE_BOOK = 3;
 }
 
+enum UserInfoAction {
+  USER_INFO_ACTION_NO_CREATE = 0;
+  USER_INFO_ACTION_CREATE = 1;
+}
+
+message UserInfoRequest {
+  // User ID string, constructed by the calling frontend, can be anything.
+  string user_id = 1;
+  UserInfoAction action = 2;
+}
+
+message UserInfo {
+  string user_id = 1;
+  string user_name = 2;
+  int64 user_telegram_id = 3;
+  string user_email = 4;
+}
+
+enum UserCreated {
+  USER_CREATED_NO = 0;
+  USER_CREATED_YES = 1;
+}
+
+message UserInfoResponse {
+  UserInfo user_info = 1;
+  UserCreated user_created = 2;
+}
+
 message GlobalSearchRequest {
   string search_term = 1;
   EntryType entry_type_filter = 2;

@@ -125,7 +125,6 @@ func AuthMiddleware() func(c *fiber.Ctx) error {
 						log.Printf("Cannot create cookie: %+v", err)
 						return c.Redirect(Login)
 					} else {
-
 						cookie := &fiber.Cookie{
 							Name:    tgauth.DefaultCookieName,
 							Value:   cookieValue,
