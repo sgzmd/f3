@@ -32,6 +32,8 @@ service FlibustierService {
   rpc TrackEntry (TrackEntryRequest) returns (TrackEntryResponse) {}
   rpc ListTrackedEntries (ListTrackedEntriesRequest) returns (ListTrackedEntriesResponse) {}
   rpc UntrackEntry (UntrackEntryRequest) returns (UntrackEntryResponse) {}
+
+  rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {}
 }
 
 enum EntryType {
@@ -46,7 +48,7 @@ enum UserInfoAction {
   USER_INFO_ACTION_CREATE = 1;
 }
 
-message UserInfoRequest {
+message GetUserInfoRequest {
   // User ID string, constructed by the calling frontend, can be anything.
   string user_id = 1;
   UserInfoAction action = 2;
@@ -64,7 +66,14 @@ enum UserCreated {
   USER_CREATED_YES = 1;
 }
 
-message UserInfoResponse {
+message KvRecordKey {
+  oneof key {
+    string user_id = 1;
+    TrackedEntryKey tracked_entry_key = 2;
+  }
+}
+
+message GetUserInfoResponse {
   UserInfo user_info = 1;
   UserCreated user_created = 2;
 }

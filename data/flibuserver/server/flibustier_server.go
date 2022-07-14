@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
 	"net"
@@ -38,6 +39,12 @@ var (
 	datastore  = flag.String("datastore", "", "Path to the data store to use")
 	update     = flag.Duration("update_every", 24*time.Hour, "How often to re-download files")
 	updateCmd  = flag.String("update_cmd", "/app/downloader_launcher.sh", "Command to kick-off re-download")
+	dumpDb     = flag.String("dump_db", "", "If used, will dump DB to given file and quit")
+)
+
+const (
+	TrackedEntryPrefix = "tracked_entry_"
+	UserEntryPrefix    = "user_entry_"
 )
 
 func (s *server) SearchAuthors(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, error) {
@@ -416,7 +423,11 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 	err := s.data.View(func(txn *badger.Txn) error {
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()
-		prefix, err := proto.Marshal(key)
+
+		entryKey := &pb.KvRecordKey{}
+		entryKey.Key = &pb.KvRecordKey_TrackedEntryKey{TrackedEntryKey: key}
+
+		prefix, err := proto.Marshal(entryKey)
 		if err != nil {
 			return err
 		}
@@ -474,7 +485,9 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 	}
 
 	s.data.Update(func(txn *badger.Txn) error {
-		keyBytes, err := proto.Marshal(key)
+		entryKey := &pb.KvRecordKey{Key: &pb.KvRecordKey_TrackedEntryKey{TrackedEntryKey: key}}
+
+		keyBytes, err := proto.Marshal(entryKey)
 		if err != nil {
 			return err
 		}
@@ -514,15 +527,20 @@ func (s *server) ListTrackedEntries(ctx context.Context, req *pb.ListTrackedEntr
 
 		for it.Rewind(); it.Valid(); it.Next() {
 			marshalledValue := []byte{}
-			key := &pb.TrackedEntryKey{}
+			key := &pb.KvRecordKey{}
 
 			err := proto.Unmarshal(it.Item().Key(), key)
 			if err != nil {
 				return err
 			}
 
+			recordKey := key.GetTrackedEntryKey()
+			if key == nil {
+				continue
+			}
+
 			// This isn't really efficient, we should use prefix scan
-			if key.UserId != req.UserId {
+			if recordKey.UserId != req.UserId {
 				continue
 			}
 
@@ -540,7 +558,7 @@ func (s *server) ListTrackedEntries(ctx context.Context, req *pb.ListTrackedEntr
 			if err != nil {
 				return err
 			}
-			trackedEntry.Key = key
+			trackedEntry.Key = recordKey
 			entries = append(entries, &trackedEntry)
 		}
 
@@ -558,7 +576,8 @@ func (s *server) UntrackEntry(ctx context.Context, req *pb.UntrackEntryRequest) 
 	key := req.Key
 	log.Printf("UntrackEntry: %+v", key)
 	err := s.data.Update(func(txn *badger.Txn) error {
-		key, err := proto.Marshal(key)
+		entryKey := &pb.KvRecordKey{Key: &pb.KvRecordKey_TrackedEntryKey{TrackedEntryKey: key}}
+		key, err := proto.Marshal(entryKey)
 		if err != nil {
 			return nil
 		}
@@ -572,9 +591,63 @@ func (s *server) UntrackEntry(ctx context.Context, req *pb.UntrackEntryRequest) 
 	}
 }
 
+func (s *server) GetUserInfo(context.Context, *pb.GetUserInfoRequest) (*pb.GetUserInfoResponse, error) {
+	return &pb.GetUserInfoResponse{}, nil
+}
+
 func (s *server) Close() {
 	log.Println("Closing database connection.")
 	s.sqliteDb.Close()
+}
+
+func (s *server) DumpDb(fileName string) {
+	log.Printf("Dumping database to %s and quitting", fileName)
+	_ = s.data.View(func(txn *badger.Txn) error {
+		opts := badger.DefaultIteratorOptions
+		opts.Prefix = []byte("")
+		it := txn.NewIterator(opts)
+		defer it.Close()
+
+		f, err := os.Create(fileName)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		for it.Rewind(); it.Valid(); it.Next() {
+			item := it.Item()
+			k := item.Key()
+			marshalledValue := []byte{}
+			key := &pb.TrackedEntryKey{}
+
+			err := proto.Unmarshal(k, key)
+			if err != nil {
+				return err
+			}
+
+			err = it.Item().Value(func(val []byte) error {
+				marshalledValue = val
+				return nil
+			})
+			if err != nil {
+				return err
+			}
+
+			trackedEntry := pb.TrackedEntry{}
+			err = proto.Unmarshal(marshalledValue, &trackedEntry)
+
+			if err != nil {
+				return err
+			}
+
+			strkey, _ := protojson.Marshal(key)
+			strval, _ := protojson.Marshal(&trackedEntry)
+
+			f.WriteString(string(strkey) + "|||" + string(strval) + "\n")
+		}
+
+		return nil
+	})
 }
 
 func OpenDatabase(db_path string) (*sql.DB, error) {
@@ -653,6 +726,11 @@ func main() {
 	pb.RegisterFlibustierServiceServer(s, srv)
 	reflection.Register(s)
 	log.Printf("server listening at %v", lis.Addr())
+
+	if *dumpDb != "" {
+		srv.DumpDb(*dumpDb)
+		os.Exit(0)
+	}
 
 	if updateCmd != nil {
 		dbReopen := time.NewTicker(*update)
