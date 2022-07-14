@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/template/html"
 	"github.com/jessevdk/go-flags"
+	"github.com/sgzmd/f3/web/common"
 	"github.com/sgzmd/f3/web/rpc"
 	"github.com/sgzmd/f3/web/webserver/handlers"
 	"github.com/sgzmd/go-telegram-auth/tgauth"
@@ -24,13 +25,9 @@ var (
 	auth tgauth.TelegramAuth
 )
 
-type Options struct {
-	GrpcBackend   string `short:"g" long:"grpc_backend" description:"GRPC Backend to use"`
-	TelegramToken string `short:"t" long:"telegram_token" description:"Telegram token to use" required:"true"`
-}
-
 func main() {
-	var opts Options
+	var opts common.Options
+
 	_, err := flags.Parse(&opts)
 
 	if err != nil {
