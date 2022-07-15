@@ -651,6 +651,50 @@ func (s *server) GetUserInfo(_ context.Context, in *pb.GetUserInfoRequest) (*pb.
 	}
 }
 
+func (s *server) ListUsers(_ context.Context, _ *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
+	prefix := []byte((UserEntryPrefix))
+	resp := pb.ListUsersResponse{
+		User: make([]*pb.UserInfo, 0, 10),
+	}
+	err := s.data.View(func(txn *badger.Txn) error {
+		it := txn.NewIterator(badger.DefaultIteratorOptions)
+		defer it.Close()
+
+		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+			err := it.Item().Value(func(val []byte) error {
+				ui := pb.UserInfo{}
+				err := proto.Unmarshal(val, &ui)
+				if err != nil {
+					return err
+				}
+				resp.User = append(resp.User, &ui)
+				return nil
+			})
+
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	} else {
+		return &resp, nil
+	}
+}
+
+// DeleteAllUsers deletes all users - for testing only.
+func (s *server) DeleteAllUsers(_ context.Context, _ *pb.DeleteAllUsersRequest) (*pb.DeleteAllUsersResponse, error) {
+	e := s.data.DropPrefix([]byte(UserEntryPrefix))
+	if e != nil {
+		return nil, e
+	} else {
+		return &pb.DeleteAllUsersResponse{}, nil
+	}
+}
+
 func (s *server) Close() {
 	log.Println("Closing database connection.")
 	s.sqliteDb.Close()

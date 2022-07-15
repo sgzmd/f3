@@ -276,6 +276,167 @@ func (UntrackEntryResult) EnumDescriptor() ([]byte, []int) {
 	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{4}
 }
 
+type ListUsersRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *ListUsersRequest) Reset() {
+	*x = ListUsersRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListUsersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUsersRequest) ProtoMessage() {}
+
+func (x *ListUsersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUsersRequest.ProtoReflect.Descriptor instead.
+func (*ListUsersRequest) Descriptor() ([]byte, []int) {
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{0}
+}
+
+type ListUsersResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	User []*UserInfo `protobuf:"bytes,1,rep,name=user,proto3" json:"user,omitempty"`
+}
+
+func (x *ListUsersResponse) Reset() {
+	*x = ListUsersResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListUsersResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUsersResponse) ProtoMessage() {}
+
+func (x *ListUsersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUsersResponse.ProtoReflect.Descriptor instead.
+func (*ListUsersResponse) Descriptor() ([]byte, []int) {
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ListUsersResponse) GetUser() []*UserInfo {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+type DeleteAllUsersRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *DeleteAllUsersRequest) Reset() {
+	*x = DeleteAllUsersRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteAllUsersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAllUsersRequest) ProtoMessage() {}
+
+func (x *DeleteAllUsersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAllUsersRequest.ProtoReflect.Descriptor instead.
+func (*DeleteAllUsersRequest) Descriptor() ([]byte, []int) {
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{2}
+}
+
+type DeleteAllUsersResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *DeleteAllUsersResponse) Reset() {
+	*x = DeleteAllUsersResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteAllUsersResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAllUsersResponse) ProtoMessage() {}
+
+func (x *DeleteAllUsersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAllUsersResponse.ProtoReflect.Descriptor instead.
+func (*DeleteAllUsersResponse) Descriptor() ([]byte, []int) {
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{3}
+}
+
 type GetUserInfoRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -290,7 +451,7 @@ type GetUserInfoRequest struct {
 func (x *GetUserInfoRequest) Reset() {
 	*x = GetUserInfoRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[0]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -303,7 +464,7 @@ func (x *GetUserInfoRequest) String() string {
 func (*GetUserInfoRequest) ProtoMessage() {}
 
 func (x *GetUserInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[0]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -316,7 +477,7 @@ func (x *GetUserInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserInfoRequest.ProtoReflect.Descriptor instead.
 func (*GetUserInfoRequest) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{0}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetUserInfoRequest) GetUserId() string {
@@ -354,7 +515,7 @@ type UserInfo struct {
 func (x *UserInfo) Reset() {
 	*x = UserInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[1]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -367,7 +528,7 @@ func (x *UserInfo) String() string {
 func (*UserInfo) ProtoMessage() {}
 
 func (x *UserInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[1]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -380,7 +541,7 @@ func (x *UserInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserInfo.ProtoReflect.Descriptor instead.
 func (*UserInfo) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{1}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UserInfo) GetUserId() string {
@@ -425,7 +586,7 @@ type KvRecordKey struct {
 func (x *KvRecordKey) Reset() {
 	*x = KvRecordKey{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[2]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -438,7 +599,7 @@ func (x *KvRecordKey) String() string {
 func (*KvRecordKey) ProtoMessage() {}
 
 func (x *KvRecordKey) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[2]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -451,7 +612,7 @@ func (x *KvRecordKey) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KvRecordKey.ProtoReflect.Descriptor instead.
 func (*KvRecordKey) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{2}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{6}
 }
 
 func (m *KvRecordKey) GetKey() isKvRecordKey_Key {
@@ -503,7 +664,7 @@ type GetUserInfoResponse struct {
 func (x *GetUserInfoResponse) Reset() {
 	*x = GetUserInfoResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[3]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -516,7 +677,7 @@ func (x *GetUserInfoResponse) String() string {
 func (*GetUserInfoResponse) ProtoMessage() {}
 
 func (x *GetUserInfoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[3]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -529,7 +690,7 @@ func (x *GetUserInfoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserInfoResponse.ProtoReflect.Descriptor instead.
 func (*GetUserInfoResponse) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{3}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetUserInfoResponse) GetUserInfo() *UserInfo {
@@ -558,7 +719,7 @@ type GlobalSearchRequest struct {
 func (x *GlobalSearchRequest) Reset() {
 	*x = GlobalSearchRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[4]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -571,7 +732,7 @@ func (x *GlobalSearchRequest) String() string {
 func (*GlobalSearchRequest) ProtoMessage() {}
 
 func (x *GlobalSearchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[4]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -584,7 +745,7 @@ func (x *GlobalSearchRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GlobalSearchRequest.ProtoReflect.Descriptor instead.
 func (*GlobalSearchRequest) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{4}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GlobalSearchRequest) GetSearchTerm() string {
@@ -616,7 +777,7 @@ type FoundEntry struct {
 func (x *FoundEntry) Reset() {
 	*x = FoundEntry{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[5]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -629,7 +790,7 @@ func (x *FoundEntry) String() string {
 func (*FoundEntry) ProtoMessage() {}
 
 func (x *FoundEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[5]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -642,7 +803,7 @@ func (x *FoundEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FoundEntry.ProtoReflect.Descriptor instead.
 func (*FoundEntry) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{5}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *FoundEntry) GetEntryType() EntryType {
@@ -692,7 +853,7 @@ type GlobalSearchResponse struct {
 func (x *GlobalSearchResponse) Reset() {
 	*x = GlobalSearchResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[6]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -705,7 +866,7 @@ func (x *GlobalSearchResponse) String() string {
 func (*GlobalSearchResponse) ProtoMessage() {}
 
 func (x *GlobalSearchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[6]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -718,7 +879,7 @@ func (x *GlobalSearchResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GlobalSearchResponse.ProtoReflect.Descriptor instead.
 func (*GlobalSearchResponse) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{6}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GlobalSearchResponse) GetOriginalRequest() *GlobalSearchRequest {
@@ -747,7 +908,7 @@ type Book struct {
 func (x *Book) Reset() {
 	*x = Book{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[7]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -760,7 +921,7 @@ func (x *Book) String() string {
 func (*Book) ProtoMessage() {}
 
 func (x *Book) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[7]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -773,7 +934,7 @@ func (x *Book) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Book.ProtoReflect.Descriptor instead.
 func (*Book) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{7}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *Book) GetBookName() string {
@@ -807,7 +968,7 @@ type TrackedEntry struct {
 func (x *TrackedEntry) Reset() {
 	*x = TrackedEntry{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[8]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -820,7 +981,7 @@ func (x *TrackedEntry) String() string {
 func (*TrackedEntry) ProtoMessage() {}
 
 func (x *TrackedEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[8]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -833,7 +994,7 @@ func (x *TrackedEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TrackedEntry.ProtoReflect.Descriptor instead.
 func (*TrackedEntry) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{8}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *TrackedEntry) GetKey() *TrackedEntryKey {
@@ -891,7 +1052,7 @@ type TrackEntryRequest struct {
 func (x *TrackEntryRequest) Reset() {
 	*x = TrackEntryRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[9]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -904,7 +1065,7 @@ func (x *TrackEntryRequest) String() string {
 func (*TrackEntryRequest) ProtoMessage() {}
 
 func (x *TrackEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[9]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -917,7 +1078,7 @@ func (x *TrackEntryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TrackEntryRequest.ProtoReflect.Descriptor instead.
 func (*TrackEntryRequest) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{9}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *TrackEntryRequest) GetKey() *TrackedEntryKey {
@@ -947,7 +1108,7 @@ type UpdateRequired struct {
 func (x *UpdateRequired) Reset() {
 	*x = UpdateRequired{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[10]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -960,7 +1121,7 @@ func (x *UpdateRequired) String() string {
 func (*UpdateRequired) ProtoMessage() {}
 
 func (x *UpdateRequired) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[10]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -973,7 +1134,7 @@ func (x *UpdateRequired) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateRequired.ProtoReflect.Descriptor instead.
 func (*UpdateRequired) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{10}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *UpdateRequired) GetTrackedEntry() *TrackedEntry {
@@ -1008,7 +1169,7 @@ type CheckUpdatesRequest struct {
 func (x *CheckUpdatesRequest) Reset() {
 	*x = CheckUpdatesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[11]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1021,7 +1182,7 @@ func (x *CheckUpdatesRequest) String() string {
 func (*CheckUpdatesRequest) ProtoMessage() {}
 
 func (x *CheckUpdatesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[11]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1034,7 +1195,7 @@ func (x *CheckUpdatesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckUpdatesRequest.ProtoReflect.Descriptor instead.
 func (*CheckUpdatesRequest) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{11}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *CheckUpdatesRequest) GetTrackedEntry() []*TrackedEntry {
@@ -1055,7 +1216,7 @@ type CheckUpdatesResponse struct {
 func (x *CheckUpdatesResponse) Reset() {
 	*x = CheckUpdatesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[12]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1068,7 +1229,7 @@ func (x *CheckUpdatesResponse) String() string {
 func (*CheckUpdatesResponse) ProtoMessage() {}
 
 func (x *CheckUpdatesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[12]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1081,7 +1242,7 @@ func (x *CheckUpdatesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckUpdatesResponse.ProtoReflect.Descriptor instead.
 func (*CheckUpdatesResponse) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{12}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *CheckUpdatesResponse) GetUpdateRequired() []*UpdateRequired {
@@ -1102,7 +1263,7 @@ type GetSeriesBooksRequest struct {
 func (x *GetSeriesBooksRequest) Reset() {
 	*x = GetSeriesBooksRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[13]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1115,7 +1276,7 @@ func (x *GetSeriesBooksRequest) String() string {
 func (*GetSeriesBooksRequest) ProtoMessage() {}
 
 func (x *GetSeriesBooksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[13]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1128,7 +1289,7 @@ func (x *GetSeriesBooksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSeriesBooksRequest.ProtoReflect.Descriptor instead.
 func (*GetSeriesBooksRequest) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{13}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetSeriesBooksRequest) GetSequenceId() int32 {
@@ -1149,7 +1310,7 @@ type GetAuthorBooksRequest struct {
 func (x *GetAuthorBooksRequest) Reset() {
 	*x = GetAuthorBooksRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[14]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1162,7 +1323,7 @@ func (x *GetAuthorBooksRequest) String() string {
 func (*GetAuthorBooksRequest) ProtoMessage() {}
 
 func (x *GetAuthorBooksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[14]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1175,7 +1336,7 @@ func (x *GetAuthorBooksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAuthorBooksRequest.ProtoReflect.Descriptor instead.
 func (*GetAuthorBooksRequest) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{14}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetAuthorBooksRequest) GetAuthorId() int32 {
@@ -1198,7 +1359,7 @@ type EntityBookResponse struct {
 func (x *EntityBookResponse) Reset() {
 	*x = EntityBookResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[15]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1211,7 +1372,7 @@ func (x *EntityBookResponse) String() string {
 func (*EntityBookResponse) ProtoMessage() {}
 
 func (x *EntityBookResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[15]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1224,7 +1385,7 @@ func (x *EntityBookResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EntityBookResponse.ProtoReflect.Descriptor instead.
 func (*EntityBookResponse) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{15}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *EntityBookResponse) GetEntityId() int32 {
@@ -1259,7 +1420,7 @@ type GetSeriesBooksResponse struct {
 func (x *GetSeriesBooksResponse) Reset() {
 	*x = GetSeriesBooksResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[16]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1272,7 +1433,7 @@ func (x *GetSeriesBooksResponse) String() string {
 func (*GetSeriesBooksResponse) ProtoMessage() {}
 
 func (x *GetSeriesBooksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[16]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1285,7 +1446,7 @@ func (x *GetSeriesBooksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSeriesBooksResponse.ProtoReflect.Descriptor instead.
 func (*GetSeriesBooksResponse) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{16}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GetSeriesBooksResponse) GetEntityBookResponse() *EntityBookResponse {
@@ -1306,7 +1467,7 @@ type GetAuthorBooksResponse struct {
 func (x *GetAuthorBooksResponse) Reset() {
 	*x = GetAuthorBooksResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[17]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1319,7 +1480,7 @@ func (x *GetAuthorBooksResponse) String() string {
 func (*GetAuthorBooksResponse) ProtoMessage() {}
 
 func (x *GetAuthorBooksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[17]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1332,7 +1493,7 @@ func (x *GetAuthorBooksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAuthorBooksResponse.ProtoReflect.Descriptor instead.
 func (*GetAuthorBooksResponse) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{17}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetAuthorBooksResponse) GetEntityBookResponse() *EntityBookResponse {
@@ -1355,7 +1516,7 @@ type AuthorName struct {
 func (x *AuthorName) Reset() {
 	*x = AuthorName{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[18]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1368,7 +1529,7 @@ func (x *AuthorName) String() string {
 func (*AuthorName) ProtoMessage() {}
 
 func (x *AuthorName) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[18]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1381,7 +1542,7 @@ func (x *AuthorName) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuthorName.ProtoReflect.Descriptor instead.
 func (*AuthorName) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{18}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *AuthorName) GetFirstName() string {
@@ -1419,7 +1580,7 @@ type EntityName struct {
 func (x *EntityName) Reset() {
 	*x = EntityName{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[19]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1432,7 +1593,7 @@ func (x *EntityName) String() string {
 func (*EntityName) ProtoMessage() {}
 
 func (x *EntityName) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[19]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1445,7 +1606,7 @@ func (x *EntityName) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EntityName.ProtoReflect.Descriptor instead.
 func (*EntityName) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{19}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{23}
 }
 
 func (m *EntityName) GetName() isEntityName_Name {
@@ -1498,7 +1659,7 @@ type TrackedEntryKey struct {
 func (x *TrackedEntryKey) Reset() {
 	*x = TrackedEntryKey{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[20]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1511,7 +1672,7 @@ func (x *TrackedEntryKey) String() string {
 func (*TrackedEntryKey) ProtoMessage() {}
 
 func (x *TrackedEntryKey) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[20]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1524,7 +1685,7 @@ func (x *TrackedEntryKey) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TrackedEntryKey.ProtoReflect.Descriptor instead.
 func (*TrackedEntryKey) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{20}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *TrackedEntryKey) GetEntityType() EntryType {
@@ -1559,7 +1720,7 @@ type UntrackEntryRequest struct {
 func (x *UntrackEntryRequest) Reset() {
 	*x = UntrackEntryRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[21]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[25]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1572,7 +1733,7 @@ func (x *UntrackEntryRequest) String() string {
 func (*UntrackEntryRequest) ProtoMessage() {}
 
 func (x *UntrackEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[21]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[25]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1585,7 +1746,7 @@ func (x *UntrackEntryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UntrackEntryRequest.ProtoReflect.Descriptor instead.
 func (*UntrackEntryRequest) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{21}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *UntrackEntryRequest) GetKey() *TrackedEntryKey {
@@ -1607,7 +1768,7 @@ type TrackEntryResponse struct {
 func (x *TrackEntryResponse) Reset() {
 	*x = TrackEntryResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[22]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1620,7 +1781,7 @@ func (x *TrackEntryResponse) String() string {
 func (*TrackEntryResponse) ProtoMessage() {}
 
 func (x *TrackEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[22]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1633,7 +1794,7 @@ func (x *TrackEntryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TrackEntryResponse.ProtoReflect.Descriptor instead.
 func (*TrackEntryResponse) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{22}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *TrackEntryResponse) GetKey() *TrackedEntryKey {
@@ -1661,7 +1822,7 @@ type ListTrackedEntriesRequest struct {
 func (x *ListTrackedEntriesRequest) Reset() {
 	*x = ListTrackedEntriesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[23]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1674,7 +1835,7 @@ func (x *ListTrackedEntriesRequest) String() string {
 func (*ListTrackedEntriesRequest) ProtoMessage() {}
 
 func (x *ListTrackedEntriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[23]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1687,7 +1848,7 @@ func (x *ListTrackedEntriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTrackedEntriesRequest.ProtoReflect.Descriptor instead.
 func (*ListTrackedEntriesRequest) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{23}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ListTrackedEntriesRequest) GetUserId() string {
@@ -1708,7 +1869,7 @@ type ListTrackedEntriesResponse struct {
 func (x *ListTrackedEntriesResponse) Reset() {
 	*x = ListTrackedEntriesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[24]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1721,7 +1882,7 @@ func (x *ListTrackedEntriesResponse) String() string {
 func (*ListTrackedEntriesResponse) ProtoMessage() {}
 
 func (x *ListTrackedEntriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[24]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[28]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1734,7 +1895,7 @@ func (x *ListTrackedEntriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTrackedEntriesResponse.ProtoReflect.Descriptor instead.
 func (*ListTrackedEntriesResponse) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{24}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ListTrackedEntriesResponse) GetEntry() []*TrackedEntry {
@@ -1756,7 +1917,7 @@ type UntrackEntryResponse struct {
 func (x *UntrackEntryResponse) Reset() {
 	*x = UntrackEntryResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[25]
+		mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[29]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1769,7 +1930,7 @@ func (x *UntrackEntryResponse) String() string {
 func (*UntrackEntryResponse) ProtoMessage() {}
 
 func (x *UntrackEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[25]
+	mi := &file_flibuserver_proto_v1_flibustier_proto_msgTypes[29]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1782,7 +1943,7 @@ func (x *UntrackEntryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UntrackEntryResponse.ProtoReflect.Descriptor instead.
 func (*UntrackEntryResponse) Descriptor() ([]byte, []int) {
-	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{25}
+	return file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *UntrackEntryResponse) GetKey() *TrackedEntryKey {
@@ -1807,7 +1968,16 @@ var file_flibuserver_proto_v1_flibustier_proto_rawDesc = []byte{
 	0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x14, 0x66, 0x6c, 0x69, 0x62, 0x75, 0x73, 0x65,
 	0x72, 0x76, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x76, 0x31, 0x1a, 0x1f, 0x67,
 	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74,
-	0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x95,
+	0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x12,
+	0x0a, 0x10, 0x4c, 0x69, 0x73, 0x74, 0x55, 0x73, 0x65, 0x72, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x22, 0x47, 0x0a, 0x11, 0x4c, 0x69, 0x73, 0x74, 0x55, 0x73, 0x65, 0x72, 0x73, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x32, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18,
+	0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x66, 0x6c, 0x69, 0x62, 0x75, 0x73, 0x65, 0x72,
+	0x76, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x76, 0x31, 0x2e, 0x55, 0x73, 0x65,
+	0x72, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x04, 0x75, 0x73, 0x65, 0x72, 0x22, 0x17, 0x0a, 0x15, 0x44,
+	0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x6c, 0x6c, 0x55, 0x73, 0x65, 0x72, 0x73, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x22, 0x18, 0x0a, 0x16, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x6c,
+	0x6c, 0x55, 0x73, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x95,
 	0x01, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65,
 	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64,
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x28,
@@ -2046,7 +2216,7 @@ var file_flibuserver_proto_v1_flibustier_proto_rawDesc = []byte{
 	0x59, 0x5f, 0x52, 0x45, 0x53, 0x55, 0x4c, 0x54, 0x5f, 0x4f, 0x4b, 0x10, 0x01, 0x12, 0x24, 0x0a,
 	0x20, 0x55, 0x4e, 0x54, 0x52, 0x41, 0x43, 0x4b, 0x5f, 0x45, 0x4e, 0x54, 0x52, 0x59, 0x5f, 0x52,
 	0x45, 0x53, 0x55, 0x4c, 0x54, 0x5f, 0x4e, 0x4f, 0x54, 0x5f, 0x54, 0x52, 0x41, 0x43, 0x4b, 0x45,
-	0x44, 0x10, 0x02, 0x32, 0xf0, 0x06, 0x0a, 0x11, 0x46, 0x6c, 0x69, 0x62, 0x75, 0x73, 0x74, 0x69,
+	0x44, 0x10, 0x02, 0x32, 0xbf, 0x08, 0x0a, 0x11, 0x46, 0x6c, 0x69, 0x62, 0x75, 0x73, 0x74, 0x69,
 	0x65, 0x72, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x67, 0x0a, 0x0c, 0x47, 0x6c, 0x6f,
 	0x62, 0x61, 0x6c, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x12, 0x29, 0x2e, 0x66, 0x6c, 0x69, 0x62,
 	0x75, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x76, 0x31,
@@ -2101,13 +2271,26 @@ var file_flibuserver_proto_v1_flibustier_proto_rawDesc = []byte{
 	0x66, 0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x29, 0x2e, 0x66, 0x6c, 0x69, 0x62,
 	0x75, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x76, 0x31,
 	0x2e, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x53, 0x0a, 0x1a, 0x63, 0x6f, 0x6d, 0x2e, 0x73, 0x67,
-	0x7a, 0x6d, 0x64, 0x2e, 0x66, 0x6c, 0x69, 0x62, 0x75, 0x73, 0x74, 0x69, 0x65, 0x72, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x42, 0x0f, 0x46, 0x6c, 0x69, 0x62, 0x75, 0x73, 0x74, 0x69, 0x65, 0x72,
-	0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x22, 0x66, 0x6c, 0x69, 0x62, 0x75, 0x73, 0x74,
-	0x61, 0x69, 0x6d, 0x70, 0x6f, 0x72, 0x74, 0x65, 0x72, 0x2f, 0x66, 0x6c, 0x69, 0x62, 0x75, 0x73,
-	0x65, 0x72, 0x76, 0x65, 0x72, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x5e, 0x0a, 0x09, 0x4c, 0x69, 0x73, 0x74, 0x55, 0x73,
+	0x65, 0x72, 0x73, 0x12, 0x26, 0x2e, 0x66, 0x6c, 0x69, 0x62, 0x75, 0x73, 0x65, 0x72, 0x76, 0x65,
+	0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x76, 0x31, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x55,
+	0x73, 0x65, 0x72, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x27, 0x2e, 0x66, 0x6c,
+	0x69, 0x62, 0x75, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e,
+	0x76, 0x31, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x55, 0x73, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x6d, 0x0a, 0x0e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x41, 0x6c, 0x6c, 0x55, 0x73, 0x65, 0x72, 0x73, 0x12, 0x2b, 0x2e, 0x66, 0x6c, 0x69, 0x62, 0x75,
+	0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x76, 0x31, 0x2e,
+	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x6c, 0x6c, 0x55, 0x73, 0x65, 0x72, 0x73, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2c, 0x2e, 0x66, 0x6c, 0x69, 0x62, 0x75, 0x73, 0x65, 0x72,
+	0x76, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x76, 0x31, 0x2e, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x41, 0x6c, 0x6c, 0x55, 0x73, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x53, 0x0a, 0x1a, 0x63, 0x6f, 0x6d, 0x2e, 0x73, 0x67, 0x7a,
+	0x6d, 0x64, 0x2e, 0x66, 0x6c, 0x69, 0x62, 0x75, 0x73, 0x74, 0x69, 0x65, 0x72, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x42, 0x0f, 0x46, 0x6c, 0x69, 0x62, 0x75, 0x73, 0x74, 0x69, 0x65, 0x72, 0x50,
+	0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x22, 0x66, 0x6c, 0x69, 0x62, 0x75, 0x73, 0x74, 0x61,
+	0x69, 0x6d, 0x70, 0x6f, 0x72, 0x74, 0x65, 0x72, 0x2f, 0x66, 0x6c, 0x69, 0x62, 0x75, 0x73, 0x65,
+	0x72, 0x76, 0x65, 0x72, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
@@ -2123,91 +2306,100 @@ func file_flibuserver_proto_v1_flibustier_proto_rawDescGZIP() []byte {
 }
 
 var file_flibuserver_proto_v1_flibustier_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_flibuserver_proto_v1_flibustier_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_flibuserver_proto_v1_flibustier_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
 var file_flibuserver_proto_v1_flibustier_proto_goTypes = []interface{}{
 	(EntryType)(0),                     // 0: flibuserver.proto.v1.EntryType
 	(UserInfoAction)(0),                // 1: flibuserver.proto.v1.UserInfoAction
 	(UserCreated)(0),                   // 2: flibuserver.proto.v1.UserCreated
 	(TrackEntryResult)(0),              // 3: flibuserver.proto.v1.TrackEntryResult
 	(UntrackEntryResult)(0),            // 4: flibuserver.proto.v1.UntrackEntryResult
-	(*GetUserInfoRequest)(nil),         // 5: flibuserver.proto.v1.GetUserInfoRequest
-	(*UserInfo)(nil),                   // 6: flibuserver.proto.v1.UserInfo
-	(*KvRecordKey)(nil),                // 7: flibuserver.proto.v1.KvRecordKey
-	(*GetUserInfoResponse)(nil),        // 8: flibuserver.proto.v1.GetUserInfoResponse
-	(*GlobalSearchRequest)(nil),        // 9: flibuserver.proto.v1.GlobalSearchRequest
-	(*FoundEntry)(nil),                 // 10: flibuserver.proto.v1.FoundEntry
-	(*GlobalSearchResponse)(nil),       // 11: flibuserver.proto.v1.GlobalSearchResponse
-	(*Book)(nil),                       // 12: flibuserver.proto.v1.Book
-	(*TrackedEntry)(nil),               // 13: flibuserver.proto.v1.TrackedEntry
-	(*TrackEntryRequest)(nil),          // 14: flibuserver.proto.v1.TrackEntryRequest
-	(*UpdateRequired)(nil),             // 15: flibuserver.proto.v1.UpdateRequired
-	(*CheckUpdatesRequest)(nil),        // 16: flibuserver.proto.v1.CheckUpdatesRequest
-	(*CheckUpdatesResponse)(nil),       // 17: flibuserver.proto.v1.CheckUpdatesResponse
-	(*GetSeriesBooksRequest)(nil),      // 18: flibuserver.proto.v1.GetSeriesBooksRequest
-	(*GetAuthorBooksRequest)(nil),      // 19: flibuserver.proto.v1.GetAuthorBooksRequest
-	(*EntityBookResponse)(nil),         // 20: flibuserver.proto.v1.EntityBookResponse
-	(*GetSeriesBooksResponse)(nil),     // 21: flibuserver.proto.v1.GetSeriesBooksResponse
-	(*GetAuthorBooksResponse)(nil),     // 22: flibuserver.proto.v1.GetAuthorBooksResponse
-	(*AuthorName)(nil),                 // 23: flibuserver.proto.v1.AuthorName
-	(*EntityName)(nil),                 // 24: flibuserver.proto.v1.EntityName
-	(*TrackedEntryKey)(nil),            // 25: flibuserver.proto.v1.TrackedEntryKey
-	(*UntrackEntryRequest)(nil),        // 26: flibuserver.proto.v1.UntrackEntryRequest
-	(*TrackEntryResponse)(nil),         // 27: flibuserver.proto.v1.TrackEntryResponse
-	(*ListTrackedEntriesRequest)(nil),  // 28: flibuserver.proto.v1.ListTrackedEntriesRequest
-	(*ListTrackedEntriesResponse)(nil), // 29: flibuserver.proto.v1.ListTrackedEntriesResponse
-	(*UntrackEntryResponse)(nil),       // 30: flibuserver.proto.v1.UntrackEntryResponse
-	(*timestamppb.Timestamp)(nil),      // 31: google.protobuf.Timestamp
+	(*ListUsersRequest)(nil),           // 5: flibuserver.proto.v1.ListUsersRequest
+	(*ListUsersResponse)(nil),          // 6: flibuserver.proto.v1.ListUsersResponse
+	(*DeleteAllUsersRequest)(nil),      // 7: flibuserver.proto.v1.DeleteAllUsersRequest
+	(*DeleteAllUsersResponse)(nil),     // 8: flibuserver.proto.v1.DeleteAllUsersResponse
+	(*GetUserInfoRequest)(nil),         // 9: flibuserver.proto.v1.GetUserInfoRequest
+	(*UserInfo)(nil),                   // 10: flibuserver.proto.v1.UserInfo
+	(*KvRecordKey)(nil),                // 11: flibuserver.proto.v1.KvRecordKey
+	(*GetUserInfoResponse)(nil),        // 12: flibuserver.proto.v1.GetUserInfoResponse
+	(*GlobalSearchRequest)(nil),        // 13: flibuserver.proto.v1.GlobalSearchRequest
+	(*FoundEntry)(nil),                 // 14: flibuserver.proto.v1.FoundEntry
+	(*GlobalSearchResponse)(nil),       // 15: flibuserver.proto.v1.GlobalSearchResponse
+	(*Book)(nil),                       // 16: flibuserver.proto.v1.Book
+	(*TrackedEntry)(nil),               // 17: flibuserver.proto.v1.TrackedEntry
+	(*TrackEntryRequest)(nil),          // 18: flibuserver.proto.v1.TrackEntryRequest
+	(*UpdateRequired)(nil),             // 19: flibuserver.proto.v1.UpdateRequired
+	(*CheckUpdatesRequest)(nil),        // 20: flibuserver.proto.v1.CheckUpdatesRequest
+	(*CheckUpdatesResponse)(nil),       // 21: flibuserver.proto.v1.CheckUpdatesResponse
+	(*GetSeriesBooksRequest)(nil),      // 22: flibuserver.proto.v1.GetSeriesBooksRequest
+	(*GetAuthorBooksRequest)(nil),      // 23: flibuserver.proto.v1.GetAuthorBooksRequest
+	(*EntityBookResponse)(nil),         // 24: flibuserver.proto.v1.EntityBookResponse
+	(*GetSeriesBooksResponse)(nil),     // 25: flibuserver.proto.v1.GetSeriesBooksResponse
+	(*GetAuthorBooksResponse)(nil),     // 26: flibuserver.proto.v1.GetAuthorBooksResponse
+	(*AuthorName)(nil),                 // 27: flibuserver.proto.v1.AuthorName
+	(*EntityName)(nil),                 // 28: flibuserver.proto.v1.EntityName
+	(*TrackedEntryKey)(nil),            // 29: flibuserver.proto.v1.TrackedEntryKey
+	(*UntrackEntryRequest)(nil),        // 30: flibuserver.proto.v1.UntrackEntryRequest
+	(*TrackEntryResponse)(nil),         // 31: flibuserver.proto.v1.TrackEntryResponse
+	(*ListTrackedEntriesRequest)(nil),  // 32: flibuserver.proto.v1.ListTrackedEntriesRequest
+	(*ListTrackedEntriesResponse)(nil), // 33: flibuserver.proto.v1.ListTrackedEntriesResponse
+	(*UntrackEntryResponse)(nil),       // 34: flibuserver.proto.v1.UntrackEntryResponse
+	(*timestamppb.Timestamp)(nil),      // 35: google.protobuf.Timestamp
 }
 var file_flibuserver_proto_v1_flibustier_proto_depIdxs = []int32{
-	1,  // 0: flibuserver.proto.v1.GetUserInfoRequest.action:type_name -> flibuserver.proto.v1.UserInfoAction
-	25, // 1: flibuserver.proto.v1.KvRecordKey.tracked_entry_key:type_name -> flibuserver.proto.v1.TrackedEntryKey
-	6,  // 2: flibuserver.proto.v1.GetUserInfoResponse.user_info:type_name -> flibuserver.proto.v1.UserInfo
-	2,  // 3: flibuserver.proto.v1.GetUserInfoResponse.user_created:type_name -> flibuserver.proto.v1.UserCreated
-	0,  // 4: flibuserver.proto.v1.GlobalSearchRequest.entry_type_filter:type_name -> flibuserver.proto.v1.EntryType
-	0,  // 5: flibuserver.proto.v1.FoundEntry.entry_type:type_name -> flibuserver.proto.v1.EntryType
-	9,  // 6: flibuserver.proto.v1.GlobalSearchResponse.original_request:type_name -> flibuserver.proto.v1.GlobalSearchRequest
-	10, // 7: flibuserver.proto.v1.GlobalSearchResponse.entry:type_name -> flibuserver.proto.v1.FoundEntry
-	25, // 8: flibuserver.proto.v1.TrackedEntry.key:type_name -> flibuserver.proto.v1.TrackedEntryKey
-	12, // 9: flibuserver.proto.v1.TrackedEntry.book:type_name -> flibuserver.proto.v1.Book
-	31, // 10: flibuserver.proto.v1.TrackedEntry.saved:type_name -> google.protobuf.Timestamp
-	25, // 11: flibuserver.proto.v1.TrackEntryRequest.key:type_name -> flibuserver.proto.v1.TrackedEntryKey
-	13, // 12: flibuserver.proto.v1.UpdateRequired.tracked_entry:type_name -> flibuserver.proto.v1.TrackedEntry
-	12, // 13: flibuserver.proto.v1.UpdateRequired.new_book:type_name -> flibuserver.proto.v1.Book
-	13, // 14: flibuserver.proto.v1.CheckUpdatesRequest.tracked_entry:type_name -> flibuserver.proto.v1.TrackedEntry
-	15, // 15: flibuserver.proto.v1.CheckUpdatesResponse.update_required:type_name -> flibuserver.proto.v1.UpdateRequired
-	12, // 16: flibuserver.proto.v1.EntityBookResponse.book:type_name -> flibuserver.proto.v1.Book
-	24, // 17: flibuserver.proto.v1.EntityBookResponse.entity_name:type_name -> flibuserver.proto.v1.EntityName
-	20, // 18: flibuserver.proto.v1.GetSeriesBooksResponse.entity_book_response:type_name -> flibuserver.proto.v1.EntityBookResponse
-	20, // 19: flibuserver.proto.v1.GetAuthorBooksResponse.entity_book_response:type_name -> flibuserver.proto.v1.EntityBookResponse
-	23, // 20: flibuserver.proto.v1.EntityName.author_name:type_name -> flibuserver.proto.v1.AuthorName
-	0,  // 21: flibuserver.proto.v1.TrackedEntryKey.entity_type:type_name -> flibuserver.proto.v1.EntryType
-	25, // 22: flibuserver.proto.v1.UntrackEntryRequest.key:type_name -> flibuserver.proto.v1.TrackedEntryKey
-	25, // 23: flibuserver.proto.v1.TrackEntryResponse.key:type_name -> flibuserver.proto.v1.TrackedEntryKey
-	3,  // 24: flibuserver.proto.v1.TrackEntryResponse.result:type_name -> flibuserver.proto.v1.TrackEntryResult
-	13, // 25: flibuserver.proto.v1.ListTrackedEntriesResponse.entry:type_name -> flibuserver.proto.v1.TrackedEntry
-	25, // 26: flibuserver.proto.v1.UntrackEntryResponse.key:type_name -> flibuserver.proto.v1.TrackedEntryKey
-	4,  // 27: flibuserver.proto.v1.UntrackEntryResponse.result:type_name -> flibuserver.proto.v1.UntrackEntryResult
-	9,  // 28: flibuserver.proto.v1.FlibustierService.GlobalSearch:input_type -> flibuserver.proto.v1.GlobalSearchRequest
-	16, // 29: flibuserver.proto.v1.FlibustierService.CheckUpdates:input_type -> flibuserver.proto.v1.CheckUpdatesRequest
-	18, // 30: flibuserver.proto.v1.FlibustierService.GetSeriesBooks:input_type -> flibuserver.proto.v1.GetSeriesBooksRequest
-	19, // 31: flibuserver.proto.v1.FlibustierService.GetAuthorBooks:input_type -> flibuserver.proto.v1.GetAuthorBooksRequest
-	14, // 32: flibuserver.proto.v1.FlibustierService.TrackEntry:input_type -> flibuserver.proto.v1.TrackEntryRequest
-	28, // 33: flibuserver.proto.v1.FlibustierService.ListTrackedEntries:input_type -> flibuserver.proto.v1.ListTrackedEntriesRequest
-	26, // 34: flibuserver.proto.v1.FlibustierService.UntrackEntry:input_type -> flibuserver.proto.v1.UntrackEntryRequest
-	5,  // 35: flibuserver.proto.v1.FlibustierService.GetUserInfo:input_type -> flibuserver.proto.v1.GetUserInfoRequest
-	11, // 36: flibuserver.proto.v1.FlibustierService.GlobalSearch:output_type -> flibuserver.proto.v1.GlobalSearchResponse
-	17, // 37: flibuserver.proto.v1.FlibustierService.CheckUpdates:output_type -> flibuserver.proto.v1.CheckUpdatesResponse
-	21, // 38: flibuserver.proto.v1.FlibustierService.GetSeriesBooks:output_type -> flibuserver.proto.v1.GetSeriesBooksResponse
-	22, // 39: flibuserver.proto.v1.FlibustierService.GetAuthorBooks:output_type -> flibuserver.proto.v1.GetAuthorBooksResponse
-	27, // 40: flibuserver.proto.v1.FlibustierService.TrackEntry:output_type -> flibuserver.proto.v1.TrackEntryResponse
-	29, // 41: flibuserver.proto.v1.FlibustierService.ListTrackedEntries:output_type -> flibuserver.proto.v1.ListTrackedEntriesResponse
-	30, // 42: flibuserver.proto.v1.FlibustierService.UntrackEntry:output_type -> flibuserver.proto.v1.UntrackEntryResponse
-	8,  // 43: flibuserver.proto.v1.FlibustierService.GetUserInfo:output_type -> flibuserver.proto.v1.GetUserInfoResponse
-	36, // [36:44] is the sub-list for method output_type
-	28, // [28:36] is the sub-list for method input_type
-	28, // [28:28] is the sub-list for extension type_name
-	28, // [28:28] is the sub-list for extension extendee
-	0,  // [0:28] is the sub-list for field type_name
+	10, // 0: flibuserver.proto.v1.ListUsersResponse.user:type_name -> flibuserver.proto.v1.UserInfo
+	1,  // 1: flibuserver.proto.v1.GetUserInfoRequest.action:type_name -> flibuserver.proto.v1.UserInfoAction
+	29, // 2: flibuserver.proto.v1.KvRecordKey.tracked_entry_key:type_name -> flibuserver.proto.v1.TrackedEntryKey
+	10, // 3: flibuserver.proto.v1.GetUserInfoResponse.user_info:type_name -> flibuserver.proto.v1.UserInfo
+	2,  // 4: flibuserver.proto.v1.GetUserInfoResponse.user_created:type_name -> flibuserver.proto.v1.UserCreated
+	0,  // 5: flibuserver.proto.v1.GlobalSearchRequest.entry_type_filter:type_name -> flibuserver.proto.v1.EntryType
+	0,  // 6: flibuserver.proto.v1.FoundEntry.entry_type:type_name -> flibuserver.proto.v1.EntryType
+	13, // 7: flibuserver.proto.v1.GlobalSearchResponse.original_request:type_name -> flibuserver.proto.v1.GlobalSearchRequest
+	14, // 8: flibuserver.proto.v1.GlobalSearchResponse.entry:type_name -> flibuserver.proto.v1.FoundEntry
+	29, // 9: flibuserver.proto.v1.TrackedEntry.key:type_name -> flibuserver.proto.v1.TrackedEntryKey
+	16, // 10: flibuserver.proto.v1.TrackedEntry.book:type_name -> flibuserver.proto.v1.Book
+	35, // 11: flibuserver.proto.v1.TrackedEntry.saved:type_name -> google.protobuf.Timestamp
+	29, // 12: flibuserver.proto.v1.TrackEntryRequest.key:type_name -> flibuserver.proto.v1.TrackedEntryKey
+	17, // 13: flibuserver.proto.v1.UpdateRequired.tracked_entry:type_name -> flibuserver.proto.v1.TrackedEntry
+	16, // 14: flibuserver.proto.v1.UpdateRequired.new_book:type_name -> flibuserver.proto.v1.Book
+	17, // 15: flibuserver.proto.v1.CheckUpdatesRequest.tracked_entry:type_name -> flibuserver.proto.v1.TrackedEntry
+	19, // 16: flibuserver.proto.v1.CheckUpdatesResponse.update_required:type_name -> flibuserver.proto.v1.UpdateRequired
+	16, // 17: flibuserver.proto.v1.EntityBookResponse.book:type_name -> flibuserver.proto.v1.Book
+	28, // 18: flibuserver.proto.v1.EntityBookResponse.entity_name:type_name -> flibuserver.proto.v1.EntityName
+	24, // 19: flibuserver.proto.v1.GetSeriesBooksResponse.entity_book_response:type_name -> flibuserver.proto.v1.EntityBookResponse
+	24, // 20: flibuserver.proto.v1.GetAuthorBooksResponse.entity_book_response:type_name -> flibuserver.proto.v1.EntityBookResponse
+	27, // 21: flibuserver.proto.v1.EntityName.author_name:type_name -> flibuserver.proto.v1.AuthorName
+	0,  // 22: flibuserver.proto.v1.TrackedEntryKey.entity_type:type_name -> flibuserver.proto.v1.EntryType
+	29, // 23: flibuserver.proto.v1.UntrackEntryRequest.key:type_name -> flibuserver.proto.v1.TrackedEntryKey
+	29, // 24: flibuserver.proto.v1.TrackEntryResponse.key:type_name -> flibuserver.proto.v1.TrackedEntryKey
+	3,  // 25: flibuserver.proto.v1.TrackEntryResponse.result:type_name -> flibuserver.proto.v1.TrackEntryResult
+	17, // 26: flibuserver.proto.v1.ListTrackedEntriesResponse.entry:type_name -> flibuserver.proto.v1.TrackedEntry
+	29, // 27: flibuserver.proto.v1.UntrackEntryResponse.key:type_name -> flibuserver.proto.v1.TrackedEntryKey
+	4,  // 28: flibuserver.proto.v1.UntrackEntryResponse.result:type_name -> flibuserver.proto.v1.UntrackEntryResult
+	13, // 29: flibuserver.proto.v1.FlibustierService.GlobalSearch:input_type -> flibuserver.proto.v1.GlobalSearchRequest
+	20, // 30: flibuserver.proto.v1.FlibustierService.CheckUpdates:input_type -> flibuserver.proto.v1.CheckUpdatesRequest
+	22, // 31: flibuserver.proto.v1.FlibustierService.GetSeriesBooks:input_type -> flibuserver.proto.v1.GetSeriesBooksRequest
+	23, // 32: flibuserver.proto.v1.FlibustierService.GetAuthorBooks:input_type -> flibuserver.proto.v1.GetAuthorBooksRequest
+	18, // 33: flibuserver.proto.v1.FlibustierService.TrackEntry:input_type -> flibuserver.proto.v1.TrackEntryRequest
+	32, // 34: flibuserver.proto.v1.FlibustierService.ListTrackedEntries:input_type -> flibuserver.proto.v1.ListTrackedEntriesRequest
+	30, // 35: flibuserver.proto.v1.FlibustierService.UntrackEntry:input_type -> flibuserver.proto.v1.UntrackEntryRequest
+	9,  // 36: flibuserver.proto.v1.FlibustierService.GetUserInfo:input_type -> flibuserver.proto.v1.GetUserInfoRequest
+	5,  // 37: flibuserver.proto.v1.FlibustierService.ListUsers:input_type -> flibuserver.proto.v1.ListUsersRequest
+	7,  // 38: flibuserver.proto.v1.FlibustierService.DeleteAllUsers:input_type -> flibuserver.proto.v1.DeleteAllUsersRequest
+	15, // 39: flibuserver.proto.v1.FlibustierService.GlobalSearch:output_type -> flibuserver.proto.v1.GlobalSearchResponse
+	21, // 40: flibuserver.proto.v1.FlibustierService.CheckUpdates:output_type -> flibuserver.proto.v1.CheckUpdatesResponse
+	25, // 41: flibuserver.proto.v1.FlibustierService.GetSeriesBooks:output_type -> flibuserver.proto.v1.GetSeriesBooksResponse
+	26, // 42: flibuserver.proto.v1.FlibustierService.GetAuthorBooks:output_type -> flibuserver.proto.v1.GetAuthorBooksResponse
+	31, // 43: flibuserver.proto.v1.FlibustierService.TrackEntry:output_type -> flibuserver.proto.v1.TrackEntryResponse
+	33, // 44: flibuserver.proto.v1.FlibustierService.ListTrackedEntries:output_type -> flibuserver.proto.v1.ListTrackedEntriesResponse
+	34, // 45: flibuserver.proto.v1.FlibustierService.UntrackEntry:output_type -> flibuserver.proto.v1.UntrackEntryResponse
+	12, // 46: flibuserver.proto.v1.FlibustierService.GetUserInfo:output_type -> flibuserver.proto.v1.GetUserInfoResponse
+	6,  // 47: flibuserver.proto.v1.FlibustierService.ListUsers:output_type -> flibuserver.proto.v1.ListUsersResponse
+	8,  // 48: flibuserver.proto.v1.FlibustierService.DeleteAllUsers:output_type -> flibuserver.proto.v1.DeleteAllUsersResponse
+	39, // [39:49] is the sub-list for method output_type
+	29, // [29:39] is the sub-list for method input_type
+	29, // [29:29] is the sub-list for extension type_name
+	29, // [29:29] is the sub-list for extension extendee
+	0,  // [0:29] is the sub-list for field type_name
 }
 
 func init() { file_flibuserver_proto_v1_flibustier_proto_init() }
@@ -2217,7 +2409,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetUserInfoRequest); i {
+			switch v := v.(*ListUsersRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2229,7 +2421,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UserInfo); i {
+			switch v := v.(*ListUsersResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2241,7 +2433,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*KvRecordKey); i {
+			switch v := v.(*DeleteAllUsersRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2253,7 +2445,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetUserInfoResponse); i {
+			switch v := v.(*DeleteAllUsersResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2265,7 +2457,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GlobalSearchRequest); i {
+			switch v := v.(*GetUserInfoRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2277,7 +2469,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*FoundEntry); i {
+			switch v := v.(*UserInfo); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2289,7 +2481,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GlobalSearchResponse); i {
+			switch v := v.(*KvRecordKey); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2301,7 +2493,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Book); i {
+			switch v := v.(*GetUserInfoResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2313,7 +2505,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TrackedEntry); i {
+			switch v := v.(*GlobalSearchRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2325,7 +2517,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TrackEntryRequest); i {
+			switch v := v.(*FoundEntry); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2337,7 +2529,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateRequired); i {
+			switch v := v.(*GlobalSearchResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2349,7 +2541,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CheckUpdatesRequest); i {
+			switch v := v.(*Book); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2361,7 +2553,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CheckUpdatesResponse); i {
+			switch v := v.(*TrackedEntry); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2373,7 +2565,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetSeriesBooksRequest); i {
+			switch v := v.(*TrackEntryRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2385,7 +2577,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetAuthorBooksRequest); i {
+			switch v := v.(*UpdateRequired); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2397,7 +2589,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EntityBookResponse); i {
+			switch v := v.(*CheckUpdatesRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2409,7 +2601,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetSeriesBooksResponse); i {
+			switch v := v.(*CheckUpdatesResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2421,7 +2613,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetAuthorBooksResponse); i {
+			switch v := v.(*GetSeriesBooksRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2433,7 +2625,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AuthorName); i {
+			switch v := v.(*GetAuthorBooksRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2445,7 +2637,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EntityName); i {
+			switch v := v.(*EntityBookResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2457,7 +2649,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TrackedEntryKey); i {
+			switch v := v.(*GetSeriesBooksResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2469,7 +2661,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UntrackEntryRequest); i {
+			switch v := v.(*GetAuthorBooksResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2481,7 +2673,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TrackEntryResponse); i {
+			switch v := v.(*AuthorName); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2493,7 +2685,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListTrackedEntriesRequest); i {
+			switch v := v.(*EntityName); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2505,7 +2697,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListTrackedEntriesResponse); i {
+			switch v := v.(*TrackedEntryKey); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2517,6 +2709,54 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 		file_flibuserver_proto_v1_flibustier_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UntrackEntryRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_flibuserver_proto_v1_flibustier_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*TrackEntryResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_flibuserver_proto_v1_flibustier_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListTrackedEntriesRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_flibuserver_proto_v1_flibustier_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListTrackedEntriesResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_flibuserver_proto_v1_flibustier_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UntrackEntryResponse); i {
 			case 0:
 				return &v.state
@@ -2529,11 +2769,11 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			}
 		}
 	}
-	file_flibuserver_proto_v1_flibustier_proto_msgTypes[2].OneofWrappers = []interface{}{
+	file_flibuserver_proto_v1_flibustier_proto_msgTypes[6].OneofWrappers = []interface{}{
 		(*KvRecordKey_UserId)(nil),
 		(*KvRecordKey_TrackedEntryKey)(nil),
 	}
-	file_flibuserver_proto_v1_flibustier_proto_msgTypes[19].OneofWrappers = []interface{}{
+	file_flibuserver_proto_v1_flibustier_proto_msgTypes[23].OneofWrappers = []interface{}{
 		(*EntityName_AuthorName)(nil),
 		(*EntityName_SequenceName)(nil),
 	}
@@ -2543,7 +2783,7 @@ func file_flibuserver_proto_v1_flibustier_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_flibuserver_proto_v1_flibustier_proto_rawDesc,
 			NumEnums:      5,
-			NumMessages:   26,
+			NumMessages:   30,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

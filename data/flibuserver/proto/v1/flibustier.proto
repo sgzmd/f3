@@ -34,6 +34,10 @@ service FlibustierService {
   rpc UntrackEntry (UntrackEntryRequest) returns (UntrackEntryResponse) {}
 
   rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {}
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {}
+
+  // Added for testing only. Do not use in production.
+  rpc DeleteAllUsers(DeleteAllUsersRequest) returns (DeleteAllUsersResponse) {}
 }
 
 enum EntryType {
@@ -47,6 +51,15 @@ enum UserInfoAction {
   USER_INFO_ACTION_NO_CREATE = 0;
   USER_INFO_ACTION_CREATE = 1;
 }
+
+message ListUsersRequest {}
+
+message ListUsersResponse {
+  repeated UserInfo user = 1;
+}
+
+message DeleteAllUsersRequest {}
+message DeleteAllUsersResponse {}
 
 message GetUserInfoRequest {
   // User ID string, constructed by the calling frontend, can be anything.

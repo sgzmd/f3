@@ -183,6 +183,42 @@ func TestServer_TestGetUserInfo_Get(t *testing.T) {
 	assert.Equal(t, int64(78931), resp.UserInfo.UserTelegramId)
 }
 
+// Tests ListUsers RPC
+func TestServer_TestListUsers(t *testing.T) {
+	_, e := client.DeleteAllUsers(context.Background(), &pb.DeleteAllUsersRequest{})
+	assert.Nil(t, e)
+
+	req := &pb.GetUserInfoRequest{
+		UserId:         "567",
+		UserTelegramId: 78931,
+		Action:         pb.UserInfoAction_USER_INFO_ACTION_CREATE,
+	}
+	resp, err := client.GetUserInfo(context.Background(), req)
+	assert.Nil(t, err)
+	assert.Equal(t, "567", resp.UserInfo.UserId)
+
+	r, e := client.ListUsers(context.Background(), &pb.ListUsersRequest{})
+	assert.Nil(t, e)
+	assert.Len(t, r.User, 1)
+
+	req2 := &pb.GetUserInfoRequest{
+		UserId:         "981",
+		UserTelegramId: 789321,
+		Action:         pb.UserInfoAction_USER_INFO_ACTION_CREATE,
+	}
+	_, _ = client.GetUserInfo(context.Background(), req2)
+
+	r, e = client.ListUsers(context.Background(), &pb.ListUsersRequest{})
+	assert.Nil(t, e)
+	assert.Len(t, r.User, 2)
+
+	_, _ = client.DeleteAllUsers(context.Background(), &pb.DeleteAllUsersRequest{})
+
+	r, e = client.ListUsers(context.Background(), &pb.ListUsersRequest{})
+	assert.Nil(t, e)
+	assert.Len(t, r.User, 0)
+}
+
 func TestMain(m *testing.M) {
 	ctx := context.Background()
 	// Creating a client

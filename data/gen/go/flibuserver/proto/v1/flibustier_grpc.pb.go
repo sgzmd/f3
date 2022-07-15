@@ -30,6 +30,9 @@ type FlibustierServiceClient interface {
 	ListTrackedEntries(ctx context.Context, in *ListTrackedEntriesRequest, opts ...grpc.CallOption) (*ListTrackedEntriesResponse, error)
 	UntrackEntry(ctx context.Context, in *UntrackEntryRequest, opts ...grpc.CallOption) (*UntrackEntryResponse, error)
 	GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error)
+	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
+	// Added for testing only. Do not use in production.
+	DeleteAllUsers(ctx context.Context, in *DeleteAllUsersRequest, opts ...grpc.CallOption) (*DeleteAllUsersResponse, error)
 }
 
 type flibustierServiceClient struct {
@@ -112,6 +115,24 @@ func (c *flibustierServiceClient) GetUserInfo(ctx context.Context, in *GetUserIn
 	return out, nil
 }
 
+func (c *flibustierServiceClient) ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error) {
+	out := new(ListUsersResponse)
+	err := c.cc.Invoke(ctx, "/flibuserver.proto.v1.FlibustierService/ListUsers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *flibustierServiceClient) DeleteAllUsers(ctx context.Context, in *DeleteAllUsersRequest, opts ...grpc.CallOption) (*DeleteAllUsersResponse, error) {
+	out := new(DeleteAllUsersResponse)
+	err := c.cc.Invoke(ctx, "/flibuserver.proto.v1.FlibustierService/DeleteAllUsers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FlibustierServiceServer is the server API for FlibustierService service.
 // All implementations must embed UnimplementedFlibustierServiceServer
 // for forward compatibility
@@ -124,6 +145,9 @@ type FlibustierServiceServer interface {
 	ListTrackedEntries(context.Context, *ListTrackedEntriesRequest) (*ListTrackedEntriesResponse, error)
 	UntrackEntry(context.Context, *UntrackEntryRequest) (*UntrackEntryResponse, error)
 	GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoResponse, error)
+	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
+	// Added for testing only. Do not use in production.
+	DeleteAllUsers(context.Context, *DeleteAllUsersRequest) (*DeleteAllUsersResponse, error)
 	mustEmbedUnimplementedFlibustierServiceServer()
 }
 
@@ -154,6 +178,12 @@ func (UnimplementedFlibustierServiceServer) UntrackEntry(context.Context, *Untra
 }
 func (UnimplementedFlibustierServiceServer) GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfo not implemented")
+}
+func (UnimplementedFlibustierServiceServer) ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUsers not implemented")
+}
+func (UnimplementedFlibustierServiceServer) DeleteAllUsers(context.Context, *DeleteAllUsersRequest) (*DeleteAllUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAllUsers not implemented")
 }
 func (UnimplementedFlibustierServiceServer) mustEmbedUnimplementedFlibustierServiceServer() {}
 
@@ -312,6 +342,42 @@ func _FlibustierService_GetUserInfo_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FlibustierService_ListUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FlibustierServiceServer).ListUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/flibuserver.proto.v1.FlibustierService/ListUsers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FlibustierServiceServer).ListUsers(ctx, req.(*ListUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FlibustierService_DeleteAllUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAllUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FlibustierServiceServer).DeleteAllUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/flibuserver.proto.v1.FlibustierService/DeleteAllUsers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FlibustierServiceServer).DeleteAllUsers(ctx, req.(*DeleteAllUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FlibustierService_ServiceDesc is the grpc.ServiceDesc for FlibustierService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -350,6 +416,14 @@ var FlibustierService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserInfo",
 			Handler:    _FlibustierService_GetUserInfo_Handler,
+		},
+		{
+			MethodName: "ListUsers",
+			Handler:    _FlibustierService_ListUsers_Handler,
+		},
+		{
+			MethodName: "DeleteAllUsers",
+			Handler:    _FlibustierService_DeleteAllUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
