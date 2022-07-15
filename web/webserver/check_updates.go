@@ -23,6 +23,13 @@ type UpdateMessage struct {
 	Message string
 }
 
+const TEMPLATE = `<b>Найдены обновления</b>
+{{ range .Updates }}
+<b>{{ .EntityName }}</b>
+{{ range .Books }}
+<i>{{.BookName}}</i>
+{{end}}{{ end }}`
+
 func CheckUpdates(ctx handlers.ClientContext) ([]UpdateMessage, error) {
 	resp, err := ctx.RpcClient.ListUsers(&pb.ListUsersRequest{})
 	if err != nil {
@@ -31,7 +38,10 @@ func CheckUpdates(ctx handlers.ClientContext) ([]UpdateMessage, error) {
 
 	updates := make([]UpdateMessage, 0, 10)
 
-	tmpl := template.Must(template.ParseFiles("templates/messages/update.html"))
+	tmpl, err := template.New("updates").Parse(TEMPLATE)
+	if err != nil {
+		return nil, err
+	}
 
 	for _, user := range resp.User {
 		update := UpdateMsg{Updates: []Update{}}
