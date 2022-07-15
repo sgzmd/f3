@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/template/html"
 	"github.com/jessevdk/go-flags"
 	"github.com/sgzmd/f3/web/common"
 	"github.com/sgzmd/f3/web/rpc"
+	"github.com/sgzmd/f3/web/telegrambot"
 	"github.com/sgzmd/f3/web/webserver/handlers"
 	"github.com/sgzmd/go-telegram-auth/tgauth"
 	"log"
@@ -36,6 +38,9 @@ func main() {
 		Auth:      &auth,
 	}
 
+	// Starting bot in a parallel thread
+	go telegrambot.BotFunc(opts.TelegramToken, client)
+
 	engine := html.New("./templates/web", ".html")
 	app := fiber.New(fiber.Config{
 		Views: engine,
@@ -52,7 +57,7 @@ func main() {
 	app.Get("/untrack/:entityType/:id", handlers.TrackUntrackHandler(clientContext, handlers.Untrack))
 	app.Get(handlers.Login, LoginHandler())
 
-	log.Fatal(app.Listen(":8080"))
+	log.Fatal(app.Listen(fmt.Sprintf(":%d", opts.WebPort)))
 }
 
 func LoginHandler() func(ctx *fiber.Ctx) error {

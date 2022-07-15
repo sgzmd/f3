@@ -1,13 +1,13 @@
 package telegrambot
 
 import (
+	mocks2 "github.com/sgzmd/f3/web/rpc/mocks"
 	"github.com/stretchr/testify/assert"
 	"testing"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/golang/mock/gomock"
 	pb "github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
-	"github.com/sgzmd/f3/web/mocks"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -15,8 +15,8 @@ func TestListHandler(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := mocks.NewMockClientInterface(ctrl)
-	bot := mocks.NewMockIBotApiWrapper(ctrl)
+	client := mocks2.NewMockClientInterface(ctrl)
+	bot := mocks2.NewMockIBotApiWrapper(ctrl)
 
 	update := NewFakeUpdate()
 
@@ -39,8 +39,8 @@ func TestListHandlerEquivalence(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := mocks.NewMockClientInterface(ctrl)
-	bot := mocks.NewMockIBotApiWrapper(ctrl)
+	client := mocks2.NewMockClientInterface(ctrl)
+	bot := mocks2.NewMockIBotApiWrapper(ctrl)
 
 	update := NewFakeUpdate()
 
@@ -69,8 +69,8 @@ func TestCheckUpdatesHandler(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := mocks.NewMockClientInterface(ctrl)
-	bot := mocks.NewMockIBotApiWrapper(ctrl)
+	client := mocks2.NewMockClientInterface(ctrl)
+	bot := mocks2.NewMockIBotApiWrapper(ctrl)
 
 	update := NewFakeUpdate()
 
