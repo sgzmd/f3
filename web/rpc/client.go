@@ -19,9 +19,15 @@ type ClientInterface interface {
 	ListTrackedEntries(in *pb.ListTrackedEntriesRequest) (*pb.ListTrackedEntriesResponse, error)
 	UntrackEntry(in *pb.UntrackEntryRequest) (*pb.UntrackEntryResponse, error)
 	GetUserInfo(in *pb.GetUserInfoRequest) (*pb.GetUserInfoResponse, error)
+	ListUsers(in *pb.ListUsersRequest) (*pb.ListUsersResponse, error)
 }
 
 type FakeClientImplementation struct {
+}
+
+func (f FakeClientImplementation) ListUsers(in *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
+	resp := pb.ListUsersResponse{}
+	return &resp, nil
 }
 
 func (f FakeClientImplementation) GetUserInfo(in *pb.GetUserInfoRequest) (*pb.GetUserInfoResponse, error) {
@@ -30,6 +36,10 @@ func (f FakeClientImplementation) GetUserInfo(in *pb.GetUserInfoRequest) (*pb.Ge
 
 type GrpcClientImplementation struct {
 	client pb.FlibustierServiceClient
+}
+
+func (g GrpcClientImplementation) ListUsers(in *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
+	return g.client.ListUsers(context.Background(), in)
 }
 
 func (g GrpcClientImplementation) GetUserInfo(in *pb.GetUserInfoRequest) (*pb.GetUserInfoResponse, error) {

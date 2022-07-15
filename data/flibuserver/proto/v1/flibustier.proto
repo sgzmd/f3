@@ -65,7 +65,7 @@ message GetUserInfoRequest {
   // User ID string, constructed by the calling frontend, can be anything.
   string user_id = 1;
   int64 user_telegram_id = 2;
-  UserInfoAction action = 3;
+  optional UserInfoAction action = 3;
 }
 
 message UserInfo {

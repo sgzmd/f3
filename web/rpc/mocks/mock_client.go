@@ -17,11 +17,6 @@ type MockClientInterface struct {
 	recorder *MockClientInterfaceMockRecorder
 }
 
-func (m *MockClientInterface) GetUserInfo(in *proto.GetUserInfoRequest) (*proto.GetUserInfoResponse, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
 // MockClientInterfaceMockRecorder is the mock recorder for MockClientInterface.
 type MockClientInterfaceMockRecorder struct {
 	mock *MockClientInterface
@@ -84,6 +79,21 @@ func (mr *MockClientInterfaceMockRecorder) GetSeriesBooks(in interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSeriesBooks", reflect.TypeOf((*MockClientInterface)(nil).GetSeriesBooks), in)
 }
 
+// GetUserInfo mocks base method.
+func (m *MockClientInterface) GetUserInfo(in *proto.GetUserInfoRequest) (*proto.GetUserInfoResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserInfo", in)
+	ret0, _ := ret[0].(*proto.GetUserInfoResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserInfo indicates an expected call of GetUserInfo.
+func (mr *MockClientInterfaceMockRecorder) GetUserInfo(in interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserInfo", reflect.TypeOf((*MockClientInterface)(nil).GetUserInfo), in)
+}
+
 // GlobalSearch mocks base method.
 func (m *MockClientInterface) GlobalSearch(in *proto.GlobalSearchRequest) (*proto.GlobalSearchResponse, error) {
 	m.ctrl.T.Helper()
@@ -112,6 +122,21 @@ func (m *MockClientInterface) ListTrackedEntries(in *proto.ListTrackedEntriesReq
 func (mr *MockClientInterfaceMockRecorder) ListTrackedEntries(in interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTrackedEntries", reflect.TypeOf((*MockClientInterface)(nil).ListTrackedEntries), in)
+}
+
+// ListUsers mocks base method.
+func (m *MockClientInterface) ListUsers(in *proto.ListUsersRequest) (*proto.ListUsersResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListUsers", in)
+	ret0, _ := ret[0].(*proto.ListUsersResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListUsers indicates an expected call of ListUsers.
+func (mr *MockClientInterfaceMockRecorder) ListUsers(in interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListUsers", reflect.TypeOf((*MockClientInterface)(nil).ListUsers), in)
 }
 
 // TrackEntry mocks base method.
