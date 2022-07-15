@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"github.com/sgzmd/f3/web/handlers"
 	"github.com/sgzmd/go-telegram-auth/tgauth"
 	"log"
 
@@ -63,7 +62,7 @@ func getEntityTypeString(entryType proto.EntryType) string {
 
 func GetTrackedEntries(client ClientContext, userInfo *tgauth.UserInfo) ([]TrackedEntry, error) {
 	resp, err := client.RpcClient.ListTrackedEntries(&proto.ListTrackedEntriesRequest{
-		UserId: handlers.MakeUserKeyFromUserNameAndId(userInfo.UserName, userInfo.Id),
+		UserId: MakeUserKeyFromUserNameAndId(userInfo.UserName, userInfo.Id),
 	})
 
 	if err != nil {
@@ -78,4 +77,12 @@ func GetTrackedEntries(client ClientContext, userInfo *tgauth.UserInfo) ([]Track
 	}
 
 	return sr, err
+}
+
+func MakeUserKey(ui *tgauth.UserInfo) string {
+	return MakeUserKeyFromUserNameAndId(ui.UserName, ui.Id)
+}
+
+func MakeUserKeyFromUserNameAndId(userName string, userId int64) string {
+	return fmt.Sprintf("%s-%d", userName, userId)
 }

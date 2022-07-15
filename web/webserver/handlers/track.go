@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
-	"github.com/sgzmd/f3/web/handlers"
 	"github.com/sgzmd/go-telegram-auth/tgauth"
 	"log"
 )
@@ -34,7 +33,7 @@ func TrackUntrackHandler(client ClientContext, actionType ActionType) func(ctx *
 		if actionType == Track {
 			resp, err := client.RpcClient.TrackEntry(&proto.TrackEntryRequest{
 				Key: &proto.TrackedEntryKey{
-					UserId:     handlers.MakeUserKeyFromUserNameAndId(userInfo.UserName, userInfo.Id),
+					UserId:     MakeUserKeyFromUserNameAndId(userInfo.UserName, userInfo.Id),
 					EntityType: proto.EntryType(entityType),
 					EntityId:   int64(entityId),
 				},
@@ -53,7 +52,7 @@ func TrackUntrackHandler(client ClientContext, actionType ActionType) func(ctx *
 		} else if actionType == Untrack {
 			resp, err := client.RpcClient.UntrackEntry(&proto.UntrackEntryRequest{
 				Key: &proto.TrackedEntryKey{
-					UserId:     handlers.MakeUserKeyFromUserNameAndId(userInfo.UserName, userInfo.Id),
+					UserId:     MakeUserKeyFromUserNameAndId(userInfo.UserName, userInfo.Id),
 					EntityType: proto.EntryType(entityType),
 					EntityId:   int64(entityId),
 				},

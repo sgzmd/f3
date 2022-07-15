@@ -2,7 +2,7 @@ package telegrambot
 
 import (
 	"fmt"
-	"github.com/sgzmd/f3/web/handlers"
+	"github.com/sgzmd/f3/web/webserver/handlers"
 	"log"
 	"strconv"
 	"strings"
