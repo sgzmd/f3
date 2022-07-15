@@ -17,6 +17,11 @@ type MockClientInterface struct {
 	recorder *MockClientInterfaceMockRecorder
 }
 
+func (m *MockClientInterface) GetUserInfo(in *proto.GetUserInfoRequest) (*proto.GetUserInfoResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 // MockClientInterfaceMockRecorder is the mock recorder for MockClientInterface.
 type MockClientInterfaceMockRecorder struct {
 	mock *MockClientInterface

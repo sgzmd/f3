@@ -18,13 +18,23 @@ type ClientInterface interface {
 	TrackEntry(in *pb.TrackEntryRequest) (*pb.TrackEntryResponse, error)
 	ListTrackedEntries(in *pb.ListTrackedEntriesRequest) (*pb.ListTrackedEntriesResponse, error)
 	UntrackEntry(in *pb.UntrackEntryRequest) (*pb.UntrackEntryResponse, error)
+	GetUserInfo(in *pb.GetUserInfoRequest) (*pb.GetUserInfoResponse, error)
 }
 
 type FakeClientImplementation struct {
 }
 
+func (f FakeClientImplementation) GetUserInfo(in *pb.GetUserInfoRequest) (*pb.GetUserInfoResponse, error) {
+	return &pb.GetUserInfoResponse{}, nil
+}
+
 type GrpcClientImplementation struct {
 	client pb.FlibustierServiceClient
+}
+
+func (g GrpcClientImplementation) GetUserInfo(in *pb.GetUserInfoRequest) (*pb.GetUserInfoResponse, error) {
+	log.Printf("GetUserInfo: %+v", in)
+	return g.client.GetUserInfo(context.Background(), in)
 }
 
 func (g GrpcClientImplementation) GlobalSearch(in *pb.GlobalSearchRequest) (*pb.GlobalSearchResponse, error) {

@@ -44,7 +44,7 @@ func main() {
 
 	app.Static(handlers.StaticPrefix, "./templates/static")
 
-	app.Use(handlers.Auth(auth))
+	app.Use(handlers.Auth(clientContext))
 
 	app.Get("/", handlers.IndexHandler(clientContext))
 	app.Get("/search/:searchTerm", handlers.SearchHandler(clientContext))
