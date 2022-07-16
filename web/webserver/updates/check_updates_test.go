@@ -114,7 +114,9 @@ func TestSendUpdates(t *testing.T) {
 		UserId:  123,
 		Message: "Some message",
 	}
-	mockClient.EXPECT().Send(tgbotapi.NewMessage(msg.UserId, msg.Message)).Return(nil)
+	tgmessage := tgbotapi.NewMessage(msg.UserId, msg.Message)
+	tgmessage.ParseMode = "HTML"
+	mockClient.EXPECT().Send(tgmessage).Return(nil)
 
 	err := sendUpdates([]UpdateMessage{msg}, mockClient)
 
