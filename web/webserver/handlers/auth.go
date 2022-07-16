@@ -24,9 +24,10 @@ func Auth(ctx ClientContext) func(c *fiber.Ctx) error {
 				return c.Redirect(Login)
 			}
 			params := valuesToParams(url.Query())
+			log.Printf("Checking auth: params=%+v", params)
 
-			if ok, _ := auth.CheckAuth(params); !ok {
-				log.Printf("Bad auth")
+			if ok, err := auth.CheckAuth(params); !ok {
+				log.Printf("Bad auth: %+v", err)
 				return c.Redirect(Login)
 			} else {
 				log.Printf("Auth OK, proceeding...")

@@ -39,6 +39,7 @@ func main() {
 	clientContext := handlers.ClientContext{
 		RpcClient: client,
 		Auth:      &auth,
+		Opts:      &opts,
 	}
 
 	// Starting bot in a parallel thread
@@ -58,7 +59,7 @@ func main() {
 	app.Get("/search/:searchTerm", handlers.SearchHandler(clientContext))
 	app.Get("/track/:entityType/:id", handlers.TrackUntrackHandler(clientContext, handlers.Track))
 	app.Get("/untrack/:entityType/:id", handlers.TrackUntrackHandler(clientContext, handlers.Untrack))
-	app.Get(handlers.Login, LoginHandler())
+	app.Get(handlers.Login, LoginHandler(opts))
 
 	// Scheduling a forever loop which checks for updates every hour
 	go updates.CheckUpdatesLoop(clientContext, opts.TelegramToken)
@@ -66,8 +67,11 @@ func main() {
 	log.Fatal(app.Listen(fmt.Sprintf(":%d", opts.WebPort)))
 }
 
-func LoginHandler() func(ctx *fiber.Ctx) error {
+func LoginHandler(opts common.Options) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
-		return ctx.Render("login", fiber.Map{})
+		return ctx.Render("login", fiber.Map{
+			"DomainName": opts.DomainName,
+			"BotName":    opts.BotName,
+		})
 	}
 }

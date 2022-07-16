@@ -19,6 +19,8 @@ func IndexHandler(client ClientContext) func(c *fiber.Ctx) error {
 		return c.Render("index", fiber.Map{
 			"Name":           userInfo.FirstName,
 			"TrackedEntries": sr,
+			"BotName":        client.Opts.BotName,
+			"DomainName":     client.Opts.DomainName,
 		})
 	}
 }
