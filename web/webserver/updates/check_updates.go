@@ -37,7 +37,7 @@ func CheckUpdatesLoop(ctx handlers.ClientContext, token string) {
 	for {
 		err := checkAndSendUpdates(ctx, token)
 		if err != nil {
-			log.Printf("Error checking updates: %s", err)
+			log.Printf("Error checking/sending updates: %s", err)
 		}
 		time.Sleep(time.Minute * 60)
 	}
@@ -46,10 +46,12 @@ func CheckUpdatesLoop(ctx handlers.ClientContext, token string) {
 func checkAndSendUpdates(ctx handlers.ClientContext, token string) error {
 	updates, err := checkUpdates(ctx)
 	if err != nil {
+		log.Printf("Error checking updates: %s", err)
 		return err
 	}
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
+		log.Printf("Error creating bot: %s", err)
 		return err
 	}
 	return sendUpdates(updates, telegrambot.BotApiWrapper{Bot: bot})

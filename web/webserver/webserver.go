@@ -24,6 +24,8 @@ func main() {
 
 	_, err := flags.Parse(&opts)
 
+	log.Printf("Startng with options: %+v", opts)
+
 	if err != nil {
 		log.Fatal(err)
 	}
