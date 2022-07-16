@@ -1,11 +1,14 @@
-package main
+package updates
 
 import (
 	"bytes"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	pb "github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
+	"github.com/sgzmd/f3/web/telegrambot"
 	"github.com/sgzmd/f3/web/webserver/handlers"
 	"html/template"
 	"log"
+	"time"
 )
 
 type Update struct {
@@ -30,7 +33,29 @@ const TEMPLATE = `<b>Найдены обновления</b>
 <i>{{.BookName}}</i>
 {{end}}{{ end }}`
 
-func CheckUpdates(ctx handlers.ClientContext) ([]UpdateMessage, error) {
+func CheckUpdatesLoop(ctx handlers.ClientContext, token string) {
+	for {
+		err := checkAndSendUpdates(ctx, token)
+		if err != nil {
+			log.Printf("Error checking updates: %s", err)
+		}
+		time.Sleep(time.Minute * 60)
+	}
+}
+
+func checkAndSendUpdates(ctx handlers.ClientContext, token string) error {
+	updates, err := checkUpdates(ctx)
+	if err != nil {
+		return err
+	}
+	bot, err := tgbotapi.NewBotAPI(token)
+	if err != nil {
+		return err
+	}
+	return sendUpdates(updates, telegrambot.BotApiWrapper{Bot: bot})
+}
+
+func checkUpdates(ctx handlers.ClientContext) ([]UpdateMessage, error) {
 	resp, err := ctx.RpcClient.ListUsers(&pb.ListUsersRequest{})
 	if err != nil {
 		return nil, err
@@ -62,6 +87,10 @@ func CheckUpdates(ctx handlers.ClientContext) ([]UpdateMessage, error) {
 			return nil, err
 		}
 
+		if len(r2.UpdateRequired) == 0 {
+			return nil, nil
+		}
+
 		for _, ur := range r2.UpdateRequired {
 			upd := Update{
 				EntityName: ur.TrackedEntry.EntryName,
@@ -81,4 +110,17 @@ func CheckUpdates(ctx handlers.ClientContext) ([]UpdateMessage, error) {
 	}
 
 	return updates, nil
+}
+
+func sendUpdates(updates []UpdateMessage, wrapper telegrambot.IBotApiWrapper) error {
+	for _, update := range updates {
+		msg := tgbotapi.NewMessage(update.UserId, update.Message)
+		msg.ParseMode = "HTML"
+		err := wrapper.Send(msg)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

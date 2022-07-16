@@ -1,6 +1,7 @@
-package main
+package updates
 
 import (
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/golang/mock/gomock"
 	"github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
 	"github.com/sgzmd/f3/web/rpc/mocks"
@@ -92,7 +93,7 @@ func TestCheckUpdates(t *testing.T) {
 
 	ctx.RpcClient = mockClient
 
-	updates, err := CheckUpdates(ctx)
+	updates, err := checkUpdates(ctx)
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(updates))
 	assert.Equal(t, int64(123), updates[0].UserId)
@@ -102,4 +103,20 @@ func TestCheckUpdates(t *testing.T) {
 
 <i>Some book2 </i>
 `, updates[0].Message)
+}
+
+func TestSendUpdates(t *testing.T) {
+	ctrl := gomock.NewController(t)
+
+	mockClient := mocks.NewMockIBotApiWrapper(ctrl)
+
+	msg := UpdateMessage{
+		UserId:  123,
+		Message: "Some message",
+	}
+	mockClient.EXPECT().Send(tgbotapi.NewMessage(msg.UserId, msg.Message)).Return(nil)
+
+	err := sendUpdates([]UpdateMessage{msg}, mockClient)
+
+	assert.Nil(t, err)
 }

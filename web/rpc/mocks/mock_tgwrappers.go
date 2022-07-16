@@ -35,9 +35,10 @@ func (m *MockIBotApiWrapper) EXPECT() *MockIBotApiWrapperMockRecorder {
 }
 
 // Send mocks base method.
-func (m *MockIBotApiWrapper) Send(msg tgbotapi.MessageConfig) {
+func (m *MockIBotApiWrapper) Send(msg tgbotapi.MessageConfig) error {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "Send", msg)
+	return nil
 }
 
 // Send indicates an expected call of Send.

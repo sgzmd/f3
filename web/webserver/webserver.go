@@ -10,6 +10,7 @@ import (
 	"github.com/sgzmd/f3/web/rpc"
 	"github.com/sgzmd/f3/web/telegrambot"
 	"github.com/sgzmd/f3/web/webserver/handlers"
+	"github.com/sgzmd/f3/web/webserver/updates"
 	"github.com/sgzmd/go-telegram-auth/tgauth"
 	"log"
 )
@@ -56,6 +57,9 @@ func main() {
 	app.Get("/track/:entityType/:id", handlers.TrackUntrackHandler(clientContext, handlers.Track))
 	app.Get("/untrack/:entityType/:id", handlers.TrackUntrackHandler(clientContext, handlers.Untrack))
 	app.Get(handlers.Login, LoginHandler())
+
+	// Scheduling a forever loop which checks for updates every hour
+	go updates.CheckUpdatesLoop(clientContext, opts.TelegramToken)
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%d", opts.WebPort)))
 }
