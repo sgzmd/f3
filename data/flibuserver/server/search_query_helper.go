@@ -64,7 +64,7 @@ select b.Title, b.BookId
 from libbook b,
      libavtor a
 where b.BookId = a.BookId
-  and b.Deleted = 0
+  and b.Deleted != '1'
   and a.AvtorId = %d
 `
 
@@ -73,7 +73,7 @@ select b.Title, b.BookId
 from libbook b,
      libseq s
 where b.BookId = s.BookId
-  and b.Deleted = 0
+  and b.Deleted != '1'
   and s.SeqId = %d
 `
 )

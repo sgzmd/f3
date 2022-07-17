@@ -38,6 +38,7 @@ service FlibustierService {
 
   // Added for testing only. Do not use in production.
   rpc DeleteAllUsers(DeleteAllUsersRequest) returns (DeleteAllUsersResponse) {}
+  rpc DeleteAllTracked(DeleteAllTrackedRequest) returns (DeleteAllTrackedResponse) {}
 }
 
 enum EntryType {
@@ -53,6 +54,8 @@ enum UserInfoAction {
 }
 
 message ListUsersRequest {}
+message DeleteAllTrackedRequest {}
+message DeleteAllTrackedResponse {}
 
 message ListUsersResponse {
   repeated UserInfo user = 1;

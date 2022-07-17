@@ -207,7 +207,8 @@ func (s *server) CheckUpdates(_ context.Context, in *pb.CheckUpdatesRequest) (*p
 
 	astm, err := s.sqliteDb.Prepare(`
 		select b.BookId, b.Title from libbook b, libavtor a 
-		where b.BookId = a.BookId and a.AvtorId = ?`)
+		where b.BookId = a.BookId and a.AvtorId = ? and b.Deleted != '1'
+`)
 
 	if err != nil {
 		return nil, err
@@ -215,7 +216,7 @@ func (s *server) CheckUpdates(_ context.Context, in *pb.CheckUpdatesRequest) (*p
 
 	sstm, err := s.sqliteDb.Prepare(`
 	select b.BookId, b.Title from libbook b, libseq s 
-	where s.BookId = b.BookId and s.SeqId = ?
+	where s.BookId = b.BookId and s.SeqId = ? and b.Deleted != '1'
 	`)
 	if err != nil {
 		return nil, err
@@ -430,6 +431,7 @@ func (s *server) TrackEntry(ctx context.Context, req *pb.TrackEntryRequest) (*pb
 		entryKey.Key = &pb.KvRecordKey_TrackedEntryKey{TrackedEntryKey: key}
 
 		prefix := TrackedEntryPrefix + proto.MarshalTextString(entryKey)
+
 		bprefix := []byte(prefix)
 
 		for it.Seek(bprefix); it.ValidForPrefix(bprefix); it.Next() {
@@ -692,6 +694,15 @@ func (s *server) DeleteAllUsers(_ context.Context, _ *pb.DeleteAllUsersRequest) 
 		return nil, e
 	} else {
 		return &pb.DeleteAllUsersResponse{}, nil
+	}
+}
+
+func (s *server) DeleteAllTracked(_ context.Context, _ *pb.DeleteAllTrackedRequest) (*pb.DeleteAllTrackedResponse, error) {
+	e := s.data.DropPrefix([]byte(TrackedEntryPrefix))
+	if e != nil {
+		return nil, e
+	} else {
+		return &pb.DeleteAllTrackedResponse{}, nil
 	}
 }
 

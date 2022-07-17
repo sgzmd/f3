@@ -157,6 +157,117 @@ func (suite *FlibustierStorageSuite) TestServer_TrackEntry_Double() {
 	suite.Assert().Equal(pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK, resp.Result)
 }
 
+func (suite *FlibustierStorageSuite) TestCheckUpdates_Author() {
+	books := []*pb.Book{{BookId: 452501, BookName: "Чужие маски"}}
+
+	tracked := &pb.TrackedEntry{Key: &pb.TrackedEntryKey{
+		EntityType: pb.EntryType_ENTRY_TYPE_AUTHOR,
+		EntityId:   109170,
+		UserId:     "123",
+	}, EntryName: "Метельский", NumEntries: 1, Book: books}
+
+	request := pb.CheckUpdatesRequest{
+		TrackedEntry: []*pb.TrackedEntry{tracked},
+	}
+
+	resp, err := client.CheckUpdates(context.Background(), &request)
+	if err != nil {
+		suite.Failf("CheckUpdates failed: %+v", err.Error())
+	} else {
+		suite.Assert().Len(resp.UpdateRequired, 1)
+		suite.Assert().Equal(int32(7), resp.UpdateRequired[0].NewNumEntries)
+	}
+}
+
+func (suite *FlibustierStorageSuite) TestCheckUpdates_Series() {
+	books := []*pb.Book{{BookId: 452501, BookName: "Чужие маски"}}
+
+	tracked := &pb.TrackedEntry{Key: &pb.TrackedEntryKey{
+		EntityType: pb.EntryType_ENTRY_TYPE_AUTHOR,
+		EntityId:   109170,
+		UserId:     "123",
+	}, EntryName: "Метельский", NumEntries: 1, Book: books}
+
+	request := pb.CheckUpdatesRequest{
+		TrackedEntry: []*pb.TrackedEntry{tracked},
+	}
+
+	resp, err := client.CheckUpdates(context.Background(), &request)
+	if err != nil {
+		suite.Failf("Failed: %v", err.Error())
+	} else {
+		// t.Errorf("Result: %s", resp.String())
+		suite.Assert().Len(resp.UpdateRequired, 1)
+		suite.Assert().Equal(int32(7), resp.UpdateRequired[0].NewNumEntries)
+	}
+}
+
+func (suite *FlibustierStorageSuite) TestCheckUpdates_Retrack() {
+	client.DeleteAllTracked(context.Background(), &pb.DeleteAllTrackedRequest{})
+
+	books := []*pb.Book{{BookId: 452501, BookName: "Чужие маски"}}
+
+	tracked := &pb.TrackedEntry{Key: &pb.TrackedEntryKey{
+		EntityType: pb.EntryType_ENTRY_TYPE_AUTHOR,
+		EntityId:   109170,
+		UserId:     "123",
+	}, EntryName: "Метельский", NumEntries: 1, Book: books}
+
+	checkUpdatesRequest := pb.CheckUpdatesRequest{
+		TrackedEntry: []*pb.TrackedEntry{tracked},
+	}
+
+	resp, err := client.CheckUpdates(context.Background(), &checkUpdatesRequest)
+	if err != nil {
+		suite.Fail("Failed: %+v", err)
+	} else {
+		// t.Errorf("Result: %s", resp.String())
+		suite.Assert().Len(resp.UpdateRequired, 1)
+		suite.Assert().Equal(int32(7), resp.UpdateRequired[0].NewNumEntries)
+
+		// Retrack the same entry so the new books are added
+		resp, err := client.TrackEntry(context.Background(), &pb.TrackEntryRequest{
+			Key:         tracked.Key,
+			ForceUpdate: true,
+		})
+
+		if err != nil {
+			suite.Fail("Failed force-track: %+v", err)
+		}
+
+		suite.Assert().Equal(pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK, resp.Result)
+
+		// Listing entry agan
+		listResp, err := client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{
+			UserId: "123",
+		})
+		if err != nil {
+			suite.Fail("Failed listing entries: %+v", err)
+		}
+
+		var newTrackedEntry *pb.TrackedEntry
+		for idx, tracked := range listResp.Entry {
+			if tracked.Key.EntityId == 109170 {
+				newTrackedEntry = listResp.Entry[idx]
+				break
+			}
+		}
+		if newTrackedEntry == nil {
+			suite.Fail("Failed to find tracked entry")
+		}
+
+		checkUpdatesRequest.TrackedEntry[0] = newTrackedEntry
+		r2, err := client.CheckUpdates(context.Background(), &checkUpdatesRequest)
+		if err != nil {
+			suite.Fail("Failed: %+v", err)
+		} else {
+			if len(r2.UpdateRequired) > 0 {
+				suite.Failf("Expect to have no UpdateRequired entity, but have: %s", r2.String())
+			}
+		}
+	}
+}
+
 func (suite *FlibustierStorageSuite) BeforeTest(suiteName, testName string) {
 	log.Print("BeforeTest()")
 	ctx := context.Background()

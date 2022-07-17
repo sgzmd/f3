@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"log"
 	"os"
@@ -58,58 +59,6 @@ func TestSearchSeries(t *testing.T) {
 	assert.Equal(t, result.Entry[0].EntryName, "Унесенный ветром")
 }
 
-func TestCheckUpdates_Author(t *testing.T) {
-	books := []*pb.Book{{BookId: 452501, BookName: "Чужие маски"}}
-
-	tracked := &pb.TrackedEntry{Key: &pb.TrackedEntryKey{
-		EntityType: pb.EntryType_ENTRY_TYPE_AUTHOR,
-		EntityId:   109170,
-		UserId:     "123",
-	}, EntryName: "Метельский", NumEntries: 1, Book: books}
-
-	request := pb.CheckUpdatesRequest{
-		TrackedEntry: []*pb.TrackedEntry{tracked},
-	}
-
-	resp, err := client.CheckUpdates(context.Background(), &request)
-	if err != nil {
-		t.Fatalf("Failed: %v", err)
-	} else {
-		// t.Errorf("Result: %s", resp.String())
-		if len(resp.UpdateRequired) != 1 || resp.UpdateRequired[0].NewNumEntries != 9 {
-			t.Fatalf(
-				"Expect to have 1 UpdateRequired entity with 9 new_num_entries, but have: %s",
-				resp)
-		}
-	}
-}
-
-func TestCheckUpdates_Series(t *testing.T) {
-	books := []*pb.Book{{BookId: 452501, BookName: "Чужие маски"}}
-
-	tracked := &pb.TrackedEntry{Key: &pb.TrackedEntryKey{
-		EntityType: pb.EntryType_ENTRY_TYPE_AUTHOR,
-		EntityId:   109170,
-		UserId:     "123",
-	}, EntryName: "Метельский", NumEntries: 1, Book: books}
-
-	request := pb.CheckUpdatesRequest{
-		TrackedEntry: []*pb.TrackedEntry{tracked},
-	}
-
-	resp, err := client.CheckUpdates(context.Background(), &request)
-	if err != nil {
-		t.Fatalf("Failed: %v", err)
-	} else {
-		// t.Errorf("Result: %s", resp.String())
-		if len(resp.UpdateRequired) != 1 || resp.UpdateRequired[0].NewNumEntries != 9 {
-			t.Fatalf(
-				"Expect to have 1 UpdateRequired entity with 9 new_num_entries, but have: %s",
-				resp)
-		}
-	}
-}
-
 func TestServer_GetSeriesBooks(t *testing.T) {
 	req := &pb.GetSeriesBooksRequest{SequenceId: 34145}
 	resp, err := client.GetSeriesBooks(context.Background(), req)
@@ -150,10 +99,11 @@ func TestServer_TestGetUserInfo_NotFound(t *testing.T) {
 }
 
 func TestServer_TestGetUserInfo_Create(t *testing.T) {
+	actionCreate := pb.UserInfoAction_USER_INFO_ACTION_CREATE
 	req := &pb.GetUserInfoRequest{
 		UserId:         "123",
 		UserTelegramId: 1234,
-		Action:         pb.UserInfoAction_USER_INFO_ACTION_CREATE,
+		Action:         &actionCreate,
 	}
 	resp, err := client.GetUserInfo(context.Background(), req)
 	assert.Nil(t, err)
@@ -163,11 +113,12 @@ func TestServer_TestGetUserInfo_Create(t *testing.T) {
 
 // Tests that user can be created, and then retrieved
 func TestServer_TestGetUserInfo_Get(t *testing.T) {
+	actionCreate := pb.UserInfoAction_USER_INFO_ACTION_CREATE
 	// Create the user first
 	req := &pb.GetUserInfoRequest{
 		UserId:         "567",
 		UserTelegramId: 78931,
-		Action:         pb.UserInfoAction_USER_INFO_ACTION_CREATE,
+		Action:         &actionCreate,
 	}
 	resp, err := client.GetUserInfo(context.Background(), req)
 	assert.Nil(t, err)
@@ -188,10 +139,11 @@ func TestServer_TestListUsers(t *testing.T) {
 	_, e := client.DeleteAllUsers(context.Background(), &pb.DeleteAllUsersRequest{})
 	assert.Nil(t, e)
 
+	actionCreate := pb.UserInfoAction_USER_INFO_ACTION_CREATE
 	req := &pb.GetUserInfoRequest{
 		UserId:         "567",
 		UserTelegramId: 78931,
-		Action:         pb.UserInfoAction_USER_INFO_ACTION_CREATE,
+		Action:         &actionCreate,
 	}
 	resp, err := client.GetUserInfo(context.Background(), req)
 	assert.Nil(t, err)
@@ -204,7 +156,7 @@ func TestServer_TestListUsers(t *testing.T) {
 	req2 := &pb.GetUserInfoRequest{
 		UserId:         "981",
 		UserTelegramId: 789321,
-		Action:         pb.UserInfoAction_USER_INFO_ACTION_CREATE,
+		Action:         &actionCreate,
 	}
 	_, _ = client.GetUserInfo(context.Background(), req2)
 
@@ -220,6 +172,8 @@ func TestServer_TestListUsers(t *testing.T) {
 }
 
 func TestMain(m *testing.M) {
+	flag.Parse()
+
 	ctx := context.Background()
 	// Creating a client
 	conn, err := grpc.DialContext(ctx, "", grpc.WithInsecure(), grpc.WithContextDialer(dialer(FLIBUSTA_DB)))

@@ -33,6 +33,7 @@ type FlibustierServiceClient interface {
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
 	// Added for testing only. Do not use in production.
 	DeleteAllUsers(ctx context.Context, in *DeleteAllUsersRequest, opts ...grpc.CallOption) (*DeleteAllUsersResponse, error)
+	DeleteAllTracked(ctx context.Context, in *DeleteAllTrackedRequest, opts ...grpc.CallOption) (*DeleteAllTrackedResponse, error)
 }
 
 type flibustierServiceClient struct {
@@ -133,6 +134,15 @@ func (c *flibustierServiceClient) DeleteAllUsers(ctx context.Context, in *Delete
 	return out, nil
 }
 
+func (c *flibustierServiceClient) DeleteAllTracked(ctx context.Context, in *DeleteAllTrackedRequest, opts ...grpc.CallOption) (*DeleteAllTrackedResponse, error) {
+	out := new(DeleteAllTrackedResponse)
+	err := c.cc.Invoke(ctx, "/flibuserver.proto.v1.FlibustierService/DeleteAllTracked", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FlibustierServiceServer is the server API for FlibustierService service.
 // All implementations must embed UnimplementedFlibustierServiceServer
 // for forward compatibility
@@ -148,6 +158,7 @@ type FlibustierServiceServer interface {
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
 	// Added for testing only. Do not use in production.
 	DeleteAllUsers(context.Context, *DeleteAllUsersRequest) (*DeleteAllUsersResponse, error)
+	DeleteAllTracked(context.Context, *DeleteAllTrackedRequest) (*DeleteAllTrackedResponse, error)
 	mustEmbedUnimplementedFlibustierServiceServer()
 }
 
@@ -184,6 +195,9 @@ func (UnimplementedFlibustierServiceServer) ListUsers(context.Context, *ListUser
 }
 func (UnimplementedFlibustierServiceServer) DeleteAllUsers(context.Context, *DeleteAllUsersRequest) (*DeleteAllUsersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAllUsers not implemented")
+}
+func (UnimplementedFlibustierServiceServer) DeleteAllTracked(context.Context, *DeleteAllTrackedRequest) (*DeleteAllTrackedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAllTracked not implemented")
 }
 func (UnimplementedFlibustierServiceServer) mustEmbedUnimplementedFlibustierServiceServer() {}
 
@@ -378,6 +392,24 @@ func _FlibustierService_DeleteAllUsers_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FlibustierService_DeleteAllTracked_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAllTrackedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FlibustierServiceServer).DeleteAllTracked(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/flibuserver.proto.v1.FlibustierService/DeleteAllTracked",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FlibustierServiceServer).DeleteAllTracked(ctx, req.(*DeleteAllTrackedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FlibustierService_ServiceDesc is the grpc.ServiceDesc for FlibustierService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -424,6 +456,10 @@ var FlibustierService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteAllUsers",
 			Handler:    _FlibustierService_DeleteAllUsers_Handler,
+		},
+		{
+			MethodName: "DeleteAllTracked",
+			Handler:    _FlibustierService_DeleteAllTracked_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
