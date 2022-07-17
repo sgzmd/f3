@@ -99,6 +99,16 @@ func checkUpdates(ctx handlers.ClientContext) ([]UpdateMessage, error) {
 				Books:      ur.NewBook,
 			}
 			update.Updates = append(update.Updates, upd)
+
+			_, e := ctx.RpcClient.TrackEntry(&pb.TrackEntryRequest{
+				Key:         ur.TrackedEntry.Key,
+				ForceUpdate: true,
+			})
+			if e != nil {
+				log.Printf("Failed to force update %+v: %s", ur.TrackedEntry, e)
+			} else {
+				log.Printf("Forced update %+v", ur.TrackedEntry)
+			}
 		}
 
 		var tpl bytes.Buffer

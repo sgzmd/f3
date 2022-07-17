@@ -31,14 +31,15 @@ func TestCheckUpdates(t *testing.T) {
 			},
 		},
 	}, nil)
+	key1 := &proto.TrackedEntryKey{
+		EntityType: proto.EntryType_ENTRY_TYPE_AUTHOR,
+		EntityId:   1,
+		UserId:     "user_123",
+	}
 	first := mockClient.EXPECT().ListTrackedEntries(&proto.ListTrackedEntriesRequest{UserId: "user_123"}).Return(&proto.ListTrackedEntriesResponse{
 		Entry: []*proto.TrackedEntry{
 			{
-				Key: &proto.TrackedEntryKey{
-					EntityType: proto.EntryType_ENTRY_TYPE_AUTHOR,
-					EntityId:   1,
-					UserId:     "user_123",
-				},
+				Key:         key1,
 				EntryName:   "Author 1",
 				NumEntries:  1,
 				EntryAuthor: "Author 1",
@@ -59,11 +60,7 @@ func TestCheckUpdates(t *testing.T) {
 	mockClient.EXPECT().CheckUpdates(&proto.CheckUpdatesRequest{
 		TrackedEntry: []*proto.TrackedEntry{
 			{
-				Key: &proto.TrackedEntryKey{
-					EntityType: proto.EntryType_ENTRY_TYPE_AUTHOR,
-					EntityId:   1,
-					UserId:     "user_123",
-				},
+				Key:         key1,
 				EntryName:   "Author 1",
 				NumEntries:  1,
 				EntryAuthor: "Author 1",
@@ -78,11 +75,7 @@ func TestCheckUpdates(t *testing.T) {
 		UpdateRequired: []*proto.UpdateRequired{
 			{
 				TrackedEntry: &proto.TrackedEntry{
-					Key: &proto.TrackedEntryKey{
-						EntityType: proto.EntryType_ENTRY_TYPE_AUTHOR,
-						EntityId:   1,
-						UserId:     "user_123",
-					},
+					Key:         key1,
 					EntryName:   "Some Entry Name",
 					EntryAuthor: "Some Entry Author",
 				},
@@ -90,6 +83,11 @@ func TestCheckUpdates(t *testing.T) {
 				NewBook:       []*proto.Book{{BookName: "Some book2 ", BookId: 3234}},
 			},
 		}}, nil)
+
+	mockClient.EXPECT().TrackEntry(&proto.TrackEntryRequest{
+		Key:         key1,
+		ForceUpdate: true,
+	})
 
 	ctx.RpcClient = mockClient
 
