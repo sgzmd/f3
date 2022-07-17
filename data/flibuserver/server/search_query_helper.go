@@ -75,6 +75,7 @@ from libbook b,
 where b.BookId = s.BookId
   and b.Deleted != '1'
   and s.SeqId = %d
+order by s.SeqNumb
 `
 )
 
