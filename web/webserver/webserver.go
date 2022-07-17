@@ -59,6 +59,9 @@ func main() {
 	app.Get("/search/:searchTerm", handlers.SearchHandler(clientContext))
 	app.Get("/track/:entityType/:id", handlers.TrackUntrackHandler(clientContext, handlers.Track))
 	app.Get("/untrack/:entityType/:id", handlers.TrackUntrackHandler(clientContext, handlers.Untrack))
+	app.Get("/check-updates-r2d2", func(ctx *fiber.Ctx) error {
+		return updates.CheckAndSendUpdates(clientContext, opts.TelegramToken)
+	})
 	app.Get(handlers.Login, LoginHandler(opts))
 
 	// Scheduling a forever loop which checks for updates every hour

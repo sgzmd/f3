@@ -35,7 +35,7 @@ const TEMPLATE = `<b>Найдены обновления</b>
 
 func CheckUpdatesLoop(ctx handlers.ClientContext, token string) {
 	for {
-		err := checkAndSendUpdates(ctx, token)
+		err := CheckAndSendUpdates(ctx, token)
 		if err != nil {
 			log.Printf("Error checking/sending updates: %s", err)
 		}
@@ -43,7 +43,7 @@ func CheckUpdatesLoop(ctx handlers.ClientContext, token string) {
 	}
 }
 
-func checkAndSendUpdates(ctx handlers.ClientContext, token string) error {
+func CheckAndSendUpdates(ctx handlers.ClientContext, token string) error {
 	updates, err := checkUpdates(ctx)
 	if err != nil {
 		log.Printf("Error checking updates: %s", err)
