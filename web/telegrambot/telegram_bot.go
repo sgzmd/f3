@@ -2,6 +2,7 @@ package telegrambot
 
 import (
 	"fmt"
+	"github.com/sgzmd/f3/web/telegrambot/intf"
 	"github.com/sgzmd/f3/web/webserver/handlers"
 	"log"
 	"strconv"
@@ -16,12 +17,12 @@ import (
 // rather than dragging every single thing from one method call to another?
 
 type TelegramBotHandler struct {
-	bot    IBotApiWrapper
+	bot    intf.IBotApiWrapper
 	client rpc.ClientInterface
 }
 
 // creates new TelegramBotHandler
-func NewTelegramBotHandler(bot IBotApiWrapper, client rpc.ClientInterface) *TelegramBotHandler {
+func NewTelegramBotHandler(bot intf.IBotApiWrapper, client rpc.ClientInterface) *TelegramBotHandler {
 	return &TelegramBotHandler{
 		bot:    bot,
 		client: client,
@@ -70,69 +71,6 @@ func (tbh *TelegramBotHandler) reportError(update tgbotapi.Update, err error) {
 	tbh.bot.Send(msg)
 }
 
-func CheckUpdatesHandler(update tgbotapi.Update, client rpc.ClientInterface, bot IBotApiWrapper) {
-	resp, err := client.ListTrackedEntries(&pb.ListTrackedEntriesRequest{UserId: MakeUserKey(update)})
-	if err != nil {
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Error listing entries: %+v")
-		msg.Text = fmt.Sprintf("Error: %+v", err)
-		log.Print(msg.Text)
-		bot.Send(msg)
-		return
-	}
-
-	if len(resp.Entry) == 0 {
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Сперва надо на что-нибудь подписаться!")
-		bot.Send(msg)
-		return
-	}
-
-	respUpdates, err := client.CheckUpdates(&pb.CheckUpdatesRequest{TrackedEntry: resp.Entry})
-	if err != nil {
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Failed to check updates: %+v")
-		msg.Text = fmt.Sprintf("Error: %+v", err)
-		log.Print(msg.Text)
-		bot.Send(msg)
-		return
-	}
-
-	if len(respUpdates.UpdateRequired) == 0 {
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Отсутствие новостей - лучшая новость!")
-		log.Print(msg.Text)
-		bot.Send(msg)
-		return
-	}
-
-	for _, upd := range respUpdates.UpdateRequired {
-		entryText := formatEntry(
-			upd.TrackedEntry.Key.EntityType,
-			upd.TrackedEntry.EntryName,
-			upd.TrackedEntry.EntryAuthor,
-			upd.NewNumEntries,
-			upd.TrackedEntry.Key.EntityId)
-
-		entryText += fmt.Sprintf("\nНовых книг: %d\n", upd.NewNumEntries-upd.TrackedEntry.NumEntries)
-
-		for _, book := range upd.NewBook {
-			entryText += fmt.Sprintf("<a href='http://flibusta.is/b/%d'>%s</a>\n", book.BookId, book.BookName)
-		}
-
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, entryText)
-		bot.Send(msg)
-
-		_, err := client.TrackEntry(&pb.TrackEntryRequest{
-			Key:         upd.TrackedEntry.Key,
-			ForceUpdate: true,
-		})
-
-		if err != nil {
-			msg2 := tgbotapi.NewMessage(update.Message.Chat.ID, "Failed to force-update entry: %+v")
-			msg2.Text = fmt.Sprintf("Error: %+v", err)
-			log.Print(msg2.Text)
-			bot.Send(msg2)
-		}
-	}
-}
-
 func formatEntry(entryType pb.EntryType, entryName string, entryAuthor string, numEntities int32, entryId int64) string {
 	var entryText string
 	switch entryType {
@@ -153,7 +91,7 @@ func errorToTg(update tgbotapi.Update, text string, err error, bot *tgbotapi.Bot
 	bot.Send(msg)
 }
 
-func ListCommandHandler(update tgbotapi.Update, client rpc.ClientInterface, bot IBotApiWrapper) ([]tgbotapi.Chattable, error) {
+func ListCommandHandler(update tgbotapi.Update, client rpc.ClientInterface, bot intf.IBotApiWrapper) ([]tgbotapi.Chattable, error) {
 	resp, err := client.ListTrackedEntries(&pb.ListTrackedEntriesRequest{
 		UserId: MakeUserKey(update)})
 	if err != nil {

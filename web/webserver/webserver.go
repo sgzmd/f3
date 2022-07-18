@@ -64,7 +64,8 @@ func main() {
 	app.Get("/track/:entityType/:id", handlers.TrackUntrackHandler(clientContext, handlers.Track))
 	app.Get("/untrack/:entityType/:id", handlers.TrackUntrackHandler(clientContext, handlers.Untrack))
 	app.Get("/check-updates-r2d2", func(ctx *fiber.Ctx) error {
-		return updates.CheckAndSendUpdates(clientContext, opts.TelegramToken)
+		_, e := updates.CheckAndSendUpdates(clientContext, opts.TelegramToken)
+		return e
 	})
 	app.Get(handlers.Login, LoginHandler(opts))
 

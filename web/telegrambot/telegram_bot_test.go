@@ -65,68 +65,6 @@ func TestListHandlerEquivalence(t *testing.T) {
 	assert.Equal(t, messages, messages2)
 }
 
-func TestCheckUpdatesHandler(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := mocks2.NewMockClientInterface(ctrl)
-	bot := mocks2.NewMockIBotApiWrapper(ctrl)
-
-	update := NewFakeUpdate()
-
-	listResp := NewFakeListTrackedEntriesResponse(5, update.Message.From.UserName)
-	client.
-		EXPECT().
-		ListTrackedEntries(gomock.Any()).
-		Return(listResp, nil)
-
-	client.
-		EXPECT().
-		CheckUpdates(&pb.CheckUpdatesRequest{TrackedEntry: listResp.Entry}).
-		Return(NewFakeCheckUpdatesResponse(), nil)
-
-	client.EXPECT().
-		TrackEntry(&pb.TrackEntryRequest{
-			Key: &pb.TrackedEntryKey{
-				EntityType: pb.EntryType_ENTRY_TYPE_SERIES,
-				EntityId:   1,
-				UserId:     "testuser",
-			},
-			ForceUpdate: true,
-		})
-
-	bot.EXPECT().Send(gomock.Any())
-
-	CheckUpdatesHandler(update, client, bot)
-}
-
-func NewFakeCheckUpdatesResponse() *pb.CheckUpdatesResponse {
-	entries := make([]*pb.UpdateRequired, 1)
-	entries[0] = &pb.UpdateRequired{
-		TrackedEntry: &pb.TrackedEntry{
-			Key: &pb.TrackedEntryKey{
-				EntityType: pb.EntryType_ENTRY_TYPE_SERIES,
-				EntityId:   1,
-				UserId:     "testuser",
-			},
-			EntryName:   "Test Entry Name",
-			NumEntries:  12,
-			EntryAuthor: "",
-			Book:        nil,
-			Saved: &timestamppb.Timestamp{
-				Seconds: 0,
-				Nanos:   0,
-			},
-		},
-		NewNumEntries: 0,
-		NewBook:       nil,
-	}
-
-	return &pb.CheckUpdatesResponse{
-		UpdateRequired: entries,
-	}
-}
-
 // creates deep fake pb.ListTrackedEntriesResponse
 func NewFakeListTrackedEntriesResponse(n int, userId string) *pb.ListTrackedEntriesResponse {
 	entries := make([]*pb.TrackedEntry, n)

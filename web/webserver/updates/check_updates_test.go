@@ -116,7 +116,7 @@ func TestSendUpdates(t *testing.T) {
 	tgmessage.ParseMode = "HTML"
 	mockClient.EXPECT().Send(tgmessage).Return(nil)
 
-	err := sendUpdates([]UpdateMessage{msg}, mockClient)
+	_, err := sendUpdates([]UpdateMessage{msg}, mockClient)
 
 	assert.Nil(t, err)
 }

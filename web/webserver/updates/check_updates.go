@@ -4,7 +4,7 @@ import (
 	"bytes"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	pb "github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
-	"github.com/sgzmd/f3/web/telegrambot"
+	"github.com/sgzmd/f3/web/telegrambot/intf"
 	"github.com/sgzmd/f3/web/webserver/handlers"
 	"html/template"
 	"log"
@@ -35,7 +35,7 @@ const TEMPLATE = `<b>Найдены обновления</b>
 
 func CheckUpdatesLoop(ctx handlers.ClientContext, token string) {
 	for {
-		err := CheckAndSendUpdates(ctx, token)
+		_, err := CheckAndSendUpdates(ctx, token)
 		if err != nil {
 			log.Printf("Error checking/sending updates: %s", err)
 		}
@@ -43,18 +43,18 @@ func CheckUpdatesLoop(ctx handlers.ClientContext, token string) {
 	}
 }
 
-func CheckAndSendUpdates(ctx handlers.ClientContext, token string) error {
+func CheckAndSendUpdates(ctx handlers.ClientContext, token string) (int, error) {
 	updates, err := checkUpdates(ctx)
 	if err != nil {
 		log.Printf("Error checking updates: %s", err)
-		return err
+		return 0, err
 	}
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.Printf("Error creating bot: %s", err)
-		return err
+		return 0, err
 	}
-	return sendUpdates(updates, telegrambot.BotApiWrapper{Bot: bot})
+	return sendUpdates(updates, intf.BotApiWrapper{Bot: bot})
 }
 
 func checkUpdates(ctx handlers.ClientContext) ([]UpdateMessage, error) {
@@ -124,15 +124,17 @@ func checkUpdates(ctx handlers.ClientContext) ([]UpdateMessage, error) {
 	return updates, nil
 }
 
-func sendUpdates(updates []UpdateMessage, wrapper telegrambot.IBotApiWrapper) error {
+func sendUpdates(updates []UpdateMessage, wrapper intf.IBotApiWrapper) (int, error) {
+	n := 0
 	for _, update := range updates {
 		msg := tgbotapi.NewMessage(update.UserId, update.Message)
 		msg.ParseMode = "HTML"
 		err := wrapper.Send(msg)
 		if err != nil {
-			return err
+			return n, err
 		}
+		n++
 	}
 
-	return nil
+	return n, nil
 }

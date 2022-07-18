@@ -3,6 +3,8 @@ package telegrambot
 import (
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/sgzmd/f3/web/rpc"
+	updates3 "github.com/sgzmd/f3/web/telegrambot/intf"
+	updates2 "github.com/sgzmd/f3/web/telegrambot/updates"
 	"log"
 )
 
@@ -20,7 +22,7 @@ func BotFunc(telegramToken string, client rpc.ClientInterface) {
 
 	updates := bot.GetUpdatesChan(u)
 
-	botw := &BotApiWrapper{Bot: bot}
+	botw := &updates3.BotApiWrapper{Bot: bot}
 
 	for update := range updates {
 		if update.Message != nil { // If we got a message
@@ -35,7 +37,7 @@ func BotFunc(telegramToken string, client rpc.ClientInterface) {
 				case ListCommand:
 					ListCommandHandler(update, client, botw)
 				case CheckUpdates:
-					CheckUpdatesHandler(update, client, BotApiWrapper{Bot: bot})
+					updates2.CheckUpdatesHandler(update, client, updates3.BotApiWrapper{Bot: bot}, telegramToken)
 				}
 
 			}
