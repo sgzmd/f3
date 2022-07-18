@@ -55,6 +55,10 @@ func main() {
 
 	app.Use(handlers.Auth(clientContext))
 
+	app.Get("/favicon.ico", func(ctx *fiber.Ctx) error {
+		return ctx.SendFile("templates/static/favicon.ico", false)
+	})
+
 	app.Get("/", handlers.IndexHandler(clientContext))
 	app.Get("/search/:searchTerm", handlers.SearchHandler(clientContext))
 	app.Get("/track/:entityType/:id", handlers.TrackUntrackHandler(clientContext, handlers.Track))
