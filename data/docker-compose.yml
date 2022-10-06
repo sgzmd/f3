@@ -1,0 +1,27 @@
+version: '3.3'
+services: 
+    database:
+      image: mariadb:latest
+      ports:
+        - 3306:3306
+      volumes:
+        - flibudata/mariadb:/var/lib/mysql
+      environment:
+        - MYSQL_ROOT_PASSWORD=toor
+        - MYSQL_PASSWORD=flibusta
+        - MYSQL_USER=flibustier
+        - MYSQL_DATABASE=flibustier
+    flibuserver:
+      build: .
+      depends_on:
+        - database
+      volumes:
+          - 'flibudata/flibuserver:/var/local/flibudata'
+      ports:
+          - '9000:9000'
+      environment:
+          - TELEGRAM_API_KEY=none
+          - TELEGRAM_CHAT_ID=none
+      restart: unless-stopped
+volumes:
+  flibudata:

@@ -3,6 +3,11 @@ FROM tetafro/golang-gcc:latest
 ENV test=0
 ENV telegram_api_key=nonkey
 ENV telegram_chat_id=-1
+ENV mariadb_host=localhost
+ENV mariadb_port=3306
+ENV mariadb_user=flibustier
+ENV mariadb_database=flibustier
+ENV mariadb_password=flibusta
 
 RUN mkdir /app
 RUN apk add sqlite gawk bash wget curl
@@ -19,7 +24,7 @@ FROM alpine:latest
 # Expects /var/local/flibudata volume to be set
 
 RUN mkdir /app
-RUN apk add sqlite gawk bash curl
+RUN apk add sqlite gawk bash curl mariadb-client
 
 ADD . /app
 

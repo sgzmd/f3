@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 function assert_exists {
   if ! command -v $1 &> /dev/null
   then
@@ -28,6 +30,11 @@ optstring="d:t:c:f:"
 active_dir="."
 telegram_key=""
 telegram_chat_id=""
+mariadb_database=""
+mariadb_password=""
+mariadb_user=""
+mariadb_host=""
+mariadb_port=""
 flibusta_db_path="none.db"
 
 while getopts ${optstring} arg; do
@@ -86,6 +93,8 @@ gunzip *.sql.gz
 
 # Creating combined SQL dump file
 cat lib*.sql > flibusta_mysql_dump.sql
+
+mysqldump -v -u$mariadb_user -p$mariadb_password $mariadb_database < flibusta_mysql_dump.sql
 
 # Applying MySQL -> sqlite3 converter script
 awk -f mysql2sqlite flibusta_mysql_dump.sql > flibusta_sqlite_dump.sql
