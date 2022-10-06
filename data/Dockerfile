@@ -24,7 +24,7 @@ FROM alpine:latest
 # Expects /var/local/flibudata volume to be set
 
 RUN mkdir /app
-RUN apk add sqlite gawk bash curl mariadb-client
+RUN apk add sqlite gawk bash curl mariadb-client python3 py3-pip
 
 ADD . /app
 
@@ -33,6 +33,8 @@ WORKDIR /app
 COPY --from=0 /app/scripts/docker_download.sh /app/docker_download.sh
 COPY --from=0 /app/downloader /app/downloader
 COPY --from=0 /app/flibustier_server /app/flibustier_server
+
+RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir mysql-to-sqlite3
 
 RUN crontab downloader.cron
 

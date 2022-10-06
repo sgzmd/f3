@@ -5,7 +5,7 @@ services:
       ports:
         - 3306:3306
       volumes:
-        - flibudata/mariadb:/var/lib/mysql
+        - flibudata:/var/lib/mysql
       environment:
         - MYSQL_ROOT_PASSWORD=toor
         - MYSQL_PASSWORD=flibusta
@@ -13,10 +13,12 @@ services:
         - MYSQL_DATABASE=flibustier
     flibuserver:
       build: .
+      links:
+        - database
       depends_on:
         - database
       volumes:
-          - 'flibudata/flibuserver:/var/local/flibudata'
+          - 'flibudata:/var/local/flibudata'
       ports:
           - '9000:9000'
       environment:
