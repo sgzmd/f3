@@ -34,7 +34,7 @@ COPY --from=0 /app/scripts/docker_download.sh /app/docker_download.sh
 COPY --from=0 /app/downloader /app/downloader
 COPY --from=0 /app/flibustier_server /app/flibustier_server
 
-RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir mysql-to-sqlite3
+RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir mysql-to-sqlite3 mysql-connector-python
 RUN wget https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.13/grpc_health_probe-linux-amd64
 RUN chmod +x ./grpc_health_probe-linux-amd64
 RUN ls -lha ./grpc_health_probe-linux-amd64
