@@ -24,7 +24,7 @@ FROM alpine:latest
 # Expects /var/local/flibudata volume to be set
 
 RUN mkdir /app
-RUN apk add sqlite gawk bash curl mariadb-client python3 py3-pip
+RUN apk add sqlite gawk bash curl mariadb-client python3 py3-pip wget
 
 ADD . /app
 
@@ -35,6 +35,9 @@ COPY --from=0 /app/downloader /app/downloader
 COPY --from=0 /app/flibustier_server /app/flibustier_server
 
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir mysql-to-sqlite3
+RUN wget https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.13/grpc_health_probe-linux-amd64
+RUN chmod +x ./grpc_health_probe-linux-amd64
+RUN ls -lha ./grpc_health_probe-linux-amd64
 
 RUN crontab downloader.cron
 
