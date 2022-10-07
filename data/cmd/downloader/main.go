@@ -18,7 +18,9 @@ import (
 	"github.com/anaskhan96/soup"
 )
 
-var BannedPrefixes = [...]string{"lib.b", "lib.a", "lib.reviews", "lib.md5"}
+var BannedPrefixes = [...]string{
+	"lib.b", "lib.a", "lib.reviews", "lib.md5", "lib.libtranslator",
+	"lib.libjoined", "lib.librecs", "lib.librate", "lib.libfile", "lib.libgenre"}
 
 func CreateUrlList(baseUrl string) []string {
 	var urls []string
