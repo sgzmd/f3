@@ -24,4 +24,4 @@ EXPOSE ${web_port}
 
 RUN echo "================ web ${TELEGRAM_API_KEY} =================="
 
-ENTRYPOINT /app/web --grpc_backend=${BACKEND_URL} --telegram_token=${TELEGRAM_API_KEY} --web_port=${WEB_PORT} --bot_name=${BOT_NAME}} --domain_name=${DOMAIN_NAME}
+ENTRYPOINT /app/web --grpc_backend=${BACKEND_URL} --telegram_token=${TELEGRAM_API_KEY} --web_port=${WEB_PORT} --bot_name=${BOT_NAME} --domain_name=${DOMAIN_NAME}

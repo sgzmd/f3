@@ -11,4 +11,5 @@ echo "PRODUCTION run of downloader"
   --mysql_user=${MARIADB_USER} \
   --mysql_password=${MARIADB_PASSWORD} \
   --mysql_database=${MARIADB_DATABASE} \
+  --mysql_port=${MARIADB_PORT} \
   --create_sqlite_file=/var/local/flibudata/flibusta.db 

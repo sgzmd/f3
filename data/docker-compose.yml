@@ -3,7 +3,7 @@ services:
     database:
       image: mariadb:latest
       ports:
-        - 3306:3306
+        - 3366:3306
       volumes:
         - flibudata:/var/lib/mysql
       environment:
@@ -17,8 +17,9 @@ services:
         args:
           - telegram_api_key=${ENV_TELEGRAM_API_KEY}
           - telegram_chat_id=${ENV_TELEGRAM_CHAT_ID}
-          - mariadb_host=${ENV_MARIADB_HOST}
+          - mariadb_host=database
           - mariadb_user=${ENV_MARIADB_USER}
+          - mariadb_port=3306
           - mariadb_password=${ENV_MARIADB_PASSWORD}
           - mariadb_database=${ENV_MARIADB_DATABASE}
       links:
@@ -46,8 +47,8 @@ services:
           - telegram_chat_id=${ENV_TELEGRAM_CHAT_ID}
           - backend_url=backend:9000
           - web_port=8080
-          - bot_name=none
-          - domain_name=none
+          - bot_name=${ENV_BOT_NAME}
+          - domain_name=${ENV_DOMAIN_NAME}
 
       depends_on:
         flibuserver:
