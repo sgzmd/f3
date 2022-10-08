@@ -1,13 +1,23 @@
 FROM tetafro/golang-gcc:latest
 
 ENV test=0
-ENV telegram_api_key=nonkey
-ENV telegram_chat_id=-1
-ENV mariadb_host=localhost
-ENV mariadb_port=3306
-ENV mariadb_user=flibustier
-ENV mariadb_database=flibustier
-ENV mariadb_password=flibusta
+ARG telegram_api_key=nonkey
+ARG telegram_chat_id=-1
+ARG mariadb_host=localhost
+ARG mariadb_port=3306
+ARG mariadb_user=flibustier
+ARG mariadb_database=flibustier
+ARG mariadb_password=flibusta
+
+ENV TELEGRAM_API_KEY=${telegram_api_key}
+ENV TELEGRAM_CHAT_ID=${telegram_chat_id}
+ENV MARIADB_HOST=${mariadb_host}
+ENV MARIADB_PORT=${mariadb_port}
+ENV MARIADB_USER=${mariadb_user}
+ENV MARIADB_DATABASE=${mariadb_database}
+ENV MARIADB_PASSWORD=${mariadb_password}
+
+RUN echo "================$telegram_api_key=================="
 
 RUN mkdir /app
 RUN apk add sqlite gawk bash wget curl

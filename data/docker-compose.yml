@@ -12,7 +12,11 @@ services:
         - MYSQL_USER=flibustier
         - MYSQL_DATABASE=flibustier
     flibuserver:
-      build: .
+      build:
+        context: .
+        args:
+          - telegram_api_key=${ENV_TELEGRAM_API_KEY}
+          - telegram_chat_id=${ENV_TELEGRAM_CHAT_ID}
       links:
         - database
       depends_on:
@@ -21,9 +25,9 @@ services:
           - 'flibudata:/var/local/flibudata'
       ports:
           - '9000:9000'
-      environment:
-          - telegram_api_key=${ENV_TELEGRAM_API_KEY}
-          - telegram_chat_id=${ENV_TELEGRAM_CHAT_ID}
+      # environment:
+      #     - telegram_api_key=${ENV_TELEGRAM_API_KEY}
+      #     - telegram_chat_id=${ENV_TELEGRAM_CHAT_ID}
       restart: unless-stopped
       healthcheck:
             test: ["CMD", "./grpc_health_probe-linux-amd64", "-addr=localhost:9000"]
