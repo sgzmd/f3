@@ -39,17 +39,20 @@ services:
             timeout: 30s
             retries: 99999
     web:
-      build: ../web
+      build: 
+        context: ../web
+        args:
+          - telegram_api_key=${ENV_TELEGRAM_API_KEY}
+          - telegram_chat_id=${ENV_TELEGRAM_CHAT_ID}
+          - backend_url=backend:9000
+          - web_port=8080
+          - bot_name=none
+          - domain_name=none
+
       depends_on:
         flibuserver:
           condition: service_healthy 
       ports:
         - '8080:8080'
-      environment:
-        - telegram_api_key=none
-        - backend_uirl=localhost:9000
-        - web_port=8080
-        - bot_name=none
-        - domain_name=none
 volumes:
   flibudata:

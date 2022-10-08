@@ -1,5 +1,7 @@
 # What is currently broken
 
-* Parameters are not passed to apps
-* Healthcheck is not implemented
-* Don't need to re-build everything every single time. Should be env controlled.
+[X] Parameters are not passed to apps
+[X] Healthcheck is not implemented
+
+[] No logs from flibuserver on docker logging console
+[] Need to test everything end-to-end and check deployment
