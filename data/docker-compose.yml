@@ -8,15 +8,19 @@ services:
         - flibudata:/var/lib/mysql
       environment:
         - MYSQL_ROOT_PASSWORD=toor
-        - MYSQL_PASSWORD=flibusta
-        - MYSQL_USER=flibustier
-        - MYSQL_DATABASE=flibustier
+        - MYSQL_PASSWORD=${ENV_MARIADB_PASSWORD}
+        - MYSQL_USER=${ENV_MARIADB_USER}
+        - MYSQL_DATABASE=${ENV_MARIADB_DATABASE}
     flibuserver:
       build:
         context: .
         args:
           - telegram_api_key=${ENV_TELEGRAM_API_KEY}
           - telegram_chat_id=${ENV_TELEGRAM_CHAT_ID}
+          - mariadb_host=${ENV_MARIADB_HOST}
+          - mariadb_user=${ENV_MARIADB_USER}
+          - mariadb_password=${ENV_MARIADB_PASSWORD}
+          - mariadb_database=${ENV_MARIADB_DATABASE}
       links:
         - database
       depends_on:
