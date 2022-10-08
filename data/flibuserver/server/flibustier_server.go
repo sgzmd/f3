@@ -6,6 +6,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	health "google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
@@ -835,8 +837,14 @@ func main() {
 	defer srv.Close()
 
 	pb.RegisterFlibustierServiceServer(s, srv)
+
 	reflection.Register(s)
 	log.Printf("server listening at %v", lis.Addr())
+
+	// Register GRPC healthcheck service
+	healthServer := health.NewServer()
+	healthServer.SetServingStatus("", grpc_health_v1.HealthCheckResponse_SERVING)
+	s.RegisterService(&grpc_health_v1.Health_ServiceDesc, healthServer)
 
 	if *dumpDb != "" {
 		srv.DumpDb(*dumpDb)
