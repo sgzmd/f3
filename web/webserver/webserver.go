@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/template/html"
@@ -12,7 +14,6 @@ import (
 	"github.com/sgzmd/f3/web/webserver/handlers"
 	"github.com/sgzmd/f3/web/webserver/updates"
 	"github.com/sgzmd/go-telegram-auth/tgauth"
-	"log"
 )
 
 var (
@@ -31,6 +32,9 @@ func main() {
 	}
 
 	auth = tgauth.NewTelegramAuth(opts.TelegramToken, "/login", "/check-auth")
+	log.Print("Enabling debug mode for authentication")
+	auth.SetDebug(true)
+
 	client, err := rpc.NewClient(&opts.GrpcBackend)
 	if err != nil {
 		log.Fatal(err)

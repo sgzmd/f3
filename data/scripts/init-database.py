@@ -74,6 +74,14 @@ def MySQLtoSqlite():
         debug=True)
     msq.transfer()
 
+# Applies SequenceAuthor.sql patch to the sqlite3 database
+def ApplyPatch() -> bool:
+    cmd = " ".join(["sqlite3", args.create_sqlite_file,
+                    "<", "SequenceAuthor.sql"])
+    
+    logging.info(cmd)
+
+    return os.system(cmd) == 0
 
 try:
 
@@ -85,6 +93,10 @@ try:
         raise Exception("Failed to import SQL dump")
 
     MySQLtoSqlite()
+    if not ApplyPatch():
+        logging.log(logging.FATAL, "Couldn't apply patch")
+        raise Exception("Failed to apply patch")
+        
 except Exception as e:
     logging.fatal(e)
 finally:

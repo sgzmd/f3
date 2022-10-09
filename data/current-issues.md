@@ -5,3 +5,4 @@
 
 [] No logs from flibuserver on docker logging console
 [] Need to test everything end-to-end and check deployment
+[] Web server loads but no login
