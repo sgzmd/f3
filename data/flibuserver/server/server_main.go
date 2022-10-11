@@ -23,7 +23,6 @@ var (
 	datastore  = flag.String("datastore", "", "Path to the data store to use")
 	update     = flag.Duration("update_every", 24*time.Hour, "How often to re-download files")
 	updateCmd  = flag.String("update_cmd", "/app/downloader_launcher.sh", "Command to kick-off re-download")
-	dumpDb     = flag.String("dump_db", "", "If used, will dump DB to given file and quit")
 
 	mysqlHost = flag.String("mysql_host", "localhost", "MySQL host")
 	mysqlPort = flag.String("mysql_port", "3306", "MySQL port")

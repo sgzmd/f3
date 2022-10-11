@@ -55,13 +55,6 @@ func (s *server) CheckUpdates(_ context.Context, in *proto.CheckUpdatesRequest) 
 			return nil, err
 		}
 
-		if !rs.Next() {
-			return nil,
-				fmt.Errorf("exceptional situation: nothing was found for %v with EntryId %d",
-					statement,
-					key.EntityId)
-		}
-
 		newBooks := make([]*proto.Book, 0)
 
 		for rs.Next() {
@@ -70,6 +63,13 @@ func (s *server) CheckUpdates(_ context.Context, in *proto.CheckUpdatesRequest) 
 			rs.Scan(&bookId, &title)
 
 			newBooks = append(newBooks, &proto.Book{BookName: title, BookId: bookId})
+		}
+
+		if len(newBooks) == 0 {
+			return nil,
+				fmt.Errorf("exceptional situation: nothing was found for %v with EntryId %d",
+					statement,
+					key.EntityId)
 		}
 
 		if entry.NumEntries != int32(len(newBooks)) {
