@@ -22,6 +22,8 @@ var BannedPrefixes = [...]string{
 	"lib.b", "lib.a", "lib.reviews", "lib.md5", "lib.libtranslator",
 	"lib.libjoined", "lib.librecs", "lib.librate", "lib.libfile", "lib.libgenre"}
 
+var skipBanned = flag.Bool("skip-banned", true, "Skip banned prefixes")
+
 func CreateUrlList(baseUrl string) []string {
 	var urls []string
 	resp, err := soup.Get(baseUrl)
@@ -39,10 +41,17 @@ func CreateUrlList(baseUrl string) []string {
 		}
 
 		bannedPrefixFound := false
-		for _, prefix := range BannedPrefixes {
-			if strings.HasPrefix(href, prefix) {
+		if *skipBanned {
+			for _, prefix := range BannedPrefixes {
+				if strings.HasPrefix(href, prefix) {
+					bannedPrefixFound = true
+					break
+				}
+			}
+		} else {
+			if strings.HasPrefix(href, "lib.md5") {
 				bannedPrefixFound = true
-				break
+				continue
 			}
 		}
 
@@ -62,6 +71,7 @@ func main() {
 	baseUrl := flag.String("base_url", BASE_URL, "Base URL of the Flibusta SQL download page")
 	download := flag.Bool("download", true, "Whether new files are to be downloaded")
 	dump := flag.String("dump_file", "flibusta.sql", "Name of the dump file to be created")
+	failOnError := flag.Bool("fail_on_error", true, "Whether to fail on error")
 
 	flag.Parse()
 
@@ -99,7 +109,11 @@ func main() {
 				log.Printf("Starting download from %s -> %s", u, filename)
 				err = helpers.DownloadFile(filename, u)
 				if err != nil {
-					log.Fatal(err)
+					if *failOnError {
+						log.Fatal(err)
+					} else {
+						log.Printf("Error downloading file: %s", err.Error())
+					}
 				}
 
 				log.Printf("%s -> %s finished.", u, filename)
@@ -107,15 +121,30 @@ func main() {
 
 				f, err := os.Open(filename)
 				if err != nil {
-					log.Fatal(err)
+					if *failOnError {
+						log.Fatal(err)
+					} else {
+						log.Printf("Error opening file: %s", err.Error())
+						return
+					}
 				}
 				gzr, err := gzip.NewReader(f)
 				if err != nil {
-					log.Fatal(err)
+					if *failOnError {
+						log.Fatal(err)
+					} else {
+						log.Printf("Error creating gzip reader: %s", err.Error())
+						return
+					}
 				}
 				bytes, err := ioutil.ReadAll(gzr)
 				if err != nil {
-					log.Fatal(err)
+					if *failOnError {
+						log.Fatal(err)
+					} else {
+						log.Printf("Error reading gzip file: %s", err.Error())
+						return
+					}
 				}
 
 				mu.Lock()
