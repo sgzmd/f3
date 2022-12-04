@@ -1,6 +1,10 @@
 #FROM tetafro/golang-gcc:latest
 FROM golang:1.19
 
+# Including the revision image was built from
+ARG vcs-ref=0
+ENV vcs-ref=$vcs-ref
+
 ARG telegram_api_key=nonkey
 ARG telegram_chat_id=-1
 ARG mariadb_host=localhost
