@@ -1,4 +1,11 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
-/app/create_sqlite_file.sh -f /var/local/flibudata/flibusta.db -d /app -t $telegram_api_key -c $telegram_chat_id
-/app/flibustier_server --flibusta_db=/var/local/flibudata/flibusta.db --datastore=/var/local/flibudata/datastore.badger --port=9000 --update_cmd=./docker_download.sh --update_every=24h
+set -x
+
+bash /app/scripts/docker_download.sh
+/app/flibustier_server --flibusta_db=/var/local/flibudata/flibusta.db \
+  --datastore=/var/local/flibudata/datastore.badger \
+  --port=9000 \
+  --update_cmd=/app/scripts/docker_download.sh \
+  --update_every=24h
+
