@@ -30,8 +30,8 @@ const TEMPLATE = `<b>Найдены обновления</b>
 {{ range .Updates }}
 <b>{{ .EntityName }}</b>
 {{ range .Books }}
-<i>{{.BookName}}</i>
-{{end}}{{ end }}`
+<i><a href="http://flibusta.is/b/{{.BookId}}">{{.BookName}}</a></i>
+{{end}}{{end}}`
 
 func CheckUpdatesLoop(ctx handlers.ClientContext, token string) {
 	for {
