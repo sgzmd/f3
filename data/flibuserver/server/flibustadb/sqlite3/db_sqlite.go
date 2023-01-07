@@ -6,6 +6,10 @@ import (
 	"sync"
 )
 
+const (
+	FLIBUSTA_DB = "../../../../../testutils/flibusta-test.db"
+)
+
 // Implements FlibustaDb interface for sqlite3 database.
 type Sqlite3Db struct {
 	sqliteDb        *sql.DB
@@ -96,32 +100,3 @@ func (s *Sqlite3Db) GetSeriesBooks(seriesId int64) ([]*pb.Book, error) {
 func NewSqlite3Db(sqliteDb *sql.DB) *Sqlite3Db {
 	return &Sqlite3Db{sqliteDb: sqliteDb, authorStatement: nil, seriesStatement: nil}
 }
-
-// Compare this snippet from flibuserver\server\flibustadb\db_test.go:
-// package flibustadb
-//
-// import (
-// 	"testing"
-//
-// 	"github.com/stretchr/testify/assert"
-// )
-//
-// func TestSqlite3Db(t *testing.T) {
-// 	db := NewSqlite3Db()
-// 	assert.NotNil(t, db)
-// }
-//
-// Compare this snippet from flibuserver\server\flibustadb\badgerdb\badgerdb.go:
-// package badgerdb
-//
-// import (
-// 	"fmt"
-// 	"strconv"
-// 	"strings"
-//
-// 	"github.com/dgraph-io/badger"
-// 	"github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
-// 	"github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1/ftypes"
-// 	"github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1/ftypes/ftypespb"
-// 	"github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1/ftypes/ftypespb/ftypespbpb"
-// 	"github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1/ftypes/ftypespb/ftypespbpb/ftypespbpbpb"
