@@ -30,8 +30,7 @@ func (s *server) CheckUpdates(_ context.Context, in *proto.CheckUpdatesRequest) 
 	}
 
 	sstm, err := s.sqliteDb.Prepare(`
-	select b.BookId, b.Title from libbook b, libseq s 
-	where s.BookId = b.BookId and s.SeqId = ? and b.Deleted != '1'
+	 
 	`)
 	if err != nil {
 		return nil, err

@@ -99,7 +99,7 @@ func TestCheckUpdates(t *testing.T) {
 
 <b>Some Entry Name</b>
 
-<i>Some book2 </i>
+<i><a href="http://flibusta.is/b/3234">Some book2 </a></i>
 `, updates[0].Message)
 }
 

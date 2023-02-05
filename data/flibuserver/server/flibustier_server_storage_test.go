@@ -53,17 +53,28 @@ func (suite *FlibustierStorageSuite) TestServer_TrackEntry() {
 }
 
 func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
-	entriesToTrack := make(map[int64]pb.EntryType)
-	for k, v := range TrackableEntries {
-		entriesToTrack[k] = v
+	type idType struct {
+		id int64
+		t  pb.EntryType
 	}
 
-	for key, value := range entriesToTrack {
-		suite.client.TrackEntry(context.Background(), &pb.TrackEntryRequest{Key: &pb.TrackedEntryKey{
-			EntityType: value,
-			EntityId:   key,
+	entries := make([]idType, 0)
+	entriesToTrack := make(map[int64]pb.EntryType)
+	for k, v := range TrackableEntries {
+		entries = append(entries, idType{id: k, t: v})
+	}
+
+	for i, _ := range entries {
+		// Submitting in reverse order to make assertion easier
+		val := entries[len(entries)-i-1]
+		_, e := suite.client.TrackEntry(context.Background(), &pb.TrackEntryRequest{Key: &pb.TrackedEntryKey{
+			EntityType: val.t,
+			EntityId:   val.id,
 			UserId:     "1",
 		}})
+		suite.Assert().Nil(e)
+		d, _ := time.ParseDuration("1s")
+		time.Sleep(d)
 	}
 
 	_, _ = suite.client.TrackEntry(context.Background(), &pb.TrackEntryRequest{Key: &pb.TrackedEntryKey{
@@ -77,12 +88,13 @@ func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
 		&pb.ListTrackedEntriesRequest{UserId: "1"})
 	suite.Assert().Nil(err)
 
+	// Checking that entries were returned in the order expected
+	result := make([]idType, 0)
 	for _, entry := range resp.Entry {
-		suite.Assert().Contains(entriesToTrack, entry.Key.EntityId)
-		delete(entriesToTrack, entry.Key.EntityId)
+		result = append(result, idType{id: entry.Key.EntityId, t: entry.Key.EntityType})
 	}
 
-	suite.Assert().Empty(entriesToTrack)
+	suite.Assert().Equal(entries, result)
 }
 
 func (suite *FlibustierStorageSuite) TestServer_Untrack() {
