@@ -9,6 +9,7 @@ import (
 	"github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
+	"sort"
 	"strings"
 	"time"
 )
@@ -184,6 +185,11 @@ func (s *server) ListTrackedEntries(ctx context.Context, req *proto.ListTrackedE
 	if err != nil {
 		return nil, err
 	}
+
+	sort.Slice(entries, func(i, j int) bool {
+		return entries[i].Saved.Seconds*1000+int64(entries[i].Saved.Nanos) >
+			entries[j].Saved.Seconds*1000+int64(entries[i].Saved.Nanos)
+	})
 
 	return &proto.ListTrackedEntriesResponse{Entry: entries}, nil
 }
