@@ -175,7 +175,7 @@ func (suite *FlibustierStorageSuite) TestCheckUpdates_Author() {
 		suite.Failf("CheckUpdates failed: %+v", err.Error())
 	} else {
 		suite.Assert().Len(resp.UpdateRequired, 1)
-		suite.Assert().Equal(int32(7), resp.UpdateRequired[0].NewNumEntries)
+		suite.Assert().Equal(int32(8), resp.UpdateRequired[0].NewNumEntries)
 	}
 }
 
@@ -198,7 +198,7 @@ func (suite *FlibustierStorageSuite) TestCheckUpdates_Series() {
 	} else {
 		// t.Errorf("Result: %s", resp.String())
 		suite.Assert().Len(resp.UpdateRequired, 1)
-		suite.Assert().Equal(int32(7), resp.UpdateRequired[0].NewNumEntries)
+		suite.Assert().Equal(int32(8), resp.UpdateRequired[0].NewNumEntries)
 	}
 }
 
@@ -223,7 +223,7 @@ func (suite *FlibustierStorageSuite) TestCheckUpdates_Retrack() {
 	} else {
 		// t.Errorf("Result: %s", resp.String())
 		suite.Assert().Len(resp.UpdateRequired, 1)
-		suite.Assert().Equal(int32(7), resp.UpdateRequired[0].NewNumEntries)
+		suite.Assert().Equal(int32(8), resp.UpdateRequired[0].NewNumEntries)
 
 		// Retrack the same entry so the new books are added
 		resp, err := client.TrackEntry(context.Background(), &pb.TrackEntryRequest{
