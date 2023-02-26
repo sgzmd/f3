@@ -7,4 +7,7 @@ type FlibustaDb interface {
 	SearchSeries(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, error)
 	GetAuthorBooks(authorId int64) ([]*pb.Book, error)
 	GetSeriesBooks(seriesId int64) ([]*pb.Book, error)
+
+	GetAuthorName(authorId int64) (pb.AuthorName, error)
+	GetSequenceName(seqId int64) (string, error)
 }

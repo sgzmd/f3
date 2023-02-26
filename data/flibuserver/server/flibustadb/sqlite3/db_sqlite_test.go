@@ -2,6 +2,7 @@ package sqlite3
 
 import (
 	"database/sql"
+	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"github.com/stretchr/testify/assert"
 	"sort"
 	"testing"
@@ -54,4 +55,24 @@ func TestGetSeriesBooks(t *testing.T) {
 
 	assert.Len(t, books, 8)
 	assert.Equal(t, "Маска зверя", books[0].BookName)
+}
+
+func TestGetAuthorName(t *testing.T) {
+	db, err := sql.Open("sqlite3", FLIBUSTA_DB)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	flibustaDb := NewSqlite3Db(db)
+	name, err := flibustaDb.GetAuthorName(109170)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, pb.AuthorName{
+		LastName:   "Метельский",
+		MiddleName: "Александрович",
+		FirstName:  "Николай"}, name)
 }

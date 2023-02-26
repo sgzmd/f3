@@ -2,6 +2,8 @@ package sqlite3
 
 import (
 	"database/sql"
+	"fmt"
+	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb"
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"log"
 	"sync"
@@ -11,12 +13,16 @@ const (
 	FLIBUSTA_DB = "../../../../../testutils/flibusta-test.db"
 )
 
-// Implements FlibustaDb interface for sqlite3 database.
+// Sqlite3Database Implements FlibustaDb interface for sqlite3 database.
 type Sqlite3Database struct {
-	sqliteDb        *sql.DB
-	authorStatement *sql.Stmt
-	seriesStatement *sql.Stmt
-	lock            sync.Mutex
+	db                    *flibustadb.FlibustaDb
+	sqliteDb              *sql.DB
+	authorStatement       *sql.Stmt
+	seriesStatement       *sql.Stmt
+	authorNameStatement   *sql.Stmt
+	sequenceNameStatement *sql.Stmt
+
+	lock sync.Mutex
 }
 
 // SearchAuthors searches authors by name.
@@ -63,6 +69,37 @@ func (s *Sqlite3Database) GetAuthorBooks(authorId int64) ([]*pb.Book, error) {
 	}
 
 	return books, nil
+}
+
+func (s *Sqlite3Database) GetAuthorName(authorid int64) (pb.AuthorName, error) {
+	{
+		s.lock.Lock()
+		defer s.lock.Unlock()
+
+		if s.authorNameStatement == nil {
+			s.authorNameStatement, _ = s.sqliteDb.Prepare(`
+				select an.FirstName, an.MiddleName, an.LastName 
+				from libavtorname an
+				where an.AvtorId = ?`)
+		}
+	}
+
+	rs, err := s.authorNameStatement.Query(authorid)
+	name := pb.AuthorName{}
+	if err != nil {
+		return name, err
+	}
+
+	if rs.Next() {
+		rs.Scan(&name.FirstName, &name.MiddleName, &name.LastName)
+		return name, nil
+	} else {
+		return name, fmt.Errorf("author with authorId=%d not found", authorid)
+	}
+}
+
+func (s *Sqlite3Database) GetSequenceName(seqId int64) (string, error) {
+	return "", nil
 }
 
 // GetSeriesBooks queries sqlite3 database for books in series.
