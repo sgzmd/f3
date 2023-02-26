@@ -43,10 +43,14 @@ func (s *Sqlite3Database) GetAuthorBooks(authorId int64) ([]*pb.Book, error) {
 		// Scoped lock which will be unlocked whether we create a new statement or not.
 		s.lock.Lock()
 		defer s.lock.Unlock()
+		var err error
 		if s.authorStatement == nil {
-			s.authorStatement, _ = s.sqliteDb.Prepare(
-				`select b.BookId, b.Title from libbook b, libavtor a 
+			s.authorStatement, err = s.sqliteDb.Prepare(
+				`select b.BookId, b.Title, a.Pos from libbook b, libavtor a 
 					   where b.BookId = a.BookId and a.AvtorId = ? and b.Deleted != '1'`)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -59,13 +63,14 @@ func (s *Sqlite3Database) GetAuthorBooks(authorId int64) ([]*pb.Book, error) {
 	for rows.Next() {
 		var bookId int32
 		var bookTitle string
-		err := rows.Scan(&bookId, &bookTitle)
+		var pos int32
+		err := rows.Scan(&bookId, &bookTitle, &pos)
 
 		if err != nil {
 			return nil, err
 		}
 
-		books = append(books, &pb.Book{BookId: bookId, BookName: bookTitle})
+		books = append(books, &pb.Book{BookId: bookId, BookName: bookTitle, OrderInSequence: pos})
 	}
 
 	return books, nil
@@ -76,11 +81,15 @@ func (s *Sqlite3Database) GetAuthorName(authorid int64) (pb.AuthorName, error) {
 		s.lock.Lock()
 		defer s.lock.Unlock()
 
+		var err error
 		if s.authorNameStatement == nil {
-			s.authorNameStatement, _ = s.sqliteDb.Prepare(`
+			s.authorNameStatement, err = s.sqliteDb.Prepare(`
 				select an.FirstName, an.MiddleName, an.LastName 
 				from libavtorname an
 				where an.AvtorId = ?`)
+			if err != nil {
+				return pb.AuthorName{}, err
+			}
 		}
 	}
 
