@@ -159,6 +159,8 @@ func (s *Sqlite3Database) GetSeriesBooks(seriesId int64) ([]*pb.Book, error) {
 		return nil, err
 	}
 
+	log.Printf("GetSeriesBooks(%d)", seriesId)
+
 	books := make([]*pb.Book, 0)
 	for rows.Next() {
 		var bookId int32
@@ -166,12 +168,16 @@ func (s *Sqlite3Database) GetSeriesBooks(seriesId int64) ([]*pb.Book, error) {
 		var seqNumb int32
 		err := rows.Scan(&bookId, &bookTitle, &seqNumb)
 
+		log.Printf("GetSeriesBooks(%d) bookId=%d, bookTitle=%s, seqNumb=%d", seriesId, bookId, bookTitle, seqNumb)
+
 		if err != nil {
 			return nil, err
 		}
 
 		books = append(books, &pb.Book{BookId: bookId, BookName: bookTitle, OrderInSequence: seqNumb})
 	}
+
+	log.Printf("GetSeriesBooks(%d) total books=%d, books=%v", seriesId, len(books), books)
 
 	return books, nil
 }

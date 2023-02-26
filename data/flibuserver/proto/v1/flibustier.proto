@@ -9,6 +9,11 @@ import "google/protobuf/timestamp.proto";
 
 package flibuserver.proto.v1;
 
+// If changing anything, use `buf` (https://github.com/bufbuild/buf) to generate the code
+// using command `buf generate` in the root of the project.
+// After that, please copy generated files to the corresponding directories in the web subproject.
+// One day, I'll figure out how to do it automatically.
+
 service FlibustierService {
   rpc GlobalSearch (GlobalSearchRequest) returns (GlobalSearchResponse) {}
   rpc CheckUpdates (CheckUpdatesRequest) returns (CheckUpdatesResponse) {}
