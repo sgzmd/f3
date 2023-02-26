@@ -139,7 +139,7 @@ func (s *Sqlite3Database) GetSeriesBooks(seriesId int64) ([]*pb.Book, error) {
 		defer s.lock.Unlock()
 		if s.seriesStatement == nil {
 			s.seriesStatement, _ = s.sqliteDb.Prepare(
-				`select b.BookId, b.Title from libbook b, libseq s 
+				`select b.BookId, b.Title, s.SeqNumb from libbook b, libseq s 
 					   where s.BookId = b.BookId and s.SeqId = ? and b.Deleted != '1' 
 					   order by s.SeqNumb`)
 		}
@@ -154,13 +154,14 @@ func (s *Sqlite3Database) GetSeriesBooks(seriesId int64) ([]*pb.Book, error) {
 	for rows.Next() {
 		var bookId int32
 		var bookTitle string
-		err := rows.Scan(&bookId, &bookTitle)
+		var seqNumb int32
+		err := rows.Scan(&bookId, &bookTitle, &seqNumb)
 
 		if err != nil {
 			return nil, err
 		}
 
-		books = append(books, &pb.Book{BookId: bookId, BookName: bookTitle})
+		books = append(books, &pb.Book{BookId: bookId, BookName: bookTitle, OrderInSequence: seqNumb})
 	}
 
 	return books, nil
