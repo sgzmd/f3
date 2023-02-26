@@ -76,3 +76,21 @@ func TestGetAuthorName(t *testing.T) {
 		MiddleName: "Александрович",
 		FirstName:  "Николай"}, name)
 }
+
+// Tests for GetSequenceName
+func TestGetSequenceName(t *testing.T) {
+	db, err := sql.Open("sqlite3", FLIBUSTA_DB)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	flibustaDb := NewSqlite3Db(db)
+	name, err := flibustaDb.GetSequenceName(34145)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, "Унесенный ветром", name)
+}

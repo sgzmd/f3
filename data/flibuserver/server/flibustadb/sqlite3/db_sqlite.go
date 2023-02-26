@@ -98,8 +98,37 @@ func (s *Sqlite3Database) GetAuthorName(authorid int64) (pb.AuthorName, error) {
 	}
 }
 
+// GetSequenceName implements FlibustaDb.GetSequenceName for Sqlite3
 func (s *Sqlite3Database) GetSequenceName(seqId int64) (string, error) {
-	return "", nil
+	{
+		s.lock.Lock()
+		defer s.lock.Unlock()
+
+		if s.sequenceNameStatement == nil {
+			var err error
+			s.sequenceNameStatement, err = s.sqliteDb.Prepare(`
+				select s.SeqName 
+				from libseqname s
+				where s.SeqId = ?`)
+
+			if err != nil {
+				return "", err
+			}
+		}
+	}
+
+	rs, err := s.sequenceNameStatement.Query(seqId)
+	if err != nil {
+		return "", err
+	}
+
+	if rs.Next() {
+		var name string
+		rs.Scan(&name)
+		return name, nil
+	} else {
+		return "", fmt.Errorf("sequence with seqId=%d not found", seqId)
+	}
 }
 
 // GetSeriesBooks queries sqlite3 database for books in series.
@@ -134,6 +163,11 @@ func (s *Sqlite3Database) GetSeriesBooks(seriesId int64) ([]*pb.Book, error) {
 	}
 
 	return books, nil
+}
+
+// Close implements FlibustaDb.Close for Sqlite3
+func (s *Sqlite3Database) Close() error {
+	return s.sqliteDb.Close()
 }
 
 // NewSqlite3Db creates new Sqlite3Database instance.

@@ -10,4 +10,6 @@ type FlibustaDb interface {
 
 	GetAuthorName(authorId int64) (pb.AuthorName, error)
 	GetSequenceName(seqId int64) (string, error)
+
+	Close() error
 }

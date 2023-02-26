@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb"
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"log"
@@ -125,37 +124,20 @@ func (s *server) GetSeriesBooks(ctx context.Context, in *pb.GetSeriesBooksReques
 	s.Lock.RLock()
 	defer s.Lock.RUnlock()
 
-	sql, err := s.sqliteDb.Prepare(`
-		SELECT b.Title, b.BookId
-		FROM libseq ls, libseqname lsn , libbook b
-		WHERE ls.seqId = lsn.seqId and ls.seqId = ? and ls.BookId = b.BookId and b.Deleted != '1'
-				  group by b.BookId
-				  order by ls.SeqNumb;`)
-
+	books, err := s.db.GetSeriesBooks(int64(in.SequenceId))
 	if err != nil {
 		return nil, err
 	}
-	books, err := GetEntityBooks(sql, in.SequenceId)
-
+	seqName, err := s.db.GetSequenceName(int64(in.SequenceId))
 	if err != nil {
 		return nil, err
 	}
 
-	rs, err := s.sqliteDb.Query("select SeqName from libseqname where SeqId = ?", in.SequenceId)
-	if err != nil {
-		return nil, err
-	}
-	if rs.Next() {
-		var seqName string
-		rs.Scan(&seqName)
-		name := &pb.EntityName{Name: &pb.EntityName_SequenceName{SequenceName: seqName}}
+	name := &pb.EntityName{Name: &pb.EntityName_SequenceName{SequenceName: seqName}}
 
-		return &pb.GetSeriesBooksResponse{
-			EntityBookResponse: &pb.EntityBookResponse{
-				Book: books, EntityId: in.SequenceId, EntityName: name}}, nil
-	}
-
-	return nil, fmt.Errorf("no series associated with id %d", in.SequenceId)
+	return &pb.GetSeriesBooksResponse{
+		EntityBookResponse: &pb.EntityBookResponse{
+			Book: books, EntityId: in.SequenceId, EntityName: name}}, nil
 }
 
 func (s *server) GetUserInfo(_ context.Context, in *pb.GetUserInfoRequest) (*pb.GetUserInfoResponse, error) {
@@ -268,10 +250,11 @@ func (s *server) DeleteAllTracked(_ context.Context, _ *pb.DeleteAllTrackedReque
 
 func (s *server) Close() {
 	log.Println("Closing database connection.")
-	s.sqliteDb.Close()
+
+	s.db.Close()
 }
 
 func (s *server) Shutdown() {
-	s.sqliteDb.Close()
+	s.Close()
 	s.data.Close()
 }
