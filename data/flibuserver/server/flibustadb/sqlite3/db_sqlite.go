@@ -140,7 +140,8 @@ func (s *Sqlite3Database) GetSeriesBooks(seriesId int64) ([]*pb.Book, error) {
 		if s.seriesStatement == nil {
 			s.seriesStatement, _ = s.sqliteDb.Prepare(
 				`select b.BookId, b.Title from libbook b, libseq s 
-					   where s.BookId = b.BookId and s.SeqId = ? and b.Deleted != '1'`)
+					   where s.BookId = b.BookId and s.SeqId = ? and b.Deleted != '1' 
+					   order by s.SeqNumb`)
 		}
 	}
 
