@@ -165,6 +165,22 @@ func (s *Sqlite3Database) GetSeriesBooks(seriesId int64) ([]*pb.Book, error) {
 	return books, nil
 }
 
+// GetBookAuthor implements FlibustaDb.GetBookAuthor for Sqlite3.
+func (s *Sqlite3Database) GetBookAuthor(bookId int64) (pb.AuthorName, error) {
+	rows, err := s.sqliteDb.Query(`select AvtorId from libavtor where BookId = ?`, bookId)
+	if err != nil {
+		return pb.AuthorName{}, err
+	}
+
+	if rows.Next() {
+		var authorId int64
+		rows.Scan(&authorId)
+		return s.GetAuthorName(authorId)
+	} else {
+		return pb.AuthorName{}, fmt.Errorf("author not found for bookId=%d", bookId)
+	}
+}
+
 // Close implements FlibustaDb.Close for Sqlite3
 func (s *Sqlite3Database) Close() error {
 	return s.sqliteDb.Close()

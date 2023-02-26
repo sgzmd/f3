@@ -125,6 +125,7 @@ func (s *server) GetSeriesBooks(ctx context.Context, in *pb.GetSeriesBooksReques
 	defer s.Lock.RUnlock()
 
 	books, err := s.db.GetSeriesBooks(int64(in.SequenceId))
+
 	if err != nil {
 		return nil, err
 	}

@@ -2,8 +2,15 @@ package main
 
 import (
 	"context"
+	"github.com/dgraph-io/badger/v3"
+	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb/sqlite3"
+	"google.golang.org/grpc/test/bufconn"
+	"io/ioutil"
 	"log"
 	"math"
+	"net"
+	"path/filepath"
+	"runtime"
 	"time"
 
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
@@ -143,7 +150,7 @@ func (suite *FlibustierStorageSuite) TestServer_TrackEntry_ListTracked() {
 	suite.Assert().Len(r2.Entry, 1)
 	suite.Assert().Equal(int64(109170), r2.Entry[0].Key.EntityId)
 	suite.Assert().LessOrEqual(math.Abs(float64(r2.Entry[0].Saved.Seconds)-float64(time.Now().Unix())), float64(2))
-	suite.Assert().Equal("Николай Александрович Метельский", r2.Entry[0].EntryAuthor)
+	suite.Assert().Equal("Метельский, Николай Александрович", r2.Entry[0].EntryAuthor)
 }
 
 func (suite *FlibustierStorageSuite) TestServer_TrackEntry_Double() {
@@ -295,4 +302,61 @@ func (suite *FlibustierStorageSuite) BeforeTest(suiteName, testName string) {
 func (suite *FlibustierStorageSuite) AfterTest(suiteName, testName string) {
 	log.Print("AfterTest()")
 	suite.conn.Close()
+}
+
+func newServerWithDump(db_path string, datastore string, dump string) (*server, error) {
+	srv := new(server)
+
+	db, err := OpenDatabase(db_path)
+	if err != nil {
+		return nil, err
+	}
+	db.Exec(dump)
+
+	srv.db = sqlite3.NewSqlite3Db(db)
+
+	var opt badger.Options
+	if datastore == "" {
+		opt = badger.DefaultOptions("").WithInMemory(true)
+	} else {
+		opt = badger.DefaultOptions(datastore)
+	}
+
+	srv.data, err = badger.Open(opt)
+	if err != nil {
+		return nil, err
+	}
+
+	return srv, nil
+}
+
+func dialer(flibustaDb string) func(context.Context, string) (net.Conn, error) {
+	log.Print("dialer() creates new server")
+	listener := bufconn.Listen(1024 * 1024)
+
+	server := grpc.NewServer()
+
+	_, filename, _, _ := runtime.Caller(0)
+	dir, _ := filepath.Split(filename)
+
+	data, err := ioutil.ReadFile(dir + "../../../testutils/flibusta-test-db.sql")
+	if err != nil {
+		panic(err)
+	}
+	sqlDump := string(data)
+	srv, err := newServerWithDump(flibustaDb, "" /* in memory datastore */, sqlDump)
+	if err != nil {
+		panic(err)
+	}
+	pb.RegisterFlibustierServiceServer(server, srv)
+
+	go func() {
+		if err := server.Serve(listener); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	return func(context.Context, string) (net.Conn, error) {
+		return listener.Dial()
+	}
 }
