@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/dgraph-io/badger/v3"
-	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb/sqlite3"
+	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb"
 	"github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -85,7 +85,7 @@ func main() {
 					os.Exit(1)
 				}
 
-				srv.db = sqlite3.NewSqlite3Db(db)
+				srv.db = flibustadb.NewSqlite3Db(db)
 
 				log.Printf("Database re-opened.")
 			}
@@ -109,7 +109,7 @@ func NewServer(db_path string, datastore string) (*server, error) {
 		return nil, err
 	}
 
-	srv.db = sqlite3.NewSqlite3Db(db)
+	srv.db = flibustadb.NewSqlite3Db(db)
 
 	var opt badger.Options
 	if datastore == "" {

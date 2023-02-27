@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"github.com/dgraph-io/badger/v3"
-	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb/sqlite3"
+	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb"
 	"google.golang.org/grpc/test/bufconn"
 	"io/ioutil"
 	"log"
@@ -313,7 +313,7 @@ func newServerWithDump(db_path string, datastore string, dump string) (*server, 
 	}
 	db.Exec(dump)
 
-	srv.db = sqlite3.NewSqlite3Db(db)
+	srv.db = flibustadb.NewSqlite3Db(db)
 
 	var opt badger.Options
 	if datastore == "" {

@@ -1,4 +1,4 @@
-package sqlite3
+package flibustadb
 
 import (
 	"database/sql"
@@ -8,6 +8,10 @@ import (
 	"testing"
 
 	_ "github.com/mattn/go-sqlite3"
+)
+
+const (
+	FLIBUSTA_DB = "../../../../testutils/flibusta-test.db"
 )
 
 // Tests for GetAuthorBooks

@@ -3,7 +3,7 @@ package sqlite3
 import "fmt"
 
 const (
-	AuthorQueryTemplate = `
+	AuthorQueryTemplateSqlite = `
 select 
 	a.authorName, 
 	a.authorId,
@@ -20,7 +20,7 @@ where
 GROUP BY 1,2;
 	`
 
-	AuthorQueryTemplateById = `
+	AuthorQueryTemplateByIdSqlite = `
 select
 	a.authorName,
 	a.authorId,
@@ -37,7 +37,7 @@ where
 GROUP BY 1,2;
 	`
 
-	SequenceQueryTemplate = `
+	SequenceQueryTemplateSqlite = `
 select	
 	f.SeqName,
 	f.Authors,
@@ -48,7 +48,7 @@ from
 where f.sequence_fts match ("%s*")
 	`
 
-	SequenceQueryTemplateById = `
+	SequenceQueryTemplateByIdSqlite = `
 select	
 	f.SeqName,
 	f.Authors,
@@ -80,19 +80,19 @@ order by s.SeqNumb
 )
 
 func CreateAuthorSearchQuery(author string) string {
-	return fmt.Sprintf(AuthorQueryTemplate, author)
+	return fmt.Sprintf(AuthorQueryTemplateSqlite, author)
 }
 
 func CreateSequenceSearchQuery(seq string) string {
-	return fmt.Sprintf(SequenceQueryTemplate, seq)
+	return fmt.Sprintf(SequenceQueryTemplateSqlite, seq)
 }
 
 func CreateAuthorByIdQuery(authorId int) string {
-	return fmt.Sprintf(AuthorQueryTemplateById, authorId)
+	return fmt.Sprintf(AuthorQueryTemplateByIdSqlite, authorId)
 }
 
 func CreateSequenceByIdQuery(seqId int) string {
-	return fmt.Sprintf(SequenceQueryTemplateById, seqId)
+	return fmt.Sprintf(SequenceQueryTemplateByIdSqlite, seqId)
 }
 
 func CreateGetBooksForAuthor(authorId int) string {
