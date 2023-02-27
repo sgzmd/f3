@@ -3,10 +3,11 @@ package sqlite3
 import (
 	"database/sql"
 	"fmt"
-	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb"
-	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"log"
 	"sync"
+
+	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb"
+	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 )
 
 const (
@@ -23,18 +24,6 @@ type Sqlite3Database struct {
 	sequenceNameStatement *sql.Stmt
 
 	lock sync.Mutex
-}
-
-// SearchAuthors searches authors by name.
-func (s *Sqlite3Database) SearchAuthors(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, error) {
-	query := CreateAuthorSearchQuery(req.SearchTerm)
-	return s.iterateOverAuthors(query)
-}
-
-// SearchSeries searches series by name.
-func (s *Sqlite3Database) SearchSeries(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, error) {
-	query := CreateSequenceSearchQuery(req.SearchTerm)
-	return s.iterateOverSeries(query)
 }
 
 // GetAuthorBooks returns all books by author.
@@ -271,4 +260,16 @@ func (s *Sqlite3Database) iterateOverSeries(query string) ([]*pb.FoundEntry, err
 	}
 
 	return entries, nil
+}
+
+// SearchAuthors searches authors by name. Specific for SQLite3 implementation.
+func (s *Sqlite3Database) SearchAuthors(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, error) {
+	query := CreateAuthorSearchQuery(req.SearchTerm)
+	return s.iterateOverAuthors(query)
+}
+
+// SearchSeries searches series by name. Specific for SQLite3 implementation.
+func (s *Sqlite3Database) SearchSeries(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, error) {
+	query := CreateSequenceSearchQuery(req.SearchTerm)
+	return s.iterateOverSeries(query)
 }
