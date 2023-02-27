@@ -200,8 +200,8 @@ func (s *FlibustaDbSql) Close() error {
 	return s.db.Close()
 }
 
-// NewSqlite3Db creates new FlibustaDbSql instance.
-func NewSqlite3Db(sqliteDb *sql.DB) *FlibustaDbSql {
+// NewFlibustaSqlDb creates new FlibustaDbSql instance.
+func NewFlibustaSqlDb(sqliteDb *sql.DB) *FlibustaDbSql {
 	return &FlibustaDbSql{db: sqliteDb, authorStatement: nil, seriesStatement: nil}
 }
 

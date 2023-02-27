@@ -85,7 +85,7 @@ func main() {
 					os.Exit(1)
 				}
 
-				srv.db = flibustadb.NewSqlite3Db(db)
+				srv.db = flibustadb.NewFlibustaSqlDb(db)
 
 				log.Printf("Database re-opened.")
 			}
@@ -109,7 +109,7 @@ func NewServer(db_path string, datastore string) (*server, error) {
 		return nil, err
 	}
 
-	srv.db = flibustadb.NewSqlite3Db(db)
+	srv.db = flibustadb.NewFlibustaSqlDb(db)
 
 	var opt badger.Options
 	if datastore == "" {
