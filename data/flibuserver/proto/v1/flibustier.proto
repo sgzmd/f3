@@ -55,6 +55,13 @@ message ListUsersResponse {
 message DeleteAllUsersRequest {}
 message DeleteAllUsersResponse {}
 
+message UserInfo {
+  string user_id = 1;
+  string user_name = 2;
+  int64 user_telegram_id = 3;
+  string user_email = 4;
+}
+
 message GetUserInfoRequest {
   // User ID string, constructed by the calling frontend, can be anything.
   string user_id = 1;
@@ -62,12 +69,11 @@ message GetUserInfoRequest {
   optional UserInfoAction action = 3;
 }
 
-message UserInfo {
-  string user_id = 1;
-  string user_name = 2;
-  int64 user_telegram_id = 3;
-  string user_email = 4;
+message GetUserInfoResponse {
+  UserInfo user_info = 1;
+  UserCreated user_created = 2;
 }
+
 
 enum UserCreated {
   USER_CREATED_NO = 0;
@@ -81,10 +87,6 @@ message KvRecordKey {
   }
 }
 
-message GetUserInfoResponse {
-  UserInfo user_info = 1;
-  UserCreated user_created = 2;
-}
 
 message GlobalSearchRequest {
   string search_term = 1;
