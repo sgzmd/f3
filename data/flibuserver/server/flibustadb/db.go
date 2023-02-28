@@ -145,19 +145,22 @@ func (s *FlibustaDbSql) GetSeriesBooks(seriesId int64) ([]*pb.Book, error) {
 		db = s.db2
 	}
 
-	{
-		// Scoped lock which will be unlocked whether we create a new statement or not.
-		s.lock.Lock()
-		defer s.lock.Unlock()
-		if s.seriesStatement == nil {
-			s.seriesStatement, _ = db.Prepare(
-				`select b.BookId, b.Title, s.SeqNumb from libbook b, libseq s 
-					   where s.BookId = b.BookId and s.SeqId = ? and b.Deleted != '1' 
-					   order by s.SeqNumb`)
-		}
-	}
+	//{
+	//	// Scoped lock which will be unlocked whether we create a new statement or not.
+	//	s.lock.Lock()
+	//	defer s.lock.Unlock()
+	//	if s.seriesStatement == nil {
+	//		s.seriesStatement, _ = db.Prepare(
+	//			`select b.BookId, b.Title, s.SeqNumb from libbook b, libseq s
+	//				   where s.BookId = b.BookId and s.SeqId = ? and b.Deleted != '1'
+	//				   order by s.SeqNumb`)
+	//	}
+	//}
 
-	rows, err := s.seriesStatement.Query(seriesId)
+	rows, err := db.Query(`select b.BookId, b.Title, s.SeqNumb from libbook b, libseq s 
+					   where s.BookId = b.BookId and s.SeqId = ? and b.Deleted != '1' 
+					   order by s.SeqNumb`, seriesId)
+
 	if err != nil {
 		return nil, err
 	}

@@ -17,7 +17,7 @@ import (
 	"os/exec"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-sql-driver/mysql"
 )
 
 var (
@@ -111,8 +111,15 @@ func NewServer(db_path string, datastore string) (*server, error) {
 		return nil, err
 	}
 
-	mariaDb, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
-		*mysqlUser, *mysqlPass, *mysqlHost, *mysqlPort, *mysqlDb))
+	cfg := mysql.Config{
+		User:   *mysqlUser,
+		Passwd: *mysqlPass,
+		Net:    "tcp",
+		Addr:   fmt.Sprintf("%s:%s", *mysqlHost, *mysqlPort),
+		DBName: *mysqlDb,
+	}
+
+	mariaDb, err := sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
 		return nil, err
 	}
