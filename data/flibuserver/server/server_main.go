@@ -16,6 +16,8 @@ import (
 	"os"
 	"os/exec"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var (

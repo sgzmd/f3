@@ -6,6 +6,7 @@ require (
 	github.com/anaskhan96/soup v1.2.5
 	github.com/dgraph-io/badger/v3 v3.2103.5
 	github.com/dustin/go-humanize v1.0.0
+	github.com/go-sql-driver/mysql v1.7.0
 	github.com/golang/protobuf v1.5.2
 	github.com/mattn/go-sqlite3 v1.14.12
 	github.com/stretchr/testify v1.7.0
@@ -18,7 +19,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgraph-io/ristretto v0.1.1 // indirect
-	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/groupcache v0.0.0-20190702054246-869f871628b6 // indirect
