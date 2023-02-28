@@ -112,11 +112,12 @@ func NewServer(db_path string, datastore string) (*server, error) {
 	}
 
 	cfg := mysql.Config{
-		User:   *mysqlUser,
-		Passwd: *mysqlPass,
-		Net:    "tcp",
-		Addr:   fmt.Sprintf("%s:%s", *mysqlHost, *mysqlPort),
-		DBName: *mysqlDb,
+		User:                 *mysqlUser,
+		Passwd:               *mysqlPass,
+		Net:                  "tcp",
+		Addr:                 fmt.Sprintf("%s:%s", *mysqlHost, *mysqlPort),
+		DBName:               *mysqlDb,
+		AllowNativePasswords: true,
 	}
 
 	mariaDb, err := sql.Open("mysql", cfg.FormatDSN())
