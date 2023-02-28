@@ -124,6 +124,10 @@ func NewServer(db_path string, datastore string) (*server, error) {
 		return nil, err
 	}
 
+	pingErr := mariaDb.Ping()
+	if pingErr != nil {
+		log.Fatalf("Failed to ping MariaDB: %+v", pingErr)
+	}
 	srv.db = flibustadb.NewFlibustaSqlDbWithMaria(db, mariaDb)
 
 	var opt badger.Options
