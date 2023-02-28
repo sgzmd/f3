@@ -26,6 +26,7 @@ type FlibustaDb interface {
 // FlibustaDbSql Implements FlibustaDb interface for SQL database.
 type FlibustaDbSql struct {
 	db                    *sql.DB
+	db2                   *sql.DB
 	authorStatement       *sql.Stmt
 	seriesStatement       *sql.Stmt
 	authorNameStatement   *sql.Stmt
@@ -139,12 +140,17 @@ func (s *FlibustaDbSql) GetSequenceName(seqId int64) (string, error) {
 
 // GetSeriesBooks queries sqlite3 database for books in series.
 func (s *FlibustaDbSql) GetSeriesBooks(seriesId int64) ([]*pb.Book, error) {
+	db := s.db
+	if s.db2 != nil {
+		db = s.db2
+	}
+
 	{
 		// Scoped lock which will be unlocked whether we create a new statement or not.
 		s.lock.Lock()
 		defer s.lock.Unlock()
 		if s.seriesStatement == nil {
-			s.seriesStatement, _ = s.db.Prepare(
+			s.seriesStatement, _ = db.Prepare(
 				`select b.BookId, b.Title, s.SeqNumb from libbook b, libseq s 
 					   where s.BookId = b.BookId and s.SeqId = ? and b.Deleted != '1' 
 					   order by s.SeqNumb`)
@@ -202,7 +208,11 @@ func (s *FlibustaDbSql) Close() error {
 
 // NewFlibustaSqlDb creates new FlibustaDbSql instance.
 func NewFlibustaSqlDb(sqliteDb *sql.DB) *FlibustaDbSql {
-	return &FlibustaDbSql{db: sqliteDb, authorStatement: nil, seriesStatement: nil}
+	return &FlibustaDbSql{db: sqliteDb, db2: nil, authorStatement: nil, seriesStatement: nil}
+}
+
+func NewFlibustaSqlDbWithMaria(sqliteDb *sql.DB, mariaDb *sql.DB) *FlibustaDbSql {
+	return &FlibustaDbSql{db: sqliteDb, db2: mariaDb, authorStatement: nil, seriesStatement: nil}
 }
 
 func (s *FlibustaDbSql) iterateOverAuthors(query string) ([]*pb.FoundEntry, error) {

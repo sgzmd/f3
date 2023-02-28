@@ -109,7 +109,13 @@ func NewServer(db_path string, datastore string) (*server, error) {
 		return nil, err
 	}
 
-	srv.db = flibustadb.NewFlibustaSqlDb(db)
+	mariaDb, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+		*mysqlUser, *mysqlPass, *mysqlHost, *mysqlPort, *mysqlDb))
+	if err != nil {
+		return nil, err
+	}
+
+	srv.db = flibustadb.NewFlibustaSqlDbWithMaria(db, mariaDb)
 
 	var opt badger.Options
 	if datastore == "" {

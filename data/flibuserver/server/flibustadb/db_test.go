@@ -45,7 +45,7 @@ func TestGetSeriesBooks(t *testing.T) {
 	}
 	defer db.Close()
 
-	flibustaDb := NewFlibustaSqlDb(db)
+	flibustaDb := NewFlibustaSqlDbWithMaria(db, db)
 
 	books, err := flibustaDb.GetSeriesBooks(34145)
 	if err != nil {
