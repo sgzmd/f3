@@ -105,26 +105,17 @@ func (s *FlibustaDbSql) GetAuthorName(authorid int64) (pb.AuthorName, error) {
 	}
 }
 
-// GetSequenceName implements FlibustaDb.GetSequenceName for Sqlite3
+// GetSequenceName implements FlibustaDb.GetSequenceName for MariaDB
 func (s *FlibustaDbSql) GetSequenceName(seqId int64) (string, error) {
-	{
-		s.lock.Lock()
-		defer s.lock.Unlock()
-
-		if s.sequenceNameStatement == nil {
-			var err error
-			s.sequenceNameStatement, err = s.db.Prepare(`
-				select s.SeqName 
-				from libseqname s
-				where s.SeqId = ?`)
-
-			if err != nil {
-				return "", err
-			}
-		}
+	db := s.db
+	if s.db2 != nil {
+		db = s.db2
 	}
 
-	rs, err := s.sequenceNameStatement.Query(seqId)
+	rs, err := db.Query(`
+				select s.SeqName 
+				from libseqname s
+				where s.SeqId = ?`, seqId)
 	if err != nil {
 		return "", err
 	}
@@ -144,18 +135,6 @@ func (s *FlibustaDbSql) GetSeriesBooks(seriesId int64) ([]*pb.Book, error) {
 	if s.db2 != nil {
 		db = s.db2
 	}
-
-	//{
-	//	// Scoped lock which will be unlocked whether we create a new statement or not.
-	//	s.lock.Lock()
-	//	defer s.lock.Unlock()
-	//	if s.seriesStatement == nil {
-	//		s.seriesStatement, _ = db.Prepare(
-	//			`select b.BookId, b.Title, s.SeqNumb from libbook b, libseq s
-	//				   where s.BookId = b.BookId and s.SeqId = ? and b.Deleted != '1'
-	//				   order by s.SeqNumb`)
-	//	}
-	//}
 
 	rows, err := db.Query(`select b.BookId, b.Title, s.SeqNumb from libbook b, libseq s 
 					   where s.BookId = b.BookId and s.SeqId = ? and b.Deleted != '1' 
