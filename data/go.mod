@@ -6,6 +6,7 @@ require (
 	github.com/anaskhan96/soup v1.2.5
 	github.com/dgraph-io/badger/v3 v3.2103.5
 	github.com/dustin/go-humanize v1.0.0
+	github.com/go-sql-driver/mysql v1.7.0
 	github.com/golang/protobuf v1.5.2
 	github.com/mattn/go-sqlite3 v1.14.12
 	github.com/stretchr/testify v1.7.0

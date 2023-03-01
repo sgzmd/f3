@@ -1,0 +1,1 @@
+alter table libavtorname add fulltext index (FirstName, LastName, MiddleName);

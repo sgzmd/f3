@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/dgraph-io/badger/v3"
 	proto2 "github.com/golang/protobuf/proto"
-	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb/sqlite3"
 	"github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
@@ -59,37 +58,7 @@ func (s *server) TrackEntry(ctx context.Context, req *proto.TrackEntryRequest) (
 
 	// So we will be definitely tracking this, let's obtain all the info
 	// about this entry.
-	var entries []*proto.FoundEntry
-	var bookExtractorSql string
-	entryId := int(key.EntityId)
-
-	if key.EntityType == proto.EntryType_ENTRY_TYPE_AUTHOR {
-		query := sqlite3.CreateAuthorByIdQuery(entryId)
-		log.Printf("SQL: %s", query)
-		entries, err = s.iterateOverAuthors(query)
-		bookExtractorSql = sqlite3.CreateGetBooksForAuthor(entryId)
-	} else if key.EntityType == proto.EntryType_ENTRY_TYPE_SERIES {
-		query := sqlite3.CreateSequenceByIdQuery(entryId)
-		log.Printf("SQL: %s", query)
-		entries, err = s.iterateOverSeries(query)
-		bookExtractorSql = sqlite3.CreateGetBooksBySequenceId(entryId)
-	} else {
-		return nil, createRequestError(NoEntryType)
-	}
-
-	if err != nil {
-		log.Printf("Error requesting entries for entity: %+v", err)
-		return nil, err
-	}
-
-	if len(entries) != 1 {
-		e := fmt.Errorf("must be 1 entry exactly in %s", entries)
-		log.Printf("Error: %+v", e)
-		return nil, e
-	}
-
-	entry := entries[0]
-	books, err := s.getBooks(bookExtractorSql)
+	books, err := s.GetBooksForKey(key)
 	if err != nil {
 		return nil, err
 	}
@@ -104,12 +73,22 @@ func (s *server) TrackEntry(ctx context.Context, req *proto.TrackEntryRequest) (
 			return err
 		}
 
+		entryName, err := s.GetEntryName(key)
+		if err != nil {
+			return err
+		}
+
+		entryAuthor, err := s.GetEntryAuthor(key)
+		if err != nil {
+			return err
+		}
+
 		val := proto.TrackedEntry{
 			Key:         key,
-			EntryName:   entry.EntryName,
-			NumEntries:  entry.NumEntities,
+			EntryName:   entryName,
+			NumEntries:  int32(len(books)),
 			Book:        books,
-			EntryAuthor: entry.Author,
+			EntryAuthor: entryAuthor,
 		}
 
 		now := time.Now()
@@ -128,6 +107,102 @@ func (s *server) TrackEntry(ctx context.Context, req *proto.TrackEntryRequest) (
 	}
 
 	return &proto.TrackEntryResponse{Key: key, Result: proto.TrackEntryResult_TRACK_ENTRY_RESULT_OK}, nil
+}
+
+// GetEntryAuthor returns the author of the entry for passed TrackedEntryKey if the entry is of type Author,
+// or the author of the first book in the sequence if the entry type is sequence
+func (s *server) GetEntryAuthor(req *proto.TrackedEntryKey) (string, error) {
+	log.Printf("GetEntryAuthor: %+v", req)
+	if req.EntityId == 0 {
+		return "", createRequestError(NoEntryId)
+	}
+
+	if req.EntityType == proto.EntryType_ENTRY_TYPE_UNSPECIFIED {
+		return "", createRequestError(NoEntryType)
+	}
+
+	entryId := req.EntityId
+
+	var author proto.AuthorName
+	var err error
+	if req.EntityType == proto.EntryType_ENTRY_TYPE_AUTHOR {
+		author, err = s.db.GetAuthorName(entryId)
+		if err != nil {
+			return "", err
+		}
+	} else if req.EntityType == proto.EntryType_ENTRY_TYPE_SERIES {
+		books, err := s.db.GetSeriesBooks(entryId)
+		if err != nil {
+			return "", err
+		}
+
+		if len(books) == 0 {
+			return "", createRequestError(NoEntryId)
+		}
+
+		author, err = s.db.GetBookAuthor(int64(books[0].BookId))
+		if err != nil {
+			return "", err
+		}
+	} else {
+		return "", createRequestError(NoEntryType)
+	}
+
+	return FormatAuthorName(author), nil
+}
+
+// GetBooksForKey returns all books belonging to author if the passed TrackedEntryKey is of type author,
+// or for series, if the key is of type series.
+func (s *server) GetBooksForKey(req *proto.TrackedEntryKey) ([]*proto.Book, error) {
+	log.Printf("GetBooksForKey: %+v", req)
+	if req.EntityId == 0 {
+		return nil, createRequestError(NoEntryId)
+	}
+
+	if req.EntityType == proto.EntryType_ENTRY_TYPE_UNSPECIFIED {
+		return nil, createRequestError(NoEntryType)
+	}
+
+	entryId := req.EntityId
+
+	if req.EntityType == proto.EntryType_ENTRY_TYPE_AUTHOR {
+		return s.db.GetAuthorBooks(entryId)
+	} else if req.EntityType == proto.EntryType_ENTRY_TYPE_SERIES {
+		return s.db.GetSeriesBooks(entryId)
+	} else {
+		return nil, createRequestError(NoEntryType)
+	}
+}
+
+// GetEntryName returns the name of the entry for passed TrackedEntryKey
+func (s *server) GetEntryName(req *proto.TrackedEntryKey) (string, error) {
+	log.Printf("GetEntryName: %+v", req)
+	if req.EntityId == 0 {
+		return "", createRequestError(NoEntryId)
+	}
+
+	if req.EntityType == proto.EntryType_ENTRY_TYPE_UNSPECIFIED {
+		return "", createRequestError(NoEntryType)
+	}
+
+	entryId := req.EntityId
+
+	if req.EntityType == proto.EntryType_ENTRY_TYPE_AUTHOR {
+		authorName, err := s.db.GetAuthorName(entryId)
+		if err != nil {
+			return "", err
+		} else {
+			return FormatAuthorName(authorName), nil
+		}
+	} else if req.EntityType == proto.EntryType_ENTRY_TYPE_SERIES {
+		return s.db.GetSequenceName(entryId)
+	} else {
+		return "", createRequestError(NoEntryType)
+	}
+}
+
+func FormatAuthorName(authorName proto.AuthorName) string {
+	return fmt.Sprintf("%s, %s %s", authorName.LastName, authorName.FirstName, authorName.MiddleName)
 }
 
 func (s *server) ListTrackedEntries(ctx context.Context, req *proto.ListTrackedEntriesRequest) (*proto.ListTrackedEntriesResponse, error) {
