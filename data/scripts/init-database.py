@@ -60,7 +60,18 @@ def ImportMySQLDump() -> bool:
                     args.mysql_database])
     logging.info(cmd)
 
-    return os.system(cmd) == 0
+    ok = os.system(cmd) == 0
+
+    if ok:
+        cmd = " ".join(["mysql", "--host", args.mysql_host,
+                        "--port", str(args.mysql_port),
+                        "-u" + args.mysql_user,
+                        "-p" + args.mysql_password,
+                        "-e'" + MYSQL_FAST + "source ./scripts/sql/mysql-indexes.sql; commit; '",
+                        args.mysql_database])
+        logging.info(cmd)
+
+        return os.system(cmd) == 0 & ok
 
 
 def MySQLtoSqlite():
