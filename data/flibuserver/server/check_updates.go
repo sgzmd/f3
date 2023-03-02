@@ -20,49 +20,23 @@ func (s *server) CheckUpdates(_ context.Context, in *proto.CheckUpdatesRequest) 
 
 	response := make([]*proto.UpdateRequired, 0)
 
-	astm, err := s.sqliteDb.Prepare(`
-		select b.BookId, b.Title from libbook b, libavtor a 
-		where b.BookId = a.BookId and a.AvtorId = ? and b.Deleted != '1'
-`)
-
-	if err != nil {
-		return nil, err
-	}
-
-	sstm, err := s.sqliteDb.Prepare(`
-	select b.BookId, b.Title from libbook b, libseq s 
-	where s.BookId = b.BookId and s.SeqId = ? and b.Deleted != '1'
-	`)
-	if err != nil {
-		return nil, err
-	}
-
 	// We will start with a very naive and simple implementation
 	for _, entry := range in.TrackedEntry {
-		var rs *sql.Rows
-		var err error
-
 		var statement *sql.Stmt
 		key := entry.Key
+
+		// An artifact of the old code - previously used direct SQL statements, using
+		// methods instead of SQL statements now.
+		var stm func(_ int64) ([]*proto.Book, error)
 		if key.EntityType == proto.EntryType_ENTRY_TYPE_AUTHOR {
-			statement = astm
+			stm = s.db.GetAuthorBooks
 		} else if key.EntityType == proto.EntryType_ENTRY_TYPE_SERIES {
-			statement = sstm
+			stm = s.db.GetSeriesBooks
 		}
 
-		rs, err = statement.Query(key.EntityId)
+		newBooks, err := stm(key.EntityId)
 		if err != nil {
 			return nil, err
-		}
-
-		newBooks := make([]*proto.Book, 0)
-
-		for rs.Next() {
-			var bookId int32
-			var title string
-			rs.Scan(&bookId, &title)
-
-			newBooks = append(newBooks, &proto.Book{BookName: title, BookId: bookId})
 		}
 
 		if len(newBooks) == 0 {

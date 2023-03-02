@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/dgraph-io/badger/v3"
+	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb"
 	"github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -15,6 +16,8 @@ import (
 	"os"
 	"os/exec"
 	"time"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 var (
@@ -84,7 +87,8 @@ func main() {
 					os.Exit(1)
 				}
 
-				srv.sqliteDb = db
+				srv.db = flibustadb.NewFlibustaSqlDb(db)
+
 				log.Printf("Database re-opened.")
 			}
 		}()
@@ -99,31 +103,6 @@ func OpenDatabase(db_path string) (*sql.DB, error) {
 	return sql.Open("sqlite3", db_path)
 }
 
-func NewServerWithDump(db_path string, datastore string, dump string) (*server, error) {
-	srv := new(server)
-
-	db, err := OpenDatabase(db_path)
-	if err != nil {
-		return nil, err
-	}
-	srv.sqliteDb = db
-	db.Exec(dump)
-
-	var opt badger.Options
-	if datastore == "" {
-		opt = badger.DefaultOptions("").WithInMemory(true)
-	} else {
-		opt = badger.DefaultOptions(datastore)
-	}
-
-	srv.data, err = badger.Open(opt)
-	if err != nil {
-		return nil, err
-	}
-
-	return srv, nil
-}
-
 func NewServer(db_path string, datastore string) (*server, error) {
 	srv := new(server)
 
@@ -131,7 +110,26 @@ func NewServer(db_path string, datastore string) (*server, error) {
 	if err != nil {
 		return nil, err
 	}
-	srv.sqliteDb = db
+
+	cfg := mysql.Config{
+		User:                 *mysqlUser,
+		Passwd:               *mysqlPass,
+		Net:                  "tcp",
+		Addr:                 fmt.Sprintf("%s:%s", *mysqlHost, *mysqlPort),
+		DBName:               *mysqlDb,
+		AllowNativePasswords: true,
+	}
+
+	mariaDb, err := sql.Open("mysql", cfg.FormatDSN())
+	if err != nil {
+		return nil, err
+	}
+
+	pingErr := mariaDb.Ping()
+	if pingErr != nil {
+		log.Fatalf("Failed to ping MariaDB: %+v", pingErr)
+	}
+	srv.db = flibustadb.NewFlibustaSqlDbWithMaria(db, mariaDb)
 
 	var opt badger.Options
 	if datastore == "" {

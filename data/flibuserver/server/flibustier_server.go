@@ -4,8 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb/sqlite3"
+	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb"
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"log"
 	"strings"
@@ -19,9 +18,9 @@ import (
 
 type server struct {
 	pb.UnimplementedFlibustierServiceServer
-	sqliteDb *sql.DB
-	data     *badger.DB
-	Lock     sync.RWMutex
+	data *badger.DB
+	Lock sync.RWMutex
+	db   flibustadb.FlibustaDb
 }
 
 const (
@@ -35,42 +34,7 @@ func (s *server) SearchAuthors(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, e
 	s.Lock.RLock()
 	defer s.Lock.RUnlock()
 
-	// TODO: Refactor this part so we can re-use iteration code with a different SQL
-	// query - as long as it supplies the right results.
-	query := sqlite3.CreateAuthorSearchQuery(req.SearchTerm)
-	return s.iterateOverAuthors(query)
-}
-
-func (s *server) iterateOverAuthors(query string) ([]*pb.FoundEntry, error) {
-	rows, err := s.sqliteDb.Query(query)
-
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var entries []*pb.FoundEntry = make([]*pb.FoundEntry, 0, 10)
-	for rows.Next() {
-		var authorName string
-		var authorId int64
-		var count int32
-
-		err = rows.Scan(&authorName, &authorId, &count)
-		if err != nil {
-			log.Fatalf("Failed to scan the row: %v", err)
-			return nil, err
-		}
-
-		entries = append(entries, &pb.FoundEntry{
-			EntryType:   pb.EntryType_ENTRY_TYPE_AUTHOR,
-			Author:      authorName,
-			EntryName:   authorName,
-			EntryId:     authorId,
-			NumEntities: count,
-		})
-	}
-
-	return entries, nil
+	return s.db.SearchAuthors(req)
 }
 
 func (s *server) SearchSeries(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, error) {
@@ -79,67 +43,7 @@ func (s *server) SearchSeries(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, er
 	s.Lock.RLock()
 	defer s.Lock.RUnlock()
 
-	query := sqlite3.CreateSequenceSearchQuery(req.SearchTerm)
-	return s.iterateOverSeries(query)
-}
-
-func (s *server) getBooks(query string) ([]*pb.Book, error) {
-	rows, err := s.sqliteDb.Query(query)
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-	books := make([]*pb.Book, 0, 10)
-	for rows.Next() {
-		var bookName string
-		var bookId int32
-
-		err = rows.Scan(&bookName, &bookId)
-		if err != nil {
-			return nil, err
-		}
-
-		books = append(books, &pb.Book{
-			BookName: bookName,
-			BookId:   bookId,
-		})
-	}
-
-	return books, nil
-}
-
-func (s *server) iterateOverSeries(query string) ([]*pb.FoundEntry, error) {
-	rows, err := s.sqliteDb.Query(query)
-
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var entries []*pb.FoundEntry = make([]*pb.FoundEntry, 0, 10)
-	for rows.Next() {
-		var seqName string
-		var authors string
-		var seqId int64
-		var count int32
-
-		err = rows.Scan(&seqName, &authors, &seqId, &count)
-		if err != nil {
-			log.Fatalf("Failed to scan the row: %v", err)
-			return nil, err
-		}
-
-		entries = append(entries, &pb.FoundEntry{
-			EntryType:   pb.EntryType_ENTRY_TYPE_SERIES,
-			Author:      authors,
-			EntryName:   seqName,
-			EntryId:     seqId,
-			NumEntities: count,
-		})
-	}
-
-	return entries, nil
+	return s.db.SearchSeries(req)
 }
 
 func (s *server) GlobalSearch(_ context.Context, in *pb.GlobalSearchRequest) (*pb.GlobalSearchResponse, error) {
@@ -198,53 +102,20 @@ func (s *server) GetAuthorBooks(_ context.Context, in *pb.GetAuthorBooksRequest)
 	s.Lock.RLock()
 	defer s.Lock.RUnlock()
 
-	sql, err := s.sqliteDb.Prepare(`
-		select 
-		  lb.Title,
-		  lb.Bookid
-		from libbook lb, libavtor la, author_fts a
-		where la.BookId = lb.BookId 
-		and a.authorId = la.AvtorId
-		and lb.Deleted != '1'
-		and la.AvtorId = ?
-		group by la.BookId order by la.BookId;`)
-
-	if err != nil {
-		return nil, err
-	}
-	books, err := GetEntityBooks(sql, in.AuthorId)
-
+	books, err := s.db.GetAuthorBooks(int64(in.AuthorId))
 	if err != nil {
 		return nil, err
 	}
 
-	sql, err = s.sqliteDb.Prepare(`
-		select an.FirstName, an.MiddleName, an.LastName 
-		from libavtorname an
-		where an.AvtorId = ?`)
+	authorName, err := s.db.GetAuthorName(int64(in.AuthorId))
 	if err != nil {
 		return nil, err
 	}
-	rs, err := sql.Query(in.AuthorId)
-	if err != nil {
-		return nil, err
-	}
+	name := &pb.EntityName{Name: &pb.EntityName_AuthorName{AuthorName: &authorName}}
 
-	if rs.Next() {
-		var firstName, middleName, lastName string
-		rs.Scan(&firstName, &middleName, &lastName)
-		name := &pb.EntityName{Name: &pb.EntityName_AuthorName{
-			AuthorName: &pb.AuthorName{
-				FirstName:  firstName,
-				MiddleName: middleName,
-				LastName:   lastName}}}
-
-		return &pb.GetAuthorBooksResponse{
-			EntityBookResponse: &pb.EntityBookResponse{
-				Book: books, EntityId: in.AuthorId, EntityName: name}}, nil
-	}
-
-	return nil, fmt.Errorf("no author associated with id %d", in.AuthorId)
+	return &pb.GetAuthorBooksResponse{
+		EntityBookResponse: &pb.EntityBookResponse{
+			Book: books, EntityId: in.AuthorId, EntityName: name}}, nil
 }
 
 func (s *server) GetSeriesBooks(ctx context.Context, in *pb.GetSeriesBooksRequest) (*pb.GetSeriesBooksResponse, error) {
@@ -253,37 +124,21 @@ func (s *server) GetSeriesBooks(ctx context.Context, in *pb.GetSeriesBooksReques
 	s.Lock.RLock()
 	defer s.Lock.RUnlock()
 
-	sql, err := s.sqliteDb.Prepare(`
-		SELECT b.Title, b.BookId
-		FROM libseq ls, libseqname lsn , libbook b
-		WHERE ls.seqId = lsn.seqId and ls.seqId = ? and ls.BookId = b.BookId and b.Deleted != '1'
-				  group by b.BookId
-				  order by ls.SeqNumb;`)
+	books, err := s.db.GetSeriesBooks(int64(in.SequenceId))
 
 	if err != nil {
 		return nil, err
 	}
-	books, err := GetEntityBooks(sql, in.SequenceId)
-
+	seqName, err := s.db.GetSequenceName(int64(in.SequenceId))
 	if err != nil {
 		return nil, err
 	}
 
-	rs, err := s.sqliteDb.Query("select SeqName from libseqname where SeqId = ?", in.SequenceId)
-	if err != nil {
-		return nil, err
-	}
-	if rs.Next() {
-		var seqName string
-		rs.Scan(&seqName)
-		name := &pb.EntityName{Name: &pb.EntityName_SequenceName{SequenceName: seqName}}
+	name := &pb.EntityName{Name: &pb.EntityName_SequenceName{SequenceName: seqName}}
 
-		return &pb.GetSeriesBooksResponse{
-			EntityBookResponse: &pb.EntityBookResponse{
-				Book: books, EntityId: in.SequenceId, EntityName: name}}, nil
-	}
-
-	return nil, fmt.Errorf("no series associated with id %d", in.SequenceId)
+	return &pb.GetSeriesBooksResponse{
+		EntityBookResponse: &pb.EntityBookResponse{
+			Book: books, EntityId: in.SequenceId, EntityName: name}}, nil
 }
 
 func (s *server) GetUserInfo(_ context.Context, in *pb.GetUserInfoRequest) (*pb.GetUserInfoResponse, error) {
@@ -396,10 +251,11 @@ func (s *server) DeleteAllTracked(_ context.Context, _ *pb.DeleteAllTrackedReque
 
 func (s *server) Close() {
 	log.Println("Closing database connection.")
-	s.sqliteDb.Close()
+
+	s.db.Close()
 }
 
 func (s *server) Shutdown() {
-	s.sqliteDb.Close()
+	s.Close()
 	s.data.Close()
 }
