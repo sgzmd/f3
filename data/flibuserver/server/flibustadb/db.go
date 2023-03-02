@@ -3,6 +3,7 @@ package flibustadb
 import (
 	"database/sql"
 	"fmt"
+	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb/mariadb"
 	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb/sqlite3"
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"log"
@@ -264,8 +265,38 @@ func (s *FlibustaDbSql) iterateOverSeries(query string) ([]*pb.FoundEntry, error
 
 // SearchAuthors searches authors by name. Specific for SQLite3 implementation.
 func (s *FlibustaDbSql) SearchAuthors(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, error) {
-	query := sqlite3.CreateAuthorSearchQuery(req.SearchTerm)
-	return s.iterateOverAuthors(query)
+	if s.db2 != nil {
+		query := fmt.Sprintf(mariadb.SearchAuthorsFtsMysql, req.SearchTerm)
+		log.Printf("SearchAuthors: sql=%s", query)
+		rows, err := s.db2.Query(query)
+		if err != nil {
+			return nil, err
+		}
+
+		var entries = make([]*pb.FoundEntry, 0, 10)
+		for rows.Next() {
+			entry := &pb.FoundEntry{}
+
+			var firstName, lastName, middleName string
+
+			err = rows.Scan(&firstName, &middleName, &lastName, &entry.EntryId, &entry.NumEntities)
+			if err != nil {
+				log.Fatalf("Failed to scan the row: %v", err)
+				return nil, err
+			}
+			entry.Author = mariadb.MakeAuthorName(firstName, middleName, lastName)
+			entry.EntryName = entry.Author
+
+			log.Printf("SearchAuthors: entry=%v", entry)
+
+			entries = append(entries, entry)
+		}
+
+		return entries, nil
+	} else {
+		query := sqlite3.CreateAuthorSearchQuery(req.SearchTerm)
+		return s.iterateOverAuthors(query)
+	}
 }
 
 // SearchSeries searches series by name. Specific for SQLite3 implementation.
