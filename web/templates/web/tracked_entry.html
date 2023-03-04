@@ -29,7 +29,7 @@
                             <small>
                                 <ol>
                                     {{ range .Entry.Book }}
-                                    <li><a target="_blank" href="http://flibusta.is/b/{{ .BookId }}">{{ .BookName }}</a></li>
+                                    <li value="{{ .OrderInSequence }}"><a target="_blank" href="http://flibusta.is/b/{{ .BookId }}">{{ .BookName }}</a></li>
                                     {{ end }}
                                 </ol>
                             </small>
