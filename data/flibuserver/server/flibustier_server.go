@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb"
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
@@ -75,25 +74,6 @@ func (s *server) GlobalSearch(_ context.Context, in *pb.GlobalSearchRequest) (*p
 		OriginalRequest: in,
 		Entry:           entries,
 	}, nil
-}
-
-func GetEntityBooks(sql *sql.Stmt, entityId int32) ([]*pb.Book, error) {
-	rs, err := sql.Query(entityId)
-
-	if err != nil {
-		return nil, err
-	}
-
-	books := make([]*pb.Book, 0)
-	for rs.Next() {
-		var bookTitle string
-		var bookId int32
-
-		rs.Scan(&bookTitle, &bookId)
-		books = append(books, &pb.Book{BookId: bookId, BookName: bookTitle})
-	}
-
-	return books, nil
 }
 
 func (s *server) GetAuthorBooks(_ context.Context, in *pb.GetAuthorBooksRequest) (*pb.GetAuthorBooksResponse, error) {

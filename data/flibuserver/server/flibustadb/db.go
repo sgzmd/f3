@@ -170,7 +170,7 @@ func NewFlibustaSqlMariaDb(db *sql.DB) *FlibustaDbSql {
 	return &FlibustaDbSql{mariaDb: db, engine: MARIA_DB}
 }
 
-// SearchAuthors searches authors by name. Specific for SQLite3 implementation.
+// SearchAuthors searches authors by name.
 func (s *FlibustaDbSql) SearchAuthors(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, error) {
 	var query string
 	if s.engine == SQLITE {
@@ -203,7 +203,7 @@ func (s *FlibustaDbSql) SearchAuthors(req *pb.GlobalSearchRequest) ([]*pb.FoundE
 	return entries, nil
 }
 
-// SearchSeries searches series by name. Specific for SQLite3 implementation.
+// SearchSeries searches series by name.
 func (s *FlibustaDbSql) SearchSeries(req *pb.GlobalSearchRequest) ([]*pb.FoundEntry, error) {
 	var query string
 	if s.engine == SQLITE {
