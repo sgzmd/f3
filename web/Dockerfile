@@ -1,4 +1,4 @@
-FROM golang:1.19
+FROM golang:1.20.1-alpine3.17
 
 ARG telegram_api_key
 ARG backend_url
