@@ -38,9 +38,9 @@ RUN ./build_flibuserver.sh
 RUN echo "================${TELEGRAM_API_KEY}=================="
 
 RUN apt update
-RUN apt install -y sqlite3 bash curl mariadb-client python3 python3-pip wget cron
+RUN apt install -y sqlite3 bash curl mariadb-client python3-minimal wget cron
 
-RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir mysql-to-sqlite3 mysql-connector-python
+# RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir mysql-connector-python
 RUN wget https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.13/grpc_health_probe-linux-amd64
 RUN chmod +x ./grpc_health_probe-linux-amd64
 RUN ls -lha ./grpc_health_probe-linux-amd64
