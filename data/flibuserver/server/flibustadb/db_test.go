@@ -23,7 +23,7 @@ func TestGetAuthorBooks(t *testing.T) {
 	}
 	defer db.Close()
 
-	flibustaDb := NewFlibustaSqlDb(db)
+	flibustaDb := NewFlibustaSqlite(db)
 
 	books, err := flibustaDb.GetAuthorBooks(109170)
 	if err != nil {
@@ -46,7 +46,7 @@ func TestGetSeriesBooks(t *testing.T) {
 	}
 	defer db.Close()
 
-	flibustaDb := NewFlibustaSqlDbWithMaria(db, db)
+	flibustaDb := NewFlibustaSqlite(db)
 
 	books, err := flibustaDb.GetSeriesBooks(34145)
 	if err != nil {
@@ -69,7 +69,7 @@ func TestGetAuthorName(t *testing.T) {
 	}
 	defer db.Close()
 
-	flibustaDb := NewFlibustaSqlDb(db)
+	flibustaDb := NewFlibustaSqlite(db)
 	name, err := flibustaDb.GetAuthorName(109170)
 
 	if err != nil {
@@ -90,7 +90,7 @@ func TestGetSequenceName(t *testing.T) {
 	}
 	defer db.Close()
 
-	flibustaDb := NewFlibustaSqlDb(db)
+	flibustaDb := NewFlibustaSqlite(db)
 	name, err := flibustaDb.GetSequenceName(34145)
 
 	if err != nil {

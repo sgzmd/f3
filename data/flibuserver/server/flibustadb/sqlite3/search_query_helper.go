@@ -52,9 +52,9 @@ GROUP BY 1,2;
 
 	SequenceQueryTemplateSqlite = `
 select	
+	f.SeqId,	
 	f.SeqName,
 	f.Authors,
-	f.SeqId,
 	(select count(ls.BookId) from libseq ls where ls.SeqId = f.SeqId) NumBooks
 from 
 	sequence_fts f 
