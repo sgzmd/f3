@@ -17,7 +17,7 @@ done
 
 echo "Service is healthy, running tests... "
 
-go test -v integration/flibustier-integration_test.go
+FLIBUSTIER_INTEGRATION=1 go test -v integration/flibustier-integration_test.go
 
 echo "Tests finished, cleaning up..."
 

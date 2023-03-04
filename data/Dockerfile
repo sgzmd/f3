@@ -1,5 +1,5 @@
 #FROM tetafro/golang-gcc:latest
-FROM golang:1.19
+FROM golang:1.20.0-bullseye
 
 # Including the revision image was built from
 ARG vcs-ref=0

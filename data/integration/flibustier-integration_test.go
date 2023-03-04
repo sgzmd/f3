@@ -68,7 +68,7 @@ func TestTrackEntry(t *testing.T) {
 			UserId:     "testuser",
 		},
 	})
-	
+
 	assert.Equal(t, resp3.Result, pb.UntrackEntryResult_UNTRACK_ENTRY_RESULT_OK)
 	resp4, err := client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{
 		UserId: "testuser",
@@ -78,6 +78,11 @@ func TestTrackEntry(t *testing.T) {
 }
 
 func TestMain(m *testing.M) {
+	if os.Getenv("FLIBUSTIER_INTEGRATION") != "1" {
+		// Not running integration tests unless explicitly requested
+		os.Exit(0)
+	}
+
 	conn, err := grpc.Dial("localhost:9000", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
