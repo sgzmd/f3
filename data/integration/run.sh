@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+set -x
+
+docker context use default
+
 wget https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.13/grpc_health_probe-linux-amd64
 chmod +x ./grpc_health_probe-linux-amd64
 docker compose --env-file ./integration-test.env up --build -d
