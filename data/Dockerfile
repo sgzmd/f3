@@ -1,5 +1,5 @@
 #FROM tetafro/golang-gcc:latest
-FROM golang:1.20.0-bullseye
+FROM golang:1.20.1-alpine3.17
 
 # Including the revision image was built from
 ARG vcs-ref=0
@@ -37,10 +37,11 @@ RUN ./build_flibuserver.sh
 
 RUN echo "================${TELEGRAM_API_KEY}=================="
 
-RUN apt update
-RUN apt install -y sqlite3 bash curl mariadb-client python3-minimal wget cron
+RUN apk update
+RUN apk upgrade
 
-# RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir mysql-connector-python
+RUN apk add bash curl mariadb-client python3 wget
+
 RUN wget https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.13/grpc_health_probe-linux-amd64
 RUN chmod +x ./grpc_health_probe-linux-amd64
 RUN ls -lha ./grpc_health_probe-linux-amd64
