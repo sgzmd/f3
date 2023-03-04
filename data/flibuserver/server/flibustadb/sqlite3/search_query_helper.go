@@ -3,7 +3,7 @@ package sqlite3
 import "fmt"
 
 const (
-	AuthorQueryTemplate = `
+	AuthorQueryTemplateSqlite = `
 select 
 	a.authorName, 
 	a.authorId,
@@ -20,7 +20,20 @@ where
 GROUP BY 1,2;
 	`
 
-	AuthorQueryTemplateById = `
+	AuthorQueryTemplateMysql = `
+select lan.FirstName, lan.MiddleName, lan.LastName, COUNT(1) num
+from libavtor la,
+     libavtorname lan,
+     libbook lb
+where la.AvtorId = lan.AvtorId
+  and la.BookId = lb.BookId
+  and lb.Deleted != '1'
+  and match(lan.FirstName, lan.LastName, lan.MiddleName) against('%s*' in boolean mode)
+group by 1, 2, 3
+order by num desc;
+`
+
+	AuthorQueryTemplateByIdSqlite = `
 select
 	a.authorName,
 	a.authorId,
@@ -37,18 +50,18 @@ where
 GROUP BY 1,2;
 	`
 
-	SequenceQueryTemplate = `
+	SequenceQueryTemplateSqlite = `
 select	
+	f.SeqId,	
 	f.SeqName,
 	f.Authors,
-	f.SeqId,
 	(select count(ls.BookId) from libseq ls where ls.SeqId = f.SeqId) NumBooks
 from 
 	sequence_fts f 
 where f.sequence_fts match ("%s*")
 	`
 
-	SequenceQueryTemplateById = `
+	SequenceQueryTemplateByIdSqlite = `
 select	
 	f.SeqName,
 	f.Authors,
@@ -80,19 +93,19 @@ order by s.SeqNumb
 )
 
 func CreateAuthorSearchQuery(author string) string {
-	return fmt.Sprintf(AuthorQueryTemplate, author)
+	return fmt.Sprintf(AuthorQueryTemplateSqlite, author)
 }
 
 func CreateSequenceSearchQuery(seq string) string {
-	return fmt.Sprintf(SequenceQueryTemplate, seq)
+	return fmt.Sprintf(SequenceQueryTemplateSqlite, seq)
 }
 
 func CreateAuthorByIdQuery(authorId int) string {
-	return fmt.Sprintf(AuthorQueryTemplateById, authorId)
+	return fmt.Sprintf(AuthorQueryTemplateByIdSqlite, authorId)
 }
 
 func CreateSequenceByIdQuery(seqId int) string {
-	return fmt.Sprintf(SequenceQueryTemplateById, seqId)
+	return fmt.Sprintf(SequenceQueryTemplateByIdSqlite, seqId)
 }
 
 func CreateGetBooksForAuthor(authorId int) string {

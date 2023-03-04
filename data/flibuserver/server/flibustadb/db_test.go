@@ -1,12 +1,18 @@
-package sqlite3
+package flibustadb
 
 import (
 	"database/sql"
+	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"github.com/stretchr/testify/assert"
 	"sort"
 	"testing"
 
+	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/mattn/go-sqlite3"
+)
+
+const (
+	FLIBUSTA_DB = "../../../../testutils/flibusta-test.db"
 )
 
 // Tests for GetAuthorBooks
@@ -17,7 +23,7 @@ func TestGetAuthorBooks(t *testing.T) {
 	}
 	defer db.Close()
 
-	flibustaDb := NewSqlite3Db(db)
+	flibustaDb := NewFlibustaSqlite(db)
 
 	books, err := flibustaDb.GetAuthorBooks(109170)
 	if err != nil {
@@ -40,7 +46,7 @@ func TestGetSeriesBooks(t *testing.T) {
 	}
 	defer db.Close()
 
-	flibustaDb := NewSqlite3Db(db)
+	flibustaDb := NewFlibustaSqlite(db)
 
 	books, err := flibustaDb.GetSeriesBooks(34145)
 	if err != nil {
@@ -54,4 +60,42 @@ func TestGetSeriesBooks(t *testing.T) {
 
 	assert.Len(t, books, 8)
 	assert.Equal(t, "Маска зверя", books[0].BookName)
+}
+
+func TestGetAuthorName(t *testing.T) {
+	db, err := sql.Open("sqlite3", FLIBUSTA_DB)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	flibustaDb := NewFlibustaSqlite(db)
+	name, err := flibustaDb.GetAuthorName(109170)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, pb.AuthorName{
+		LastName:   "Метельский",
+		MiddleName: "Александрович",
+		FirstName:  "Николай"}, name)
+}
+
+// Tests for GetSequenceName
+func TestGetSequenceName(t *testing.T) {
+	db, err := sql.Open("sqlite3", FLIBUSTA_DB)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	flibustaDb := NewFlibustaSqlite(db)
+	name, err := flibustaDb.GetSequenceName(34145)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, "Унесенный ветром", name)
 }

@@ -8,6 +8,7 @@ const (
 	NoUserId    ErrorCodeType = iota
 	NoEntryId   ErrorCodeType = iota
 	NoEntryType ErrorCodeType = iota
+	NoEntities  ErrorCodeType = iota
 )
 
 type RequestError struct {
@@ -24,6 +25,7 @@ var ErrorCodeToMessage = map[ErrorCodeType]string{
 	NoUserId:    "No UserId",
 	NoEntryId:   "No EntryId",
 	NoEntryType: "No EntryType",
+	NoEntities:  "No Entities",
 }
 
 func createRequestError(code ErrorCodeType) *RequestError {
