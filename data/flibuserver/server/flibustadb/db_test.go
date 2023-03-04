@@ -4,10 +4,13 @@ import (
 	"database/sql"
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"github.com/stretchr/testify/assert"
+	"log"
+	"regexp"
 	"sort"
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
+	tok "github.com/liuzl/tokenizer"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -98,4 +101,24 @@ func TestGetSequenceName(t *testing.T) {
 	}
 
 	assert.Equal(t, "Унесенный ветром", name)
+}
+
+func TestTokenizerForSQL(t *testing.T) {
+	str := "Россия, которую мы!"
+
+	words := tok.Tokenize(str)
+	alnum, _ := regexp.Compile(`\p{L}+`)
+	for _, w := range words {
+		// Check if w is alphanumeric only
+		if alnum.MatchString(w) {
+			log.Printf("word: %+v", w)
+		}
+	}
+	log.Printf("words: %+v", words)
+}
+
+// Tests MakeBooleanQuery
+func TestMakeBooleanQuery(t *testing.T) {
+	query := makeBooleanQuery("Россия, которую мы!")
+	assert.Equal(t, "+россия +которую +мы", query)
 }

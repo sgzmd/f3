@@ -3,10 +3,13 @@ package flibustadb
 import (
 	"database/sql"
 	"fmt"
+	"github.com/liuzl/tokenizer"
 	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb/mariadb"
 	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb/sqlite3"
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"log"
+	"regexp"
+	"strings"
 	"sync"
 )
 
@@ -209,7 +212,7 @@ func (s *FlibustaDbSql) SearchSeries(req *pb.GlobalSearchRequest) ([]*pb.FoundEn
 	if s.engine == SQLITE {
 		query = fmt.Sprintf(sqlite3.SequenceQueryTemplateSqlite, req.SearchTerm)
 	} else {
-		query = fmt.Sprintf(mariadb.SearchSeriesFtsMysql, req.SearchTerm)
+		query = fmt.Sprintf(mariadb.SearchSeriesFtsMysql, makeBooleanQuery(req.SearchTerm))
 	}
 	log.Printf("SearchSeries: sql=%s", query)
 	rows, err := s.mariaDb.Query(query)
@@ -234,4 +237,22 @@ func (s *FlibustaDbSql) SearchSeries(req *pb.GlobalSearchRequest) ([]*pb.FoundEn
 	}
 
 	return entries, nil
+}
+
+// makeBooleanQuery takes a string of text, tokenizes it, discards all non-alphanumeric blocks,
+// and produces a boolean MySQL query in form of +word1 +word2 +word3.
+func makeBooleanQuery(text string) string {
+	var query string
+
+	tokens := tokenizer.TokenizePro(text)
+
+	// Checks passed string only consists of valid Unicode letter characters
+	alnum, _ := regexp.Compile(`\p{L}+`)
+	for _, token := range tokens {
+		if alnum.MatchString(token.Norm) {
+			query += "+" + token.Norm + " "
+		}
+	}
+
+	return strings.TrimSpace(query)
 }
