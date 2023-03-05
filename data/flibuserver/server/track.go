@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func (s *server) TrackEntry(ctx context.Context, req *proto.TrackEntryRequest) (*proto.TrackEntryResponse, error) {
+func (s *server) TrackEntry(_ context.Context, req *proto.TrackEntryRequest) (*proto.TrackEntryResponse, error) {
 	log.Printf("TrackEntryRequest: %+v", req)
 
 	key := req.Key
@@ -52,8 +52,10 @@ func (s *server) TrackEntry(ctx context.Context, req *proto.TrackEntryRequest) (
 		return nil, err
 	}
 
-	if alreadyTracked && !req.ForceUpdate {
-		return &proto.TrackEntryResponse{Key: key, Result: proto.TrackEntryResult_TRACK_ENTRY_RESULT_ALREADY_TRACKED}, nil
+	if req.Status != proto.TrackedEntryStatus_TRACKED_ENTRY_STATUS_ARCHIVED {
+		if alreadyTracked && !req.ForceUpdate {
+			return &proto.TrackEntryResponse{Key: key, Result: proto.TrackEntryResult_TRACK_ENTRY_RESULT_ALREADY_TRACKED}, nil
+		}
 	}
 
 	// So we will be definitely tracking this, let's obtain all the info
@@ -89,6 +91,7 @@ func (s *server) TrackEntry(ctx context.Context, req *proto.TrackEntryRequest) (
 			NumEntries:  int32(len(books)),
 			Book:        books,
 			EntryAuthor: entryAuthor,
+			Status:      req.Status,
 		}
 
 		now := time.Now()
@@ -106,7 +109,11 @@ func (s *server) TrackEntry(ctx context.Context, req *proto.TrackEntryRequest) (
 		return nil, err
 	}
 
-	return &proto.TrackEntryResponse{Key: key, Result: proto.TrackEntryResult_TRACK_ENTRY_RESULT_OK}, nil
+	result := proto.TrackEntryResult_TRACK_ENTRY_RESULT_OK
+	if req.Status == proto.TrackedEntryStatus_TRACKED_ENTRY_STATUS_ARCHIVED {
+		result = proto.TrackEntryResult_TRACK_ENTRY_RESULT_ARCHIVED
+	}
+	return &proto.TrackEntryResponse{Key: key, Result: result}, nil
 }
 
 // GetEntryAuthor returns the author of the entry for passed TrackedEntryKey if the entry is of type Author,

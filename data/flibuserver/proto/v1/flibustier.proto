@@ -14,6 +14,9 @@ package flibuserver.proto.v1;
 // After that, please copy generated files to the corresponding directories in the web subproject.
 // One day, I'll figure out how to do it automatically.
 
+// Run the following:
+// buf generate
+// rsync -Rav ./gen ../web/
 
 enum EntryType {
   ENTRY_TYPE_UNSPECIFIED = 0;
@@ -52,6 +55,11 @@ message Book {
   int32 order_in_sequence = 3;
 }
 
+enum TrackedEntryStatus {
+  TRACKED_ENTRY_STATUS_TRACKED = 0;
+  TRACKED_ENTRY_STATUS_ARCHIVED = 1;
+}
+
 message TrackedEntry {
   TrackedEntryKey key = 1;
   string entry_name = 2;
@@ -62,6 +70,8 @@ message TrackedEntry {
   repeated Book book = 6;
 
   google.protobuf.Timestamp saved = 7;
+
+  TrackedEntryStatus status = 8;
 }
 
 message TrackEntryRequest {
@@ -69,6 +79,8 @@ message TrackEntryRequest {
 
   // Re-track entry even if it already exists
   bool force_update = 2;
+
+  TrackedEntryStatus status = 3;
 }
 
 message UpdateRequired {
@@ -134,6 +146,7 @@ enum TrackEntryResult {
   TRACK_ENTRY_RESULT_UNSPECIFIED = 0;
   TRACK_ENTRY_RESULT_OK = 1;
   TRACK_ENTRY_RESULT_ALREADY_TRACKED = 2;
+  TRACK_ENTRY_RESULT_ARCHIVED = 3;
 }
 
 message TrackEntryResponse {

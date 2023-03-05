@@ -59,6 +59,28 @@ func (suite *FlibustierStorageSuite) TestServer_TrackEntry() {
 	suite.Assert().Len(resp3.Entry[0].Book, 8)
 }
 
+// Tests that the entry can be archived
+func (suite *FlibustierStorageSuite) TestServer_ArchiveEntry() {
+	trackReq := &pb.TrackEntryRequest{Key: &pb.TrackedEntryKey{
+		EntityType: pb.EntryType_ENTRY_TYPE_AUTHOR,
+		EntityId:   109170,
+		UserId:     "1"},
+		ForceUpdate: false}
+	resp, err := suite.client.TrackEntry(context.Background(), trackReq)
+	suite.Assert().Nil(err)
+	suite.Assert().Equal(pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK, resp.Result)
+
+	trackReq.Status = pb.TrackedEntryStatus_TRACKED_ENTRY_STATUS_ARCHIVED
+	resp2, err := suite.client.TrackEntry(context.Background(), trackReq)
+	suite.Assert().Nil(err)
+	suite.Assert().Equal(pb.TrackEntryResult_TRACK_ENTRY_RESULT_ARCHIVED, resp2.Result)
+
+	// Check that the entry is archived
+	resp3, err := suite.client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "1"})
+	suite.Assert().Nil(err)
+	suite.Assert().Equal(pb.TrackedEntryStatus_TRACKED_ENTRY_STATUS_ARCHIVED, resp3.Entry[0].Status)
+}
+
 func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
 	type idType struct {
 		id int64
