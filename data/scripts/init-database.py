@@ -1,16 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
-from asyncio import subprocess
 import logging
 import pprint
 import os
 import sys
-
-import mysql_to_sqlite3 as ms3
-import mysql.connector as msc
-
-from subprocess import call, Popen
 
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
@@ -33,7 +27,6 @@ parser.add_argument("--mysql_port", type=int, default=3306)
 parser.add_argument("--mysql_user")
 parser.add_argument("--mysql_password")
 parser.add_argument("--mysql_database")
-parser.add_argument("--create_sqlite_file", default="flibusta.db")
 parser.add_argument("--skip_download", action="store_true")
 
 args = parser.parse_args()
@@ -60,29 +53,18 @@ def ImportMySQLDump() -> bool:
                     args.mysql_database])
     logging.info(cmd)
 
-    return os.system(cmd) == 0
+    ok = os.system(cmd) == 0
 
+    if ok:
+        cmd = " ".join(["mysql", "--host", args.mysql_host,
+                        "--port", str(args.mysql_port),
+                        "-u" + args.mysql_user,
+                        "-p" + args.mysql_password,
+                        "-e'" + MYSQL_FAST + "source ./scripts/sql/mysql-indexes.sql; commit; '",
+                        args.mysql_database])
+        logging.info(cmd)
 
-def MySQLtoSqlite():
-    msq = ms3.MySQLtoSQLite(
-        sqlite_file=args.create_sqlite_file,
-        mysql_user=args.mysql_user,
-        mysql_password=args.mysql_password,
-        mysql_database=args.mysql_database,
-        mysql_host=args.mysql_host,
-        mysql_port=args.mysql_port,
-        debug=True)
-    msq.transfer()
-
-# Applies SequenceAuthor.sql patch to the sqlite3 database
-def ApplyPatch() -> bool:
-    cmd = " ".join(["sqlite3", args.create_sqlite_file,
-                    "<", "SequenceAuthor.sql"])
-    
-    logging.info(cmd)
-
-    return os.system(cmd) == 0
-
+        return os.system(cmd) == 0 & ok
 try:
 
     if not args.skip_download:
@@ -92,11 +74,6 @@ try:
         logging.log(logging.FATAL, "Couldn't import MySQL dump")
         raise Exception("Failed to import SQL dump")
 
-    MySQLtoSqlite()
-    if not ApplyPatch():
-        logging.log(logging.FATAL, "Couldn't apply patch")
-        raise Exception("Failed to apply patch")
-        
 except Exception as e:
     logging.fatal(e)
 finally:

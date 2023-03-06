@@ -313,7 +313,7 @@ func newServerWithDump(db_path string, datastore string, dump string) (*server, 
 	}
 	db.Exec(dump)
 
-	srv.db = flibustadb.NewFlibustaSqlDb(db)
+	srv.db = flibustadb.NewFlibustaSqlite(db)
 
 	var opt badger.Options
 	if datastore == "" {
