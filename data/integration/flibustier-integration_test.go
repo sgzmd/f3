@@ -111,9 +111,9 @@ func TestArchiveEntry(t *testing.T) {
 	resp3, err := client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{
 		UserId: "testuser",
 	})
-	assert.Equal(t, len(resp2.Entry), 1)
+	assert.Equal(t, len(resp3.Entry), 1)
 
-	entry2 := resp2.Entry[0]
+	entry2 := resp3.Entry[0]
 	assert.Equal(t, entry, entry2)
 
 }
