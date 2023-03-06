@@ -1,8 +1,9 @@
 package rpc
 
 import (
-	"google.golang.org/protobuf/encoding/prototext"
 	"log"
+
+	"google.golang.org/protobuf/encoding/prototext"
 
 	"github.com/golang/protobuf/proto"
 	pb "github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
@@ -19,6 +20,7 @@ type ClientInterface interface {
 	TrackEntry(in *pb.TrackEntryRequest) (*pb.TrackEntryResponse, error)
 	ListTrackedEntries(in *pb.ListTrackedEntriesRequest) (*pb.ListTrackedEntriesResponse, error)
 	UntrackEntry(in *pb.UntrackEntryRequest) (*pb.UntrackEntryResponse, error)
+	UpdateEntry(in *pb.UpdateTrackedEntryRequest) (*pb.UpdateTrackedEntryResponse, error)
 	GetUserInfo(in *pb.GetUserInfoRequest) (*pb.GetUserInfoResponse, error)
 	ListUsers(in *pb.ListUsersRequest) (*pb.ListUsersResponse, error)
 }
@@ -78,6 +80,14 @@ func (g GrpcClientImplementation) ListTrackedEntries(in *pb.ListTrackedEntriesRe
 
 func (g GrpcClientImplementation) UntrackEntry(in *pb.UntrackEntryRequest) (*pb.UntrackEntryResponse, error) {
 	return g.client.UntrackEntry(context.Background(), in)
+}
+
+func (g GrpcClientImplementation) UpdateEntry(in *pb.UpdateTrackedEntryRequest) (*pb.UpdateTrackedEntryResponse, error) {
+	return g.client.UpdateEntry(context.Background(), in)
+}
+
+func (f FakeClientImplementation) UpdateEntry(in *pb.UpdateTrackedEntryRequest) (*pb.UpdateTrackedEntryResponse, error) {
+	return &pb.UpdateTrackedEntryResponse{TrackedEntry: in.TrackedEntry}, nil
 }
 
 func (f FakeClientImplementation) GlobalSearch(in *pb.GlobalSearchRequest) (*pb.GlobalSearchResponse, error) {

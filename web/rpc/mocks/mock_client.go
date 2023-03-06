@@ -168,3 +168,18 @@ func (mr *MockClientInterfaceMockRecorder) UntrackEntry(in interface{}) *gomock.
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UntrackEntry", reflect.TypeOf((*MockClientInterface)(nil).UntrackEntry), in)
 }
+
+// UpdateEntry mocks base method.
+func (m *MockClientInterface) UpdateEntry(in *proto.UpdateTrackedEntryRequest) (*proto.UpdateTrackedEntryResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateEntry", in)
+	ret0, _ := ret[0].(*proto.UpdateTrackedEntryResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateEntry indicates an expected call of UpdateEntry.
+func (mr *MockClientInterfaceMockRecorder) UpdateEntry(in interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateEntry", reflect.TypeOf((*MockClientInterface)(nil).UpdateEntry), in)
+}
