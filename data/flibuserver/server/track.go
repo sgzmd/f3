@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/dgraph-io/badger/v3"
-	proto2 "github.com/golang/protobuf/proto"
-	"github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/dgraph-io/badger/v3"
+	proto2 "github.com/golang/protobuf/proto"
+	"github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (s *server) TrackEntry(_ context.Context, req *proto.TrackEntryRequest) (*proto.TrackEntryResponse, error) {
@@ -52,10 +53,8 @@ func (s *server) TrackEntry(_ context.Context, req *proto.TrackEntryRequest) (*p
 		return nil, err
 	}
 
-	if req.Status != proto.TrackedEntryStatus_TRACKED_ENTRY_STATUS_ARCHIVED {
-		if alreadyTracked && !req.ForceUpdate {
-			return &proto.TrackEntryResponse{Key: key, Result: proto.TrackEntryResult_TRACK_ENTRY_RESULT_ALREADY_TRACKED}, nil
-		}
+	if alreadyTracked && !req.ForceUpdate {
+		return &proto.TrackEntryResponse{Key: key, Result: proto.TrackEntryResult_TRACK_ENTRY_RESULT_ALREADY_TRACKED}, nil
 	}
 
 	// So we will be definitely tracking this, let's obtain all the info
@@ -109,11 +108,7 @@ func (s *server) TrackEntry(_ context.Context, req *proto.TrackEntryRequest) (*p
 		return nil, err
 	}
 
-	result := proto.TrackEntryResult_TRACK_ENTRY_RESULT_OK
-	if req.Status == proto.TrackedEntryStatus_TRACKED_ENTRY_STATUS_ARCHIVED {
-		result = proto.TrackEntryResult_TRACK_ENTRY_RESULT_ARCHIVED
-	}
-	return &proto.TrackEntryResponse{Key: key, Result: result}, nil
+	return &proto.TrackEntryResponse{Key: key, Result: proto.TrackEntryResult_TRACK_ENTRY_RESULT_OK}, nil
 }
 
 // GetEntryAuthor returns the author of the entry for passed TrackedEntryKey if the entry is of type Author,

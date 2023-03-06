@@ -2,9 +2,6 @@ package main
 
 import (
 	"context"
-	"github.com/dgraph-io/badger/v3"
-	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb"
-	"google.golang.org/grpc/test/bufconn"
 	"io/ioutil"
 	"log"
 	"math"
@@ -12,6 +9,10 @@ import (
 	"path/filepath"
 	"runtime"
 	"time"
+
+	"github.com/dgraph-io/badger/v3"
+	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb"
+	"google.golang.org/grpc/test/bufconn"
 
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 
@@ -57,28 +58,6 @@ func (suite *FlibustierStorageSuite) TestServer_TrackEntry() {
 	resp3, err := suite.client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "1"})
 	suite.Assert().Nil(err)
 	suite.Assert().Len(resp3.Entry[0].Book, 8)
-}
-
-// Tests that the entry can be archived
-func (suite *FlibustierStorageSuite) TestServer_ArchiveEntry() {
-	trackReq := &pb.TrackEntryRequest{Key: &pb.TrackedEntryKey{
-		EntityType: pb.EntryType_ENTRY_TYPE_AUTHOR,
-		EntityId:   109170,
-		UserId:     "1"},
-		ForceUpdate: false}
-	resp, err := suite.client.TrackEntry(context.Background(), trackReq)
-	suite.Assert().Nil(err)
-	suite.Assert().Equal(pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK, resp.Result)
-
-	trackReq.Status = pb.TrackedEntryStatus_TRACKED_ENTRY_STATUS_ARCHIVED
-	resp2, err := suite.client.TrackEntry(context.Background(), trackReq)
-	suite.Assert().Nil(err)
-	suite.Assert().Equal(pb.TrackEntryResult_TRACK_ENTRY_RESULT_ARCHIVED, resp2.Result)
-
-	// Check that the entry is archived
-	resp3, err := suite.client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "1"})
-	suite.Assert().Nil(err)
-	suite.Assert().Equal(pb.TrackedEntryStatus_TRACKED_ENTRY_STATUS_ARCHIVED, resp3.Entry[0].Status)
 }
 
 func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
@@ -142,7 +121,7 @@ func (suite *FlibustierStorageSuite) TestServer_Untrack() {
 	}})
 	suite.Assert().Nil(err, err)
 
-	r2, err := suite.client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "user"})
+	r2, _ := suite.client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "user"})
 	suite.Assert().Len(r2.Entry, 1)
 
 	suite.client.UntrackEntry(context.Background(), &pb.UntrackEntryRequest{Key: r.Key})
