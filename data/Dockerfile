@@ -13,6 +13,7 @@ ARG mariadb_user=flibustier
 ARG mariadb_database=flibustier
 ARG mariadb_password=flibusta
 ARG skip_build_flibustier=""
+ARG flibusta_base_url="http://flibusta.site/sql"
 
 ENV TELEGRAM_API_KEY=${telegram_api_key}
 ENV TELEGRAM_CHAT_ID=${telegram_chat_id}
@@ -21,6 +22,9 @@ ENV MARIADB_PORT=${mariadb_port}
 ENV MARIADB_USER=${mariadb_user}
 ENV MARIADB_DATABASE=${mariadb_database}
 ENV MARIADB_PASSWORD=${mariadb_password}
+ENV FLIBUSTA_BASE_URL=${flibusta_base_url}
+
+RUN echo "BASE URL: ${FLIBUSTA_BASE_URL}"
 
 RUN echo "================ ${TELEGRAM_API_KEY} =================="
 

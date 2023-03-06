@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/encoding/prototext"
 	"os"
 	"testing"
 )
@@ -114,7 +115,9 @@ func TestArchiveEntry(t *testing.T) {
 	assert.Equal(t, len(resp3.Entry), 1)
 
 	entry2 := resp3.Entry[0]
-	assert.Equal(t, entry, entry2)
+	text1 := prototext.Format(entry)
+	text2 := prototext.Format(entry2)
+	assert.Equal(t, text1, text2)
 
 }
 

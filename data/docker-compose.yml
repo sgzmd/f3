@@ -22,6 +22,7 @@ services:
           - mariadb_port=3306
           - mariadb_password=${ENV_MARIADB_PASSWORD}
           - mariadb_database=${ENV_MARIADB_DATABASE}
+          - flibusta_base_url=${ENV_FLIBUSTA_BASE_URL}
       links:
         - database
       depends_on:
