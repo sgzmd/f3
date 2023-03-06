@@ -29,6 +29,7 @@ type FlibustierServiceClient interface {
 	TrackEntry(ctx context.Context, in *TrackEntryRequest, opts ...grpc.CallOption) (*TrackEntryResponse, error)
 	ListTrackedEntries(ctx context.Context, in *ListTrackedEntriesRequest, opts ...grpc.CallOption) (*ListTrackedEntriesResponse, error)
 	UntrackEntry(ctx context.Context, in *UntrackEntryRequest, opts ...grpc.CallOption) (*UntrackEntryResponse, error)
+	UpdateEntry(ctx context.Context, in *UpdateTrackedEntryRequest, opts ...grpc.CallOption) (*UpdateTrackedEntryResponse, error)
 	GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error)
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
 	// Added for testing only. Do not use in production.
@@ -107,6 +108,15 @@ func (c *flibustierServiceClient) UntrackEntry(ctx context.Context, in *UntrackE
 	return out, nil
 }
 
+func (c *flibustierServiceClient) UpdateEntry(ctx context.Context, in *UpdateTrackedEntryRequest, opts ...grpc.CallOption) (*UpdateTrackedEntryResponse, error) {
+	out := new(UpdateTrackedEntryResponse)
+	err := c.cc.Invoke(ctx, "/flibuserver.proto.v1.FlibustierService/UpdateEntry", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *flibustierServiceClient) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
 	out := new(GetUserInfoResponse)
 	err := c.cc.Invoke(ctx, "/flibuserver.proto.v1.FlibustierService/GetUserInfo", in, out, opts...)
@@ -154,6 +164,7 @@ type FlibustierServiceServer interface {
 	TrackEntry(context.Context, *TrackEntryRequest) (*TrackEntryResponse, error)
 	ListTrackedEntries(context.Context, *ListTrackedEntriesRequest) (*ListTrackedEntriesResponse, error)
 	UntrackEntry(context.Context, *UntrackEntryRequest) (*UntrackEntryResponse, error)
+	UpdateEntry(context.Context, *UpdateTrackedEntryRequest) (*UpdateTrackedEntryResponse, error)
 	GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoResponse, error)
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
 	// Added for testing only. Do not use in production.
@@ -186,6 +197,9 @@ func (UnimplementedFlibustierServiceServer) ListTrackedEntries(context.Context, 
 }
 func (UnimplementedFlibustierServiceServer) UntrackEntry(context.Context, *UntrackEntryRequest) (*UntrackEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UntrackEntry not implemented")
+}
+func (UnimplementedFlibustierServiceServer) UpdateEntry(context.Context, *UpdateTrackedEntryRequest) (*UpdateTrackedEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateEntry not implemented")
 }
 func (UnimplementedFlibustierServiceServer) GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfo not implemented")
@@ -338,6 +352,24 @@ func _FlibustierService_UntrackEntry_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FlibustierService_UpdateEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTrackedEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FlibustierServiceServer).UpdateEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/flibuserver.proto.v1.FlibustierService/UpdateEntry",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FlibustierServiceServer).UpdateEntry(ctx, req.(*UpdateTrackedEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _FlibustierService_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserInfoRequest)
 	if err := dec(in); err != nil {
@@ -444,6 +476,10 @@ var FlibustierService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UntrackEntry",
 			Handler:    _FlibustierService_UntrackEntry_Handler,
+		},
+		{
+			MethodName: "UpdateEntry",
+			Handler:    _FlibustierService_UpdateEntry_Handler,
 		},
 		{
 			MethodName: "GetUserInfo",

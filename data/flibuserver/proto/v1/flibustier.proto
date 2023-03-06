@@ -235,6 +235,7 @@ service FlibustierService {
   rpc TrackEntry (TrackEntryRequest) returns (TrackEntryResponse) {}
   rpc ListTrackedEntries (ListTrackedEntriesRequest) returns (ListTrackedEntriesResponse) {}
   rpc UntrackEntry (UntrackEntryRequest) returns (UntrackEntryResponse) {}
+  rpc UpdateEntry (UpdateTrackedEntryRequest) returns (UpdateTrackedEntryResponse) {}
 
   rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {}
   rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {}

@@ -41,6 +41,8 @@ func TestFlibustierStorage(t *testing.T) {
 }
 
 func (suite *FlibustierStorageSuite) TestServer_TrackEntry() {
+	client.DeleteAllTracked(context.Background(), &pb.DeleteAllTrackedRequest{})
+
 	trackReq := &pb.TrackEntryRequest{Key: &pb.TrackedEntryKey{
 		EntityType: pb.EntryType_ENTRY_TYPE_AUTHOR,
 		EntityId:   109170,
@@ -61,6 +63,8 @@ func (suite *FlibustierStorageSuite) TestServer_TrackEntry() {
 }
 
 func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
+	client.DeleteAllTracked(context.Background(), &pb.DeleteAllTrackedRequest{})
+
 	type idType struct {
 		id int64
 		t  pb.EntryType
@@ -106,6 +110,8 @@ func (suite *FlibustierStorageSuite) TestServer_ListTrackedEntries() {
 }
 
 func (suite *FlibustierStorageSuite) TestServer_Untrack() {
+	client.DeleteAllTracked(context.Background(), &pb.DeleteAllTrackedRequest{})
+
 	var entryId int64
 	var entryType pb.EntryType
 	for k, v := range TrackableEntries {
@@ -131,6 +137,8 @@ func (suite *FlibustierStorageSuite) TestServer_Untrack() {
 }
 
 func (suite *FlibustierStorageSuite) TestServer_TrackEntry_ListTracked() {
+	client.DeleteAllTracked(context.Background(), &pb.DeleteAllTrackedRequest{})
+
 	r, err := client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "abc"})
 	suite.Assert().Nil(err)
 	suite.Assert().NotNil(r)
@@ -155,6 +163,8 @@ func (suite *FlibustierStorageSuite) TestServer_TrackEntry_ListTracked() {
 }
 
 func (suite *FlibustierStorageSuite) TestServer_TrackEntry_Double() {
+	client.DeleteAllTracked(context.Background(), &pb.DeleteAllTrackedRequest{})
+
 	theKey := &pb.TrackedEntryKey{
 		EntityId:   34145,
 		EntityType: pb.EntryType_ENTRY_TYPE_SERIES,
@@ -175,6 +185,40 @@ func (suite *FlibustierStorageSuite) TestServer_TrackEntry_Double() {
 	resp, err = client.TrackEntry(context.Background(), req2)
 	suite.Assert().Nil(err)
 	suite.Assert().Equal(pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK, resp.Result)
+}
+
+// TestSever_UpdateEntry tests that the server can update an entry
+func (suite *FlibustierStorageSuite) TestServer_UpdateEntry() {
+	client.DeleteAllTracked(context.Background(), &pb.DeleteAllTrackedRequest{})
+
+	theKey := &pb.TrackedEntryKey{
+		EntityId:   34145,
+		EntityType: pb.EntryType_ENTRY_TYPE_SERIES,
+		UserId:     "abc"}
+	req := &pb.TrackEntryRequest{Key: theKey, ForceUpdate: false}
+	resp, err := client.TrackEntry(context.Background(), req)
+	suite.Assert().Nil(err)
+	suite.Assert().Equal(pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK, resp.Result)
+
+	// Let's update the entry now
+	r2, err := client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "abc"})
+	suite.Assert().Nil(err)
+	entry := r2.Entry[0]
+	entry.Status = pb.TrackedEntryStatus_TRACKED_ENTRY_STATUS_ARCHIVED
+	entry.NumEntries = 9999
+
+	// Call UpdateEntry to update the entry
+	_, err = client.UpdateEntry(context.Background(), &pb.UpdateTrackedEntryRequest{TrackedEntry: entry})
+	suite.Assert().Nil(err, "UpdateEntry failed: %+v", err)
+
+	// Let's retrieve the entry again and check that it was updated
+	r3, err := client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{UserId: "abc"})
+	suite.Assert().Nil(err)
+	suite.Assert().Len(r3.Entry, 1)
+	suite.Assert().Equal(pb.TrackedEntryStatus_TRACKED_ENTRY_STATUS_ARCHIVED, r3.Entry[0].Status)
+	suite.Assert().Equal(int32(9999), r3.Entry[0].NumEntries)
+
+	client.UntrackEntry(context.Background(), &pb.UntrackEntryRequest{Key: theKey})
 }
 
 func (suite *FlibustierStorageSuite) TestCheckUpdates_Author() {

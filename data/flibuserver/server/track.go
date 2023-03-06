@@ -229,7 +229,7 @@ func (s *server) ListTrackedEntries(ctx context.Context, req *proto.ListTrackedE
 			}
 
 			recordKey := key.GetTrackedEntryKey()
-			if key == nil {
+			if recordKey == nil {
 				continue
 			}
 
@@ -285,5 +285,32 @@ func (s *server) UntrackEntry(ctx context.Context, req *proto.UntrackEntryReques
 		return nil, err
 	} else {
 		return &proto.UntrackEntryResponse{Key: key, Result: proto.UntrackEntryResult_UNTRACK_ENTRY_RESULT_OK}, nil
+	}
+}
+
+// UpdateTrackedEntry updates the tracked entry with the passed TrackedEntryKey
+func (s *server) UpdateEntry(ctx context.Context, req *proto.UpdateTrackedEntryRequest) (*proto.UpdateTrackedEntryResponse, error) {
+	log.Printf("UpdateTrackedEntry: %+v", req)
+	key := req.TrackedEntry.Key
+	entry := req.TrackedEntry
+
+	err := s.data.Update(func(txn *badger.Txn) error {
+		entryKey := &proto.KvRecordKey{Key: &proto.KvRecordKey_TrackedEntryKey{TrackedEntryKey: key}}
+
+		prefix := TrackedEntryPrefix + proto2.MarshalTextString(entryKey)
+		keyBytes := []byte(prefix)
+
+		marshalledEntry, err := proto2.Marshal(entry)
+		if err != nil {
+			return err
+		}
+
+		txn.Delete(keyBytes)
+		return txn.Set(keyBytes, marshalledEntry)
+	})
+	if err != nil {
+		return nil, err
+	} else {
+		return &proto.UpdateTrackedEntryResponse{TrackedEntry: entry, Result: proto.TrackEntryResult_TRACK_ENTRY_RESULT_OK}, nil
 	}
 }
