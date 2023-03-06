@@ -9,7 +9,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-12 pl-0">
-                            <a target="_blank" href="{{ .GetUrl }}">{{ .Entry.EntryName }}</a>
+                            <a target="_blank" href="{{ .GetUrl }}" data-testid="tracked-entry" data-testval="{{ .Entry.Key.EntityId }}">{{ .Entry.EntryName }}</a>
                             <small>
                                 <a href="/untrack/{{.Entry.Key.EntityType.Number}}/{{ .Entry.Key.EntityId }}"
                                    class="action">(x)</a>

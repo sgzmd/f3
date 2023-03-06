@@ -36,7 +36,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12 pl-0">
+        <div class="col-md-12 pl-0" data-testid="tracked-entries-dev">
             {{ range .TrackedEntries }}
             {{ template "tracked_entry" . }}
             {{ end }}

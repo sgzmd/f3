@@ -1,6 +1,7 @@
 package rpc
 
 import (
+	"google.golang.org/protobuf/encoding/prototext"
 	"log"
 
 	"github.com/golang/protobuf/proto"
@@ -106,7 +107,11 @@ func (f FakeClientImplementation) TrackEntry(in *pb.TrackEntryRequest) (*pb.Trac
 
 func (f FakeClientImplementation) ListTrackedEntries(in *pb.ListTrackedEntriesRequest) (*pb.ListTrackedEntriesResponse, error) {
 	resp := pb.ListTrackedEntriesResponse{}
-	proto.UnmarshalText(ListEntriesFakeResponse, &resp)
+	err := prototext.Unmarshal([]byte(ListEntriesFakeResponse), &resp)
+
+	if err != nil {
+		log.Fatalf("Failed to unmarshal ListTrackedEntriesResponse: %v", err)
+	}
 	return &resp, nil
 }
 
