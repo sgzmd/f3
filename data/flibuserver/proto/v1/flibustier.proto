@@ -216,6 +216,15 @@ message GlobalSearchResponse {
 }
 
 
+message UpdateTrackedEntryRequest {
+  TrackedEntry tracked_entry = 1;
+}
+
+message UpdateTrackedEntryResponse {
+  TrackedEntry tracked_entry = 1;
+  TrackEntryResult result = 2;
+}
+
 // Main service definition
 service FlibustierService {
   rpc GlobalSearch (GlobalSearchRequest) returns (GlobalSearchResponse) {}
