@@ -13,6 +13,7 @@ import (
 	"github.com/sgzmd/f3/web/telegrambot"
 	"github.com/sgzmd/f3/web/webserver/handlers"
 	"github.com/sgzmd/f3/web/webserver/updates"
+	"github.com/sgzmd/go-telegram-auth/testing"
 	"github.com/sgzmd/go-telegram-auth/tgauth"
 )
 
@@ -31,9 +32,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	auth = tgauth.NewTelegramAuth(opts.TelegramToken, "/login", "/check-auth")
-	log.Print("Enabling debug mode for authentication")
-	auth.SetDebug(true)
+	if opts.UseFakeAuth {
+		auth = testing.NewFakeTelegramAuth(true, opts.FakeAuthUserId)
+		log.Printf("WARNING: Using fake authentication for user %s", opts.FakeAuthUserId)
+	} else {
+		auth = tgauth.NewTelegramAuth(opts.TelegramToken, "/login", "/check-auth")
+		log.Print("Enabling debug mode for authentication")
+		auth.SetDebug(true)
+	}
 
 	client, err := rpc.NewClient(&opts.GrpcBackend)
 	if err != nil {
@@ -47,7 +53,9 @@ func main() {
 	}
 
 	// Starting bot in a parallel thread
-	go telegrambot.BotFunc(opts.TelegramToken, client)
+	if !opts.UseFakeAuth {
+		go telegrambot.BotFunc(opts.TelegramToken, client)
+	}
 
 	engine := html.New("./templates/web", ".html")
 	app := fiber.New(fiber.Config{
