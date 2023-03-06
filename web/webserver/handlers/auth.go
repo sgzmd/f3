@@ -1,12 +1,13 @@
 package handlers
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
-	"github.com/sgzmd/go-telegram-auth/tgauth"
 	"log"
 	"net/url"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/sgzmd/f3/web/gen/go/flibuserver/proto/v1"
+	"github.com/sgzmd/go-telegram-auth/tgauth"
 )
 
 func Auth(ctx ClientContext) func(c *fiber.Ctx) error {
@@ -71,6 +72,14 @@ func Auth(ctx ClientContext) func(c *fiber.Ctx) error {
 					}
 				}
 			}
+		}
+
+		if ctx.Opts.UseFakeAuth {
+			params, _ := auth.GetParamsFromCookieValue("fake")
+			ui, _ := auth.GetUserInfo(params)
+
+			c.Locals("user", ui)
+			return c.Next()
 		}
 
 		cookieValue := c.Cookies(tgauth.DefaultCookieName, "")

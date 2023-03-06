@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -33,6 +34,9 @@ func main() {
 	}
 
 	if opts.UseFakeAuth {
+		if !strings.HasPrefix(opts.GrpcBackend, "localhost:") {
+			log.Fatal("Fake authentication is only allowed for localhost")
+		}
 		auth = testing.NewFakeTelegramAuth(true, opts.FakeAuthUserId)
 		log.Printf("WARNING: Using fake authentication for user %s", opts.FakeAuthUserId)
 	} else {
