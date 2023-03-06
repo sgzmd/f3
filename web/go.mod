@@ -3,7 +3,7 @@ module github.com/sgzmd/f3/web
 go 1.18
 
 require (
-	github.com/PuerkitoBio/goquery v1.8.1
+	github.com/ericchiang/css v1.3.0
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/gofiber/fiber/v2 v2.38.1
 	github.com/gofiber/template v1.7.1
@@ -19,7 +19,6 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
-	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/klauspost/compress v1.15.11 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
