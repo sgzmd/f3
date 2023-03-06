@@ -74,6 +74,47 @@ func TestTrackEntry(t *testing.T) {
 		UserId: "testuser",
 	})
 	assert.Equal(t, len(resp4.Entry), 0)
+}
+
+func TestArchiveEntry(t *testing.T) {
+	// to ensure state is clear from previous tests
+	client.DeleteAllTracked(context.Background(), &pb.DeleteAllTrackedRequest{})
+
+	resp, err := client.TrackEntry(context.Background(), &pb.TrackEntryRequest{
+		Key: &pb.TrackedEntryKey{
+			EntityType: pb.EntryType_ENTRY_TYPE_SERIES,
+			EntityId:   34145,
+			UserId:     "testuser",
+		},
+		ForceUpdate: false,
+	})
+	if err != nil {
+		t.Fatalf("TrackEntry failed: %v", err)
+	}
+
+	assert.Equal(t, resp.Key.EntityId, int64(34145))
+	assert.Equal(t, resp.Result, pb.TrackEntryResult_TRACK_ENTRY_RESULT_OK)
+
+	// List tracked entries
+	resp2, err := client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{
+		UserId: "testuser",
+	})
+	assert.Equal(t, len(resp2.Entry), 1)
+
+	entry := resp2.Entry[0]
+	assert.Equal(t, entry.Key.EntityId, int64(34145))
+
+	// Archive entry now
+	_, err = client.UpdateEntry(context.Background(), &pb.UpdateTrackedEntryRequest{TrackedEntry: entry})
+	assert.Nil(t, err)
+
+	resp3, err := client.ListTrackedEntries(context.Background(), &pb.ListTrackedEntriesRequest{
+		UserId: "testuser",
+	})
+	assert.Equal(t, len(resp2.Entry), 1)
+
+	entry2 := resp2.Entry[0]
+	assert.Equal(t, entry, entry2)
 
 }
 

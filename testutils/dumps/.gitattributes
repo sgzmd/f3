@@ -1,0 +1,6 @@
+index.html filter=lfs diff=lfs merge=lfs -text
+lib.libavtorname.sql.gz filter=lfs diff=lfs merge=lfs -text
+lib.libavtor.sql.gz filter=lfs diff=lfs merge=lfs -text
+lib.libbook.sql.gz filter=lfs diff=lfs merge=lfs -text
+lib.libseqname.sql.gz filter=lfs diff=lfs merge=lfs -text
+lib.libseq.sql.gz filter=lfs diff=lfs merge=lfs -text
