@@ -36,6 +36,18 @@ func TestGlobalSearch(t *testing.T) {
 	assert.Greater(t, len(resp.Entry), 0)
 }
 
+func TestGlobalSearch_Author(t *testing.T) {
+	resp, err := client.GlobalSearch(context.Background(), &pb.GlobalSearchRequest{
+		SearchTerm: "Сергей Мусаниф",
+	})
+	if err != nil {
+		t.Fatalf("GlobalSearch failed: %v", err)
+	}
+
+	t.Logf("GlobalSearch response: %+v", resp)
+	assert.Equal(t, len(resp.Entry), 1)
+}
+
 func TestTrackEntry(t *testing.T) {
 	// to ensure state is clear from previous tests
 	client.DeleteAllTracked(context.Background(), &pb.DeleteAllTrackedRequest{})
