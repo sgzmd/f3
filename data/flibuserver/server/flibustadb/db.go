@@ -181,7 +181,7 @@ func (s *FlibustaDbSql) SearchAuthors(req *pb.GlobalSearchRequest) ([]*pb.FoundE
 	if s.engine == SQLITE {
 		query = fmt.Sprintf(sqlite3.AuthorQueryTemplateSqlite, req.SearchTerm)
 	} else {
-		query = fmt.Sprintf(mariadb.SearchAuthorsFtsMysql, req.SearchTerm)
+		query = fmt.Sprintf(mariadb.SearchAuthorsFtsMysql, makeBooleanQuery(req.SearchTerm))
 	}
 	log.Printf("SearchAuthors: sql=%s", query)
 	rows, err := s.mariaDb.Query(query)

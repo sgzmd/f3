@@ -11,6 +11,12 @@ services:
       - MYSQL_PASSWORD=${ENV_MARIADB_PASSWORD}
       - MYSQL_USER=${ENV_MARIADB_USER}
       - MYSQL_DATABASE=${ENV_MARIADB_DATABASE}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${ENV_MARIADB_USER}", "-p${ENV_MARIADB_PASSWORD}"]
+      interval: 30s
+      timeout: 30s
+      retries: 99999
+
   flibuserver:
     build:
       context: ../
