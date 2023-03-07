@@ -165,11 +165,13 @@ func (s *FlibustaDbSql) Close() error {
 
 // NewFlibustaSqlite Creates new FlibustaDbSql instance for SQLite3 database.
 func NewFlibustaSqlite(db *sql.DB) *FlibustaDbSql {
+	log.Printf("NewFlibustaSqlite()")
 	return &FlibustaDbSql{mariaDb: db, engine: SQLITE}
 }
 
 // NewFlibustaSqlMariaDb Creates new FlibustaDbSql instance for MariaDB database.
 func NewFlibustaSqlMariaDb(db *sql.DB) *FlibustaDbSql {
+	log.Printf("NewFlibustaSqlMariaDb()")
 	return &FlibustaDbSql{mariaDb: db, engine: MARIA_DB}
 }
 

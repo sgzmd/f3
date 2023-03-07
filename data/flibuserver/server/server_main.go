@@ -124,6 +124,8 @@ func NewServer(db_path string, datastore string) (*server, error) {
 		AllowNativePasswords: true,
 	}
 
+	log.Printf("Connecting to MariaDB: %+v", cfg.FormatDSN())
+
 	mariaDb, err := sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
 		return nil, err
