@@ -25,4 +25,5 @@ steps:
     workingDirectory: './web'
 - task: ShellScript@2
   inputs:
-    scriptPath: integration/run-integration.sh
+    scriptPath: data/integration/run-integration.sh
+    cwd: ./data
