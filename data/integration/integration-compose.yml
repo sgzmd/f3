@@ -36,5 +36,21 @@ services:
       interval: 30s
       timeout: 30s
       retries: 99999
+  web:
+    build:
+      context: ../web
+    environment:
+      TELEGRAM_API_KEY: ${ENV_TELEGRAM_API_KEY}
+      BACKEND_URL: localhost:9000
+      WEB_PORT: 8088
+      BOT_NAME: ${ENV_BOT_NAME}
+      DOMAIN_NAME: ${ENV_DOMAIN_NAME}
+      AUTH_MODE: "--use_fake_auth"
+    depends_on:
+      flibuserver:
+        condition: service_healthy
+    ports:
+      - '8088:8088'
+
 volumes:
   flibudata:
