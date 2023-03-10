@@ -1,10 +1,16 @@
 FROM golang:1.20.1-alpine3.17
 
-ENV TELEGRAM_API_KEY=""
-ENV BACKEND_URL=""
-ENV WEB_PORT=""
-ENV BOT_NAME=""
-ENV DOMAIN_NAME=""
+ARG telegram_api_key
+ARG backend_url
+ARG web_port
+ARG bot_name
+ARG domain_name
+
+ENV TELEGRAM_API_KEY=${telegram_api_key}
+ENV BACKEND_URL=${backend_url}
+ENV WEB_PORT=${web_port}
+ENV BOT_NAME=${bot_name}
+ENV DOMAIN_NAME=${domain_name}
 
 RUN mkdir /app
 
