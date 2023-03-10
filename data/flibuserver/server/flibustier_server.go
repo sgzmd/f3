@@ -273,7 +273,7 @@ func RefreshDatabase(srv *server) error {
 		if err != nil {
 			return fmt.Errorf("failed to download database update: %+v", err)
 		}
-		
+
 		return nil
 	}
 }
