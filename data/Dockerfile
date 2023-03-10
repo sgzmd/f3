@@ -5,23 +5,6 @@ FROM golang:1.20.1-alpine3.17
 ARG vcs-ref=0
 ENV vcs-ref=$vcs-ref
 
-ARG telegram_api_key=nonkey
-ARG telegram_chat_id=-1
-ARG mariadb_host=localhost
-ARG mariadb_port=3306
-ARG mariadb_user=flibustier
-ARG mariadb_database=flibustier
-ARG mariadb_password=flibusta
-ARG skip_build_flibustier=""
-
-ENV TELEGRAM_API_KEY=${telegram_api_key}
-ENV TELEGRAM_CHAT_ID=${telegram_chat_id}
-ENV MARIADB_HOST=${mariadb_host}
-ENV MARIADB_PORT=${mariadb_port}
-ENV MARIADB_USER=${mariadb_user}
-ENV MARIADB_DATABASE=${mariadb_database}
-ENV MARIADB_PASSWORD=${mariadb_password}
-
 RUN echo "================ ${TELEGRAM_API_KEY} =================="
 
 RUN mkdir /app

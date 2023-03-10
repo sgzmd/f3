@@ -14,16 +14,16 @@ services:
     flibuserver:
       build:
         context: .
-        args:
-          - telegram_api_key=${ENV_TELEGRAM_API_KEY}
-          - telegram_chat_id=${ENV_TELEGRAM_CHAT_ID}
-          - mariadb_host=database
-          - mariadb_user=${ENV_MARIADB_USER}
-          - mariadb_port=3306
-          - mariadb_password=${ENV_MARIADB_PASSWORD}
-          - mariadb_database=${ENV_MARIADB_DATABASE}
       links:
         - database
+      environment:
+        MARIADB_HOST: ${ENV_MARIADB_HOST}
+        MARIADB_USER: ${ENV_MARIADB_USER}
+        MARIADB_PASSWORD: ${ENV_MARIADB_PASSWORD}
+        MARIADB_DATABASE: ${ENV_MARIADB_DATABASE}
+        MARIADB_PORT: 3306
+        TELEGRAM_API_KEY: ${ENV_TELEGRAM_API_KEY}
+        TELEGRAM_CHAT_ID: ${ENV_TELEGRAM_CHAT_ID}
       depends_on:
         - database
       volumes:
@@ -49,7 +49,7 @@ services:
 
       depends_on:
         flibuserver:
-          condition: service_healthy 
+          condition: service_healthy
       ports:
         - '8088:8088'
 volumes:

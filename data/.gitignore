@@ -1,2 +1,3 @@
 .env
 version.txt
+grpc_health*amd64*
