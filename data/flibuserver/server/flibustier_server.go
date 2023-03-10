@@ -267,24 +267,13 @@ func RefreshDatabase(srv *server) error {
 	if err != nil {
 		return fmt.Errorf("failed to download database update: %+v", err)
 	} else {
+		srv.Lock.Lock()
+		defer srv.Lock.Unlock()
 		err := downloadCmd.Wait()
 		if err != nil {
 			return fmt.Errorf("failed to download database update: %+v", err)
 		}
-
-		log.Printf("Re-opening database ...")
-		srv.Lock.Lock()
-		db, err := OpenDatabase(*flibustaDb)
-		srv.Lock.Unlock()
-		if err != nil {
-			log.Fatalf("Failed to open database: %s", err)
-			os.Exit(1)
-		}
-
-		srv.db = flibustadb.NewFlibustaSqlite(db)
-
-		log.Printf("Database re-opened.")
-
+		
 		return nil
 	}
 }
