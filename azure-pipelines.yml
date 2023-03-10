@@ -13,6 +13,10 @@ steps:
 - task: GoTool@0
   inputs:
     version: '1.20.2'
+- task: ShellScript@2
+  inputs:
+    scriptPath: data/integration/run-integration.sh
+    cwd: ./data
 - task: Go@0
   inputs:
     command: 'test'
@@ -23,7 +27,3 @@ steps:
     command: 'test'
     arguments: ' -v ./...'
     workingDirectory: './web'
-- task: ShellScript@2
-  inputs:
-    scriptPath: data/integration/run-integration.sh
-    cwd: ./data
