@@ -35,6 +35,7 @@ type FlibustierServiceClient interface {
 	// Added for testing only. Do not use in production.
 	DeleteAllUsers(ctx context.Context, in *DeleteAllUsersRequest, opts ...grpc.CallOption) (*DeleteAllUsersResponse, error)
 	DeleteAllTracked(ctx context.Context, in *DeleteAllTrackedRequest, opts ...grpc.CallOption) (*DeleteAllTrackedResponse, error)
+	ForceRefresh(ctx context.Context, in *ForceRefreshRequest, opts ...grpc.CallOption) (*ForceRefreshResponse, error)
 }
 
 type flibustierServiceClient struct {
@@ -153,6 +154,15 @@ func (c *flibustierServiceClient) DeleteAllTracked(ctx context.Context, in *Dele
 	return out, nil
 }
 
+func (c *flibustierServiceClient) ForceRefresh(ctx context.Context, in *ForceRefreshRequest, opts ...grpc.CallOption) (*ForceRefreshResponse, error) {
+	out := new(ForceRefreshResponse)
+	err := c.cc.Invoke(ctx, "/flibuserver.proto.v1.FlibustierService/ForceRefresh", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FlibustierServiceServer is the server API for FlibustierService service.
 // All implementations must embed UnimplementedFlibustierServiceServer
 // for forward compatibility
@@ -170,6 +180,7 @@ type FlibustierServiceServer interface {
 	// Added for testing only. Do not use in production.
 	DeleteAllUsers(context.Context, *DeleteAllUsersRequest) (*DeleteAllUsersResponse, error)
 	DeleteAllTracked(context.Context, *DeleteAllTrackedRequest) (*DeleteAllTrackedResponse, error)
+	ForceRefresh(context.Context, *ForceRefreshRequest) (*ForceRefreshResponse, error)
 	mustEmbedUnimplementedFlibustierServiceServer()
 }
 
@@ -212,6 +223,9 @@ func (UnimplementedFlibustierServiceServer) DeleteAllUsers(context.Context, *Del
 }
 func (UnimplementedFlibustierServiceServer) DeleteAllTracked(context.Context, *DeleteAllTrackedRequest) (*DeleteAllTrackedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAllTracked not implemented")
+}
+func (UnimplementedFlibustierServiceServer) ForceRefresh(context.Context, *ForceRefreshRequest) (*ForceRefreshResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ForceRefresh not implemented")
 }
 func (UnimplementedFlibustierServiceServer) mustEmbedUnimplementedFlibustierServiceServer() {}
 
@@ -442,6 +456,24 @@ func _FlibustierService_DeleteAllTracked_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FlibustierService_ForceRefresh_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ForceRefreshRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FlibustierServiceServer).ForceRefresh(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/flibuserver.proto.v1.FlibustierService/ForceRefresh",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FlibustierServiceServer).ForceRefresh(ctx, req.(*ForceRefreshRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FlibustierService_ServiceDesc is the grpc.ServiceDesc for FlibustierService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -496,6 +528,10 @@ var FlibustierService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteAllTracked",
 			Handler:    _FlibustierService_DeleteAllTracked_Handler,
+		},
+		{
+			MethodName: "ForceRefresh",
+			Handler:    _FlibustierService_ForceRefresh_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

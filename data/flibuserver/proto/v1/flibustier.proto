@@ -225,6 +225,21 @@ message UpdateTrackedEntryResponse {
   TrackEntryResult result = 2;
 }
 
+message ForceRefreshRequest {
+
+}
+
+message ForceRefreshResponse {
+  enum ForceRefreshResult {
+    FORCE_REFRESH_RESULT_UNSPECIFIED = 0;
+    FORCE_REFRESH_RESULT_OK = 1;
+    FORCE_REFRESH_ERROR = 2;
+  }
+
+  ForceRefreshResult result = 1;
+  string error_message = 2;
+}
+
 // Main service definition
 service FlibustierService {
   rpc GlobalSearch (GlobalSearchRequest) returns (GlobalSearchResponse) {}
@@ -243,4 +258,6 @@ service FlibustierService {
   // Added for testing only. Do not use in production.
   rpc DeleteAllUsers(DeleteAllUsersRequest) returns (DeleteAllUsersResponse) {}
   rpc DeleteAllTracked(DeleteAllTrackedRequest) returns (DeleteAllTrackedResponse) {}
+
+  rpc ForceRefresh(ForceRefreshRequest) returns (ForceRefreshResponse) {}
 }
