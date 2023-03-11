@@ -91,7 +91,7 @@ func TestTrackEntry(t *testing.T) {
 	assert.Equal(t, len(resp4.Entry), 0)
 }
 
-func DisabledTestArchiveEntry(t *testing.T) {
+func TestArchiveEntryBackend(t *testing.T) {
 	// to ensure state is clear from previous tests
 	client.DeleteAllTracked(context.Background(), &pb.DeleteAllTrackedRequest{})
 
@@ -145,11 +145,47 @@ func TestForceRefresh(t *testing.T) {
 }
 
 func TestSmokeTestWeb(t *testing.T) {
-	resp, err := http.Get("http://localhost:8088")
-	assert.Nil(t, err)
-	d, _ := io.ReadAll(resp.Body)
-	s := string(d)
+	s := getHtml(t, "http://localhost:8088")
 	assert.Containsf(t, s, "<h4>Отслеживаем</h4>", "Expected to find 'Отслеживаем' in response, got: %s", s)
+}
+
+func DisabledTestArchiveEntryWeb(t *testing.T) {
+	// to ensure state is clear from previous tests
+	client.DeleteAllTracked(context.Background(), &pb.DeleteAllTrackedRequest{})
+
+	// Ignoring errors because this is tested elsewhere
+	_, _ = client.TrackEntry(context.Background(), &pb.TrackEntryRequest{
+		Key: &pb.TrackedEntryKey{
+			EntityType: pb.EntryType_ENTRY_TYPE_SERIES,
+			EntityId:   34145,
+			UserId:     "testuser",
+		},
+		ForceUpdate: false,
+	})
+
+	index := getHtml(t, "http://localhost:8088")
+	assert.Containsf(t, index,
+		`<a target="_blank" href="http://flibusta.is/s/34145" data-testid="tracked-entry" data-testval="34145">Маски [= Унесенный ветром]</a>`,
+		"Expected to find entry 34145 in response, got: %s", index)
+
+	// Ignoring body because redirect anyway
+	_, e := http.Get("http://localhost:8088/archive/1/34145")
+	assert.Nil(t, e, "Failed to archive entry: %+v", e)
+
+	archives := getHtml(t, "http://localhost:8088/archives")
+	assert.Containsf(t, archives,
+		`<a target="_blank" href="http://flibusta.is/s/34145" data-testid="tracked-entry" data-testval="34145">Маски [= Унесенный ветром]</a>`,
+		"Expected to find entry 34145 in response, got: %s", index)
+}
+
+func getHtml(t *testing.T, url string) string {
+	resp, err := http.Get(url)
+	assert.Nil(t, err, "Failed to get URL %s: %+v", url, err)
+
+	d, err := io.ReadAll(resp.Body)
+	assert.Nil(t, err, "Failed to read response body: %+v", err)
+
+	return string(d)
 }
 
 func TestMain(m *testing.M) {
