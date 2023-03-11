@@ -5,6 +5,7 @@ FROM golang:1.20.1-alpine3.17
 ARG vcs-ref=0
 ENV vcs-ref=$vcs-ref
 
+<<<<<<< HEAD
 ARG telegram_api_key=nonkey
 ARG telegram_chat_id=-1
 ARG mariadb_host=localhost
@@ -26,6 +27,8 @@ ENV FLIBUSTA_BASE_URL=${flibusta_base_url}
 
 RUN echo "BASE URL: ${FLIBUSTA_BASE_URL}"
 
+=======
+>>>>>>> dev
 RUN echo "================ ${TELEGRAM_API_KEY} =================="
 
 RUN mkdir /app
