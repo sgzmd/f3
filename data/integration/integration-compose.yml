@@ -30,8 +30,10 @@ services:
       MARIADB_PORT: 3306
       TELEGRAM_API_KEY: ${ENV_TELEGRAM_API_KEY}
       TELEGRAM_CHAT_ID: ${ENV_TELEGRAM_CHAT_ID}
+      FLIBUSTA_BASE_URL: ${ENV_FLIBUSTA_BASE_URL}
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     volumes:
       - 'flibudata:/var/local/flibudata'
     ports:
