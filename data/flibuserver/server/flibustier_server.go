@@ -3,9 +3,12 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/sgzmd/f3/data/flibuserver/server/flibustadb"
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"log"
+	"os"
+	"os/exec"
 	"strings"
 	"sync"
 
@@ -238,4 +241,39 @@ func (s *server) Close() {
 func (s *server) Shutdown() {
 	s.Close()
 	s.data.Close()
+}
+
+// ForceRefresh implements ForceRefresh method
+func (s *server) ForceRefresh(_ context.Context, _ *pb.ForceRefreshRequest) (*pb.ForceRefreshResponse, error) {
+	err := RefreshDatabase(s)
+	if err != nil {
+		return &pb.ForceRefreshResponse{
+			Result:       pb.ForceRefreshResponse_FORCE_REFRESH_ERROR,
+			ErrorMessage: fmt.Sprintf("Failed to refresh database: %+v", err),
+		}, nil
+	} else {
+		return &pb.ForceRefreshResponse{
+			Result: pb.ForceRefreshResponse_FORCE_REFRESH_RESULT_OK,
+		}, nil
+	}
+}
+
+func RefreshDatabase(srv *server) error {
+	downloadCmd := exec.Command(*updateCmd)
+	downloadCmd.Stdout = os.Stdout
+	downloadCmd.Stderr = os.Stderr
+
+	err := downloadCmd.Start()
+	if err != nil {
+		return fmt.Errorf("failed to download database update: %+v", err)
+	} else {
+		srv.Lock.Lock()
+		defer srv.Lock.Unlock()
+		err := downloadCmd.Wait()
+		if err != nil {
+			return fmt.Errorf("failed to download database update: %+v", err)
+		}
+
+		return nil
+	}
 }

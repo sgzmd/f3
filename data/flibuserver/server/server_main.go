@@ -15,7 +15,6 @@ import (
 	"log"
 	"net"
 	"os"
-	"os/exec"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
@@ -75,30 +74,7 @@ func main() {
 
 		go func() {
 			for range dbReopen.C {
-				downloadCmd := exec.Command(*updateCmd)
-				downloadCmd.Stdout = os.Stdout
-				downloadCmd.Stderr = os.Stderr
-
-				err = downloadCmd.Start()
-				if err != nil {
-					log.Printf("Failed to download database update: %+v", err)
-					continue
-				}
-
-				downloadCmd.Wait()
-
-				log.Printf("Re-opening database ...")
-				srv.Lock.Lock()
-				db, err := OpenDatabase(*flibustaDb)
-				srv.Lock.Unlock()
-				if err != nil {
-					log.Fatalf("Failed to open database: %s", err)
-					os.Exit(1)
-				}
-
-				srv.db = flibustadb.NewFlibustaSqlite(db)
-
-				log.Printf("Database re-opened.")
+				RefreshDatabase(srv)
 			}
 		}()
 	}
