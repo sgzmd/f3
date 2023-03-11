@@ -13,7 +13,7 @@ services:
       - MYSQL_DATABASE=${ENV_MARIADB_DATABASE}
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${ENV_MARIADB_USER}", "-p${ENV_MARIADB_PASSWORD}"]
-      interval: 30s
+      interval: 5s
       timeout: 30s
       retries: 99999
 
@@ -49,11 +49,12 @@ services:
       context: ../web
     environment:
       TELEGRAM_API_KEY: ${ENV_TELEGRAM_API_KEY}
-      BACKEND_URL: localhost:9000
+      BACKEND_URL: flibuserver:9000
       WEB_PORT: 8088
       BOT_NAME: ${ENV_BOT_NAME}
       DOMAIN_NAME: ${ENV_DOMAIN_NAME}
       AUTH_MODE: "--use_fake_auth"
+      FLIBUSTIER_INTEGRATION: 1
     depends_on:
       flibuserver:
         condition: service_healthy

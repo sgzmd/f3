@@ -8,6 +8,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/encoding/prototext"
+	"io"
+	"net/http"
 	"os"
 	"testing"
 )
@@ -140,6 +142,14 @@ func TestForceRefresh(t *testing.T) {
 
 	// Running test again to ensure we can still run it after refresh
 	TestGlobalSearch(t)
+}
+
+func TestSmokeTestWeb(t *testing.T) {
+	resp, err := http.Get("http://localhost:8088")
+	assert.Nil(t, err)
+	d, _ := io.ReadAll(resp.Body)
+	s := string(d)
+	assert.Containsf(t, s, "<h4>Отслеживаем</h4>", "Expected to find 'Отслеживаем' in response, got: %s", s)
 }
 
 func TestMain(m *testing.M) {

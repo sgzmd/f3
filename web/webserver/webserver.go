@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/template/html"
@@ -16,6 +13,8 @@ import (
 	"github.com/sgzmd/f3/web/webserver/updates"
 	"github.com/sgzmd/go-telegram-auth/testing"
 	"github.com/sgzmd/go-telegram-auth/tgauth"
+	"log"
+	"os"
 )
 
 var (
@@ -34,8 +33,8 @@ func main() {
 	}
 
 	if opts.UseFakeAuth {
-		if !strings.HasPrefix(opts.GrpcBackend, "localhost:") {
-			log.Fatal("Fake authentication is only allowed for localhost")
+		if os.Getenv("FLIBUSTIER_INTEGRATION") != "1" {
+			log.Fatal("Fake auth can only be used in integration tests")
 		}
 		auth = testing.NewFakeTelegramAuth(true, opts.FakeAuthUserId)
 		log.Printf("WARNING: Using fake authentication for user %s", opts.FakeAuthUserId)
@@ -76,9 +75,11 @@ func main() {
 	})
 
 	app.Get("/", handlers.IndexHandler(clientContext))
+	app.Get("/archives", handlers.ArchiveViewHandler(clientContext))
 	app.Get("/search/:searchTerm", handlers.SearchHandler(clientContext))
 	app.Get("/track/:entityType/:id", handlers.TrackUntrackArchiveHandler(clientContext, handlers.Track))
 	app.Get("/untrack/:entityType/:id", handlers.TrackUntrackArchiveHandler(clientContext, handlers.Untrack))
+	app.Get("/archive/:entityType/:id", handlers.TrackUntrackArchiveHandler(clientContext, handlers.Archive))
 	app.Get("/check-updates-r2d2", func(ctx *fiber.Ctx) error {
 		_, e := updates.CheckAndSendUpdates(clientContext, opts.TelegramToken)
 		return e
