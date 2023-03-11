@@ -2,6 +2,7 @@ package integration
 
 import (
 	"context"
+	"fmt"
 	"github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	pb "github.com/sgzmd/f3/data/gen/go/flibuserver/proto/v1"
 	"github.com/stretchr/testify/assert"
@@ -194,7 +195,9 @@ func TestMain(m *testing.M) {
 		os.Exit(0)
 	}
 
-	conn, err := grpc.Dial("localhost:9000", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	port := os.Getenv("FLIBUSERVER_PORT")
+
+	conn, err := grpc.Dial(fmt.Sprintf("localhost:%s", port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}

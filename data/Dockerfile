@@ -29,6 +29,6 @@ RUN wget https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v
 RUN chmod +x ./grpc_health_probe-linux-amd64
 RUN ls -lha ./grpc_health_probe-linux-amd64
 
-EXPOSE 9000
+EXPOSE ${FLIBUSERVER_PORT}
 
 CMD /bin/sh /app/start.sh

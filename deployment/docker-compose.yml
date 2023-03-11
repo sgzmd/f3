@@ -3,7 +3,7 @@ services:
   database:
     image: mariadb:latest
     ports:
-      - 3396:3396
+      - 3366:3306
     volumes:
       - flibudata:/var/lib/mysql
     environment:
@@ -11,16 +11,15 @@ services:
       - MYSQL_PASSWORD=${ENV_MARIADB_PASSWORD}
       - MYSQL_USER=${ENV_MARIADB_USER}
       - MYSQL_DATABASE=${ENV_MARIADB_DATABASE}
-      - MYSQL_TCP_PORT=3396
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${ENV_MARIADB_USER}", "-p${ENV_MARIADB_PASSWORD}"]
-      interval: 5s
+      interval: 30s
       timeout: 30s
       retries: 99999
 
   flibuserver:
     build:
-      context: ../
+      context: ./data
     links:
       - database
     environment:
@@ -28,40 +27,36 @@ services:
       MARIADB_USER: ${ENV_MARIADB_USER}
       MARIADB_PASSWORD: ${ENV_MARIADB_PASSWORD}
       MARIADB_DATABASE: ${ENV_MARIADB_DATABASE}
-      MARIADB_PORT: 3396
+      MARIADB_PORT: 3306
       TELEGRAM_API_KEY: ${ENV_TELEGRAM_API_KEY}
       TELEGRAM_CHAT_ID: ${ENV_TELEGRAM_CHAT_ID}
       FLIBUSTA_BASE_URL: ${ENV_FLIBUSTA_BASE_URL}
       FLIBUSERVER_PORT: ${ENV_FLIBUSERVER_PORT}
     depends_on:
-      database:
-        condition: service_healthy
+      - database
     volumes:
       - 'flibudata:/var/local/flibudata'
     ports:
       - '${ENV_FLIBUSERVER_PORT}:${ENV_FLIBUSERVER_PORT}'
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "./grpc_health_probe-linux-amd64", "-addr=localhost:${ENV_FLIBUSERVER_PORT}"]
       interval: 30s
       timeout: 30s
       retries: 99999
-
   web:
     build:
-      context: ../web
+      context: ./web
     environment:
       TELEGRAM_API_KEY: ${ENV_TELEGRAM_API_KEY}
       BACKEND_URL: flibuserver:${ENV_FLIBUSERVER_PORT}
-      WEB_PORT: 8088
+      WEB_PORT: ${ENV_FLIBUWEB_PORT}
       BOT_NAME: ${ENV_BOT_NAME}
       DOMAIN_NAME: ${ENV_DOMAIN_NAME}
-      AUTH_MODE: "--use_fake_auth"
-      FLIBUSTIER_INTEGRATION: 1
     depends_on:
       flibuserver:
         condition: service_healthy
     ports:
-      - '8088:8088'
-
+      - '${ENV_FLIBUWEB_PORT}:${ENV_FLIBUWEB_PORT}'
 volumes:
   flibudata:
