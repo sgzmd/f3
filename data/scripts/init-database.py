@@ -28,6 +28,7 @@ parser.add_argument("--mysql_user")
 parser.add_argument("--mysql_password")
 parser.add_argument("--mysql_database")
 parser.add_argument("--skip_download", action="store_true")
+parser.add_argument("--flibusta_base_url")
 
 args = parser.parse_args()
 pprint.pprint(args)
@@ -41,7 +42,7 @@ SET unique_checks=0;
 
 
 def CreateMySQLDump() -> bool:
-    return os.system("./downloader --dump_file " + args.sql_dump_file) == 0
+    return os.system("./downloader --dump_file " + args.sql_dump_file + " --base_url " + args.flibusta_base_url) == 0
 
 
 def ImportMySQLDump() -> bool:

@@ -27,6 +27,8 @@ var skipBanned = flag.Bool("skip-banned", true, "Skip banned prefixes")
 func CreateUrlList(baseUrl string) []string {
 	var urls []string
 	resp, err := soup.Get(baseUrl)
+	// If this is a testing environment, path will end with index.html which we need to remove
+	basePath := ChopIndexHtml(baseUrl)
 	if err != nil {
 		fmt.Printf("Error downloading base URL: %s", err.Error())
 		os.Exit(1)
@@ -59,11 +61,15 @@ func CreateUrlList(baseUrl string) []string {
 			continue
 		}
 
-		u := fmt.Sprintf("%s%s", baseUrl, href)
+		u := fmt.Sprintf("%s%s", basePath, href)
 		fmt.Printf("%s -> %s\n", link.Text(), u)
 		urls = append(urls, u)
 	}
 	return urls
+}
+
+func ChopIndexHtml(s string) string {
+	return strings.TrimSuffix(s, "index.html")
 }
 
 func main() {
