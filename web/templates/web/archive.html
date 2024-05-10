@@ -1,0 +1,27 @@
+{{template "header" }}
+
+{{ template "navbar"  }}
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col ">
+            <h1>Hello, {{.Name}}!</h1>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h4>Архивы</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 pl-0" data-testid="tracked-entries-dev">
+            {{ range .TrackedEntries }}
+            {{ template "tracked_entry" . }}
+            {{ end }}
+        </div>
+    </div>
+</div>
+
+
+{{template "footer" }}
