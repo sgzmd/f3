@@ -1,0 +1,6 @@
+f.r-k.co {
+    reverse_proxy web:8088
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
