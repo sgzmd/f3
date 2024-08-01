@@ -13,5 +13,5 @@ bash /app/scripts/docker_download.sh
   --mysql_pass=${MARIADB_PASSWORD} \
   --mysql_db=${MARIADB_DATABASE} \
   --mysql_port=${MARIADB_PORT}
-
+  
 

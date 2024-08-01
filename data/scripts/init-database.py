@@ -11,8 +11,10 @@ root.setLevel(logging.DEBUG)
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setLevel(logging.DEBUG)
+# Define the log message format including file name and line number
 formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    '%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s')
+
 handler.setFormatter(formatter)
 root.addHandler(handler)
 
@@ -31,7 +33,7 @@ parser.add_argument("--skip_download", action="store_true")
 parser.add_argument("--flibusta_base_url")
 
 args = parser.parse_args()
-pprint.pprint(args)
+logging.info(args)
 
 MYSQL_FAST = """
 SET foreign_key_checks=0;
@@ -42,7 +44,9 @@ SET unique_checks=0;
 
 
 def CreateMySQLDump() -> bool:
-    return os.system("./downloader --dump_file " + args.sql_dump_file + " --base_url " + args.flibusta_base_url) == 0
+    command = "./downloader --dump_file " + args.sql_dump_file + " --base_url " + args.flibusta_base_url
+    logging.info(command)
+    return os.system(command) == 0
 
 
 def ImportMySQLDump() -> bool:
