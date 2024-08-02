@@ -1,6 +1,12 @@
 #!/usr/bin/env sh
 
 set -x
+
+if [ -n "$SKIP_FLIBUSTA_DOWNLOAD" ]; then
+  echo "SKIP_FLIBUSTA_DOWNLOAD is set. Skipping the execution of the downloader."
+  exit 0
+fi
+
 echo "PRODUCTION run of downloader"
 
 /app/scripts/init-database.py \
