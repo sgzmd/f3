@@ -1,8 +1,6 @@
 #!/usr/bin/env sh
 set -x
 
-docker context use bi2
-
 tag=`date --iso-8601`T`date +%H-%M`
 
 echo "Creating git tag $tag"
