@@ -11,20 +11,18 @@ services:
       - MYSQL_PASSWORD=${ENV_MARIADB_PASSWORD}
       - MYSQL_USER=${ENV_MARIADB_USER}
       - MYSQL_DATABASE=${ENV_MARIADB_DATABASE}
-    # looks like mysqladmin is no longer in the image
-    # healthcheck:
-    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${ENV_MARIADB_USER}", "-p${ENV_MARIADB_PASSWORD}"]
-    #   interval: 30s
-    #   timeout: 30s
-    #   retries: 99999
     networks:
       - flibunetwork
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   flibuserver:
     build:
       context: .
-    # links:
-    #   - database
     environment:
       MARIADB_HOST: ${ENV_MARIADB_HOST}
       MARIADB_USER: ${ENV_MARIADB_USER}
@@ -49,6 +47,11 @@ services:
           retries: 99999
     networks:
       - flibunetwork
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   web:
     build: 
@@ -66,10 +69,15 @@ services:
       - '8088:8088'
     networks:
       - flibunetwork
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   flibudata:
 
 networks:
   flibunetwork:
-    driver: bridge  
+    driver: bridge
